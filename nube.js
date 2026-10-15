@@ -122,21 +122,48 @@ async function iniciarNube(cfg) {
   };
 
   /* ---------- rubros agregados por el equipo ---------- */
+  // eliminado y actualizado llegaron con "editar rubros"; si la base todavía no tiene esas columnas
+  // (falta correr supabase/2-editar-rubros.sql) se sube lo básico y se avisa una vez.
+  let rubrosViejos = false;
   nube.guardarRubro = async (r) => {
-    const { error } = await sb.from('rubros').upsert({ id: r.id, proyecto: M.proyecto.id, nombre: r.nombre, responsables: r.responsables });
+    const fila = { id: r.id, proyecto: M.proyecto.id, nombre: r.nombre, responsables: r.responsables || [] };
+    let { error } = await sb.from('rubros').upsert(rubrosViejos ? fila : { ...fila, eliminado: !!r.eliminado, actualizado: r.actualizado || hoyISO() });
+    if (error && !rubrosViejos && /eliminado|actualizado|column/i.test(error.message || '')) {
+      rubrosViejos = true;
+      ({ error } = await sb.from('rubros').upsert(fila));
+      if (r.eliminado) aviso('El rubro se eliminó en este teléfono; para el resto del equipo falta un paso en Supabase');
+    }
     if (error) console.warn('rubro sin subir', error);
   };
+  const deFilaRubro = (r) => ({ id: r.id, nombre: r.nombre, responsables: r.responsables || [], eliminado: !!r.eliminado, actualizado: r.actualizado || r.creado || '' });
   nube.traerRubros = async () => {
     const { data, error } = await sb.from('rubros').select('*').eq('proyecto', M.proyecto.id);
     if (error) return;
-    const lista = data.map((r) => ({ id: r.id, nombre: r.nombre, responsables: r.responsables || [] }));
+    if (data.length && !('eliminado' in data[0])) rubrosViejos = true;
+    const remotos = new Map(data.map((r) => [r.id, deFilaRubro(r)]));
+    const final = new Map(remotos);
+    // cambios hechos sin señal en este teléfono: si son más nuevos que los de la nube, se suben
+    for (const l of rubrosPropios()) {
+      const r = remotos.get(l.id);
+      if (!r || (l.actualizado || '') > (r.actualizado || '')) { final.set(l.id, l); nube.guardarRubro(l); }
+    }
+    const lista = [...final.values()];
     sumarRubros(lista);
-    // los creados sin señal en este teléfono se suben ahora
-    for (const r of rubrosPropios()) if (!data.some((x) => x.id === r.id)) nube.guardarRubro(r);
-    pref('rubros-propios', JSON.stringify([...new Map([...rubrosPropios(), ...lista].map((r) => [r.id, r])).values()]));
+    pref('rubros-propios', JSON.stringify(lista));
   };
 
   /* ---------- en vivo ---------- */
+  sb.channel('rubros-' + M.proyecto.id)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'rubros', filter: `proyecto=eq.${M.proyecto.id}` }, (ev) => {
+      if (!ev.new || !ev.new.id || !('nombre' in ev.new)) return;
+      const r = deFilaRubro(ev.new);
+      const l = rubrosPropios().find((x) => x.id === r.id);
+      if (l && (l.actualizado || '') > (r.actualizado || '')) return;
+      pref('rubros-propios', JSON.stringify([...rubrosPropios().filter((x) => x.id !== r.id), r]));
+      sumarRubros([r]);
+      refrescarSiSePuede();
+    })
+    .subscribe();
   sb.channel('marcadores-' + M.proyecto.id)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'marcadores', filter: `proyecto=eq.${M.proyecto.id}` }, async (ev) => {
       const r = ev.new; if (!r || !r.id) return;

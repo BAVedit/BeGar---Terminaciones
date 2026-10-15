@@ -220,6 +220,9 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 }
 .btn.primario { background: var(--acento); border-color: var(--acento); color: var(--acento-tinta); }
 .btn.peligro { color: var(--abierto); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.35; }
+.check input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: var(--acento-fuerte); }
+.sep { border: 0; border-top: 1px solid var(--linea); margin: 4px 0; width: 100%; }
 .btn.ancho { flex: 1; }
 
 /* formulario */
