@@ -60,3 +60,13 @@ Sin configurar, cada teléfono guarda sus marcadores. Para que todos vean lo mis
 4. Para sumar o quitar gente después: **Table Editor → miembros** (rol `editor` o `lector`).
 
 Cada persona entra una sola vez con su mail y contraseña; la sesión queda guardada. Los editores cargan y cierran marcadores; los lectores ven todo, con fotos e informes. Cada marcador guarda quién lo relevó, quién lo marcó realizado y quién lo verificó, con fecha. Sin señal se sigue trabajando y se sube solo cuando vuelve.
+
+## App Android (APK)
+
+`android-app/` es una app Android (Capacitor) que abre la versión publicada en GitHub Pages, sin navegador.
+Suma botón atrás de Android, compartir informes (PDF/Word) por WhatsApp/Drive y giro a horizontal en pantalla completa.
+Los cambios en `visor/` llegan solos; sólo hace falta un APK nuevo si se cambia algo de `android-app/`.
+
+- Se compila sola en GitHub Actions (`.github/workflows/apk.yml`) con cada cambio en `android-app/`, o a mano desde Actions → APK Android → Run workflow.
+- Descarga: https://github.com/BAVedit/BeGar---Terminaciones/releases/download/apk/Terminaciones-BeGar.apk
+- Firma: `android-app/firma/debug.keystore` (clave de depuración, pública en el repo) para que cada APK se instale encima del anterior. Si la app se distribuye fuera del equipo, conviene cambiarla por una clave propia guardada como secreto.

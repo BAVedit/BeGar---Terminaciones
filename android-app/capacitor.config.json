@@ -1,0 +1,11 @@
+{
+  "appId": "py.com.codesarrollos.terminaciones",
+  "appName": "Terminaciones BeGar",
+  "webDir": "www",
+  "server": {
+    "url": "https://bavedit.github.io/BeGar---Terminaciones/",
+    "androidScheme": "https",
+    "allowNavigation": ["bavedit.github.io", "*.supabase.co"]
+  },
+  "android": { "backgroundColor": "#ffffff" }
+}
