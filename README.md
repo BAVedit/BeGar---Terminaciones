@@ -55,6 +55,7 @@ Sin configurar, cada teléfono guarda sus marcadores. Para que todos vean lo mis
 
 1. Crear una cuenta gratis en supabase.com y un proyecto nuevo (por ejemplo `begar-obra`).
 2. En **SQL Editor → New query**, pegar `supabase/esquema.sql`, cambiar los mails del final por los reales y tocar **Run**.
+   - Si la base ya estaba creada antes de "Editar rubros", correr también `supabase/2-editar-rubros.sql` (una línea por columna nueva; se puede correr de nuevo sin problema).
 3. En **Project Settings → API**, copiar la *Project URL* y la *anon public key* en `visor/config.js`.
 4. Para sumar o quitar gente después: **Table Editor → miembros** (rol `editor` o `lector`).
 

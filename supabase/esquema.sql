@@ -88,8 +88,16 @@ create table if not exists public.rubros (
   proyecto     text not null,
   nombre       text not null,
   responsables jsonb not null default '[]',
+  eliminado    boolean not null default false,
+  actualizado  timestamptz,
   creado       timestamptz not null default now()
 );
+-- Para bases creadas antes de "editar rubros" (mismo contenido que 2-editar-rubros.sql).
+alter table public.rubros add column if not exists eliminado boolean not null default false;
+alter table public.rubros add column if not exists actualizado timestamptz;
+do $$ begin
+  alter publication supabase_realtime add table public.rubros;
+exception when duplicate_object then null; end $$;
 alter table public.rubros enable row level security;
 drop policy if exists "miembros ven rubros" on public.rubros;
 create policy "miembros ven rubros" on public.rubros for select to authenticated
