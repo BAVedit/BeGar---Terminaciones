@@ -1,0 +1,151 @@
+{
+  "id": "begar",
+  "nombre": "Belive Garay",
+  "codigo_archivo": "BeGar",
+  "carpeta_planos": "1. Planos/Vigente",
+  "carpeta_contratos": "5. Compras y Contrataciones/02 Contratos y OT",
+  "carpetas_excluidas": [
+    "04. Municipal"
+  ],
+  "niveles": [
+    {
+      "id": "SS",
+      "nombre": "Subsuelo",
+      "titulos": [
+        "plano de sub suelo",
+        "planta subsuelo"
+      ],
+      "unidades": []
+    },
+    {
+      "id": "PB",
+      "nombre": "Planta Baja",
+      "titulos": [
+        "plano de planta baja"
+      ],
+      "unidades": []
+    },
+    {
+      "id": "N1",
+      "nombre": "Nivel 1",
+      "tipo": "Planta Tipo 1",
+      "titulos": [
+        "planta tipo 1 - nivel 1"
+      ],
+      "unidades": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E"
+      ]
+    },
+    {
+      "id": "N2",
+      "nombre": "Nivel 2",
+      "tipo": "Planta Tipo 1",
+      "titulos": [
+        "planta tipo 1 - nivel 2"
+      ],
+      "unidades": [
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E"
+      ]
+    },
+    {
+      "id": "N3",
+      "nombre": "Nivel 3",
+      "tipo": "Planta Tipo 2",
+      "titulos": [
+        "planta tipo 2 - nivel 3"
+      ],
+      "unidades": [
+        "3A",
+        "3B",
+        "3C",
+        "3D"
+      ]
+    },
+    {
+      "id": "N4",
+      "nombre": "Nivel 4",
+      "tipo": "Planta Tipo 2",
+      "titulos": [
+        "planta tipo 2 - nivel 4"
+      ],
+      "unidades": [
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ]
+    },
+    {
+      "id": "N5",
+      "nombre": "Nivel 5",
+      "tipo": "Planta Tipo 2",
+      "titulos": [
+        "planta tipo 2 - nivel 5"
+      ],
+      "unidades": [
+        "5A",
+        "5B",
+        "5C",
+        "5D"
+      ]
+    },
+    {
+      "id": "AZ",
+      "nombre": "Azotea",
+      "titulos": [
+        "plano azotea",
+        "planta azotea"
+      ],
+      "unidades": []
+    }
+  ],
+  "plantas_tipo": {
+    "Planta Tipo 1": [
+      "N1",
+      "N2"
+    ],
+    "Planta Tipo 2": [
+      "N3",
+      "N4",
+      "N5"
+    ]
+  },
+  "ubicaciones": {
+    "_comentario": "Regex para detectar etiquetas de dpto/local en el plano. {nivel} se reemplaza por el numero del nivel al armar el nombre (ej. DTO C en N3 -> 3C).",
+    "patrones": [
+      "^(?P<num>[1-5])(?P<letra>[A-E])$",
+      "^(?:DTO\\.?|DPTO\\.?)\\s*(?P<letra>[A-E])$",
+      "^LOCAL\\s*(?P<letra>[A-Z])$"
+    ],
+    "ambientes": [
+      "ESTAR",
+      "COMEDOR",
+      "DORMITORIO",
+      "BAÑO",
+      "COCINA",
+      "LAVADERO",
+      "PALIER",
+      "BALCON",
+      "PLACARD"
+    ]
+  },
+  "render": {
+    "lado_max_px": 6144,
+    "tile_px": 1024,
+    "formato": "webp",
+    "calidad": 80,
+    "detalle_lado_max_px": 1400
+  },
+  "planos_base": [
+    "Arquitectónico",
+    "Nomenclados"
+  ]
+}

@@ -1,0 +1,3156 @@
+{
+ "version": 1,
+ "generado": "2026-10-15T05:25:10",
+ "proyecto": {
+  "id": "begar",
+  "nombre": "Belive Garay",
+  "codigo_archivo": "BeGar",
+  "planos_base": [
+   "Arquitectónico",
+   "Nomenclados"
+  ]
+ },
+ "niveles": [
+  {
+   "id": "SS",
+   "nombre": "Subsuelo",
+   "titulos": [
+    "subsuelo"
+   ],
+   "unidades": []
+  },
+  {
+   "id": "PB",
+   "nombre": "Planta Baja",
+   "titulos": [
+    "planta baja"
+   ],
+   "unidades": []
+  },
+  {
+   "id": "N1",
+   "nombre": "Nivel 1",
+   "tipo": "Planta Tipo 1",
+   "titulos": [
+    "planta tipo 1 - nivel 1",
+    "nivel 1"
+   ],
+   "unidades": [
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E"
+   ]
+  },
+  {
+   "id": "N2",
+   "nombre": "Nivel 2",
+   "tipo": "Planta Tipo 1",
+   "titulos": [
+    "planta tipo 1 - nivel 2",
+    "nivel 2"
+   ],
+   "unidades": [
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "2E"
+   ]
+  },
+  {
+   "id": "N3",
+   "nombre": "Nivel 3",
+   "tipo": "Planta Tipo 2",
+   "titulos": [
+    "planta tipo 2 - nivel 3",
+    "nivel 3"
+   ],
+   "unidades": [
+    "3A",
+    "3B",
+    "3C",
+    "3D"
+   ]
+  },
+  {
+   "id": "N4",
+   "nombre": "Nivel 4",
+   "tipo": "Planta Tipo 2",
+   "titulos": [
+    "nivel 4"
+   ],
+   "unidades": [
+    "4A",
+    "4B",
+    "4C",
+    "4D"
+   ]
+  },
+  {
+   "id": "N5",
+   "nombre": "Nivel 5",
+   "tipo": "Planta Tipo 2",
+   "titulos": [
+    "nivel 5"
+   ],
+   "unidades": [
+    "5A",
+    "5B",
+    "5C",
+    "5D"
+   ]
+  },
+  {
+   "id": "AZ",
+   "nombre": "Azotea",
+   "titulos": [
+    "azotea",
+    "n6 az"
+   ],
+   "unidades": []
+  }
+ ],
+ "rubros": [
+  {
+   "id": "electricas",
+   "nombre": "Instalaciones eléctricas",
+   "piloto": false,
+   "responsables": [
+    "Ecoenergía",
+    "Javier Denis"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Instalación Eléctrica",
+    "Señales Débiles",
+    "Portero Inteligente",
+    "Luces para Replanteo",
+    "Tomas y Llaves",
+    "Cielorraso"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [
+    "23. Inst Eléctricas - Ecoenergía"
+   ],
+   "documentos": [
+    {
+     "carpeta": "23. Inst Eléctricas - Ecoenergía",
+     "archivo": "Contrato Ecoenergía.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/23. Inst Eléctricas - Ecoenergía/Contrato Ecoenergía.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/23. Inst Eléctricas - Ecoenergía/Contrato Ecoenergía.pdf"
+    },
+    {
+     "carpeta": "23. Inst Eléctricas - Ecoenergía",
+     "archivo": "OT-BeGar-023-01.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/23. Inst Eléctricas - Ecoenergía/OT-BeGar-023-01.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/23. Inst Eléctricas - Ecoenergía/OT-BeGar-023-01.pdf"
+    }
+   ]
+  },
+  {
+   "id": "hidro",
+   "nombre": "Instalaciones hidrosanitarias",
+   "piloto": false,
+   "responsables": [
+    "VM Instalaciones"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Sanitarias",
+    "Pluvial",
+    "Drenaje",
+    "Agua Corriente",
+    "Pasantes Tanque Superior",
+    "Pasantes",
+    "Baño Tipo",
+    "Cocina Tipo y Lavadero",
+    "Arquitectónico"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "termo",
+   "nombre": "Instalaciones termomecánicas",
+   "piloto": false,
+   "responsables": [
+    "Tecnoservice"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Climatización",
+    "Termomecánica",
+    "TM-Cortes",
+    "Cielorraso"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "pci",
+   "nombre": "PCI",
+   "piloto": false,
+   "responsables": [
+    "Altha Ingeniería"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Prevención Contra Incendios"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "carp-aluminio",
+   "nombre": "Carpintería de aluminio y vidrio",
+   "piloto": true,
+   "responsables": [
+    "MENA CC"
+   ],
+   "planos": [
+    "ar-nomenclados",
+    "ard-carpinteria-de-aluminio-y-vidrio",
+    "minuta-modificacion-carp-aluminio"
+   ],
+   "planos_faltantes": [
+    "Muros Cortina",
+    "Modelo de Dinteles"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [
+     "ar-nomenclados__planta-baja"
+    ],
+    "N1": [
+     "ar-nomenclados__planta-tipo-1-nivel-1"
+    ],
+    "N2": [
+     "ar-nomenclados__planta-tipo-1-nivel-2"
+    ],
+    "N3": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N4": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N5": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "AZ": []
+   },
+   "laminas": [
+    "ard-carpinteria-de-aluminio-y-vidrio__hoja-1",
+    "minuta-modificacion-carp-aluminio__hoja-1"
+   ],
+   "contratistas": [
+    "19. Constructora - MENA CC"
+   ],
+   "documentos": [
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Adenda 01.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Adenda 01.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Adenda 01.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Contrato MENA CC.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Contrato MENA CC.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Contrato MENA CC.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf"
+    }
+   ]
+  },
+  {
+   "id": "carp-madera",
+   "nombre": "Carpintería de madera (puertas)",
+   "piloto": false,
+   "responsables": [],
+   "planos": [
+    "ar-nomenclados"
+   ],
+   "planos_faltantes": [
+    "Puertas de Madera"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [
+     "ar-nomenclados__planta-baja"
+    ],
+    "N1": [
+     "ar-nomenclados__planta-tipo-1-nivel-1"
+    ],
+    "N2": [
+     "ar-nomenclados__planta-tipo-1-nivel-2"
+    ],
+    "N3": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N4": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N5": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "muebles",
+   "nombre": "Muebles y placares",
+   "piloto": false,
+   "responsables": [],
+   "planos": [],
+   "planos_faltantes": [
+    "Armarios y Muebles"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "pisos",
+   "nombre": "Pisos y revestimientos",
+   "piloto": false,
+   "responsables": [],
+   "planos": [],
+   "planos_faltantes": [
+    "Pisos y Revestimientos",
+    "Pétreos"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "cielorrasos",
+   "nombre": "Cielorrasos",
+   "piloto": false,
+   "responsables": [],
+   "planos": [],
+   "planos_faltantes": [
+    "Cielorraso"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "mamposteria",
+   "nombre": "Mampostería y tabiques",
+   "piloto": false,
+   "responsables": [
+    "MENA CC"
+   ],
+   "planos": [
+    "ar-nomenclados"
+   ],
+   "planos_faltantes": [
+    "Acotadas",
+    "Arquitectónico"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [
+     "ar-nomenclados__planta-baja"
+    ],
+    "N1": [
+     "ar-nomenclados__planta-tipo-1-nivel-1"
+    ],
+    "N2": [
+     "ar-nomenclados__planta-tipo-1-nivel-2"
+    ],
+    "N3": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N4": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "N5": [
+     "ar-nomenclados__planta-tipo-2"
+    ],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [
+    "19. Constructora - MENA CC"
+   ],
+   "documentos": [
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Adenda 01.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Adenda 01.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Adenda 01.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Contrato MENA CC.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Contrato MENA CC.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Contrato MENA CC.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf"
+    }
+   ]
+  },
+  {
+   "id": "pintura",
+   "nombre": "Pintura",
+   "piloto": false,
+   "responsables": [
+    "Juan Carlos"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Acabados"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [
+    "28. Juan Carlos pintura"
+   ],
+   "documentos": [
+    {
+     "carpeta": "28. Juan Carlos pintura",
+     "archivo": "OT-BeGar-028-01.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/28. Juan Carlos pintura/OT-BeGar-028-01.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/28. Juan Carlos pintura/OT-BeGar-028-01.pdf"
+    }
+   ]
+  },
+  {
+   "id": "herreria",
+   "nombre": "Herrería / carpintería metálica",
+   "piloto": false,
+   "responsables": [],
+   "planos": [],
+   "planos_faltantes": [
+    "Carpintería Metálica",
+    "Herrería"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "aislaciones",
+   "nombre": "Aislaciones e impermeabilización",
+   "piloto": false,
+   "responsables": [
+    "MENA CC"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Aislaciones"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [
+    "19. Constructora - MENA CC"
+   ],
+   "documentos": [
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Adenda 01.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Adenda 01.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Adenda 01.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "Contrato MENA CC.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/Contrato MENA CC.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/Contrato MENA CC.pdf"
+    },
+    {
+     "carpeta": "19. Constructora - MENA CC",
+     "archivo": "OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "formato": "pdf",
+     "ruta": "documentos/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf",
+     "origen": "5. Compras y Contrataciones/02 Contratos y OT/19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf"
+    }
+   ]
+  },
+  {
+   "id": "ascensor",
+   "nombre": "Ascensor",
+   "piloto": false,
+   "responsables": [
+    "OTIS"
+   ],
+   "planos": [],
+   "planos_faltantes": [
+    "Núcleo Escalera y Ascensor"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  },
+  {
+   "id": "amenities",
+   "nombre": "Amenities",
+   "piloto": false,
+   "responsables": [],
+   "planos": [],
+   "planos_faltantes": [
+    "Piscina",
+    "Lobby y Palieres",
+    "Señalética"
+   ],
+   "niveles": {
+    "SS": [],
+    "PB": [],
+    "N1": [],
+    "N2": [],
+    "N3": [],
+    "N4": [],
+    "N5": [],
+    "AZ": []
+   },
+   "laminas": [],
+   "contratistas": [],
+   "documentos": []
+  }
+ ],
+ "planos": {
+  "ar-nomenclados": {
+   "id": "ar-nomenclados",
+   "nombre": "Nomenclados",
+   "disciplina": "AR",
+   "estado": "construcción",
+   "archivo": "01. Arquitectura/BeGar-AR- Nomenclados_C.pdf",
+   "modificado": "2026-10-15 05:24",
+   "hojas": 2,
+   "huella": "bd438abf771b",
+   "vigente": "si",
+   "grupo": "ar-nomenclados",
+   "recortes": [
+    "ar-nomenclados__planta-tipo-1-nivel-1",
+    "ar-nomenclados__planta-tipo-1-nivel-2",
+    "ar-nomenclados__planta-tipo-2",
+    "ar-nomenclados__planta-baja"
+   ]
+  },
+  "ard-carpinteria-de-aluminio-y-vidrio": {
+   "id": "ard-carpinteria-de-aluminio-y-vidrio",
+   "nombre": "Carpintería de Aluminio y Vidrio",
+   "disciplina": "ARD",
+   "estado": "construcción",
+   "archivo": "01. Arquitectura/BeGar-ARD- Carpintería de Aluminio y Vidrio_C.pdf",
+   "modificado": "2026-10-15 05:24",
+   "hojas": 1,
+   "huella": "ab04d59e7d9d",
+   "vigente": "si",
+   "grupo": "ard-carpinteria-de-aluminio-y-vidrio",
+   "recortes": [
+    "ard-carpinteria-de-aluminio-y-vidrio__hoja-1"
+   ]
+  },
+  "minuta-modificacion-carp-aluminio": {
+   "id": "minuta-modificacion-carp-aluminio",
+   "nombre": "Minuta Modificación Carp. Aluminio",
+   "disciplina": "",
+   "estado": "",
+   "archivo": "05. Otros/10. Planos Complementarios/Minuta Modificación Carp. Aluminio.pdf",
+   "modificado": "2026-10-15 05:24",
+   "hojas": 1,
+   "huella": "580ef3a6224e",
+   "vigente": "si",
+   "grupo": "minuta-modificacion-carp-aluminio",
+   "recortes": [
+    "minuta-modificacion-carp-aluminio__hoja-1"
+   ]
+  }
+ },
+ "recortes": {
+  "ar-nomenclados__planta-tipo-1-nivel-1": {
+   "id": "ar-nomenclados__planta-tipo-1-nivel-1",
+   "plano": "ar-nomenclados",
+   "hoja": 1,
+   "titulo": "Planta Tipo 1 - Nivel 1",
+   "niveles": [
+    "N1"
+   ],
+   "compartida": false,
+   "bbox_pdf": [
+    92.0,
+    87.0,
+    1728.0,
+    732.3
+   ],
+   "origen": "propuesto",
+   "huella": "65707c99139b",
+   "codigos": [
+    {
+     "codigo": "LHM",
+     "x": 0.07856688930819263,
+     "y": 0.47183681684723155,
+     "w": 0.006451707014536216,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.044260057668522694,
+     "y": 0.06168994327013642,
+     "w": 0.010191929078043819,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.1423290970855937,
+     "y": 0.06168994327013642,
+     "w": 0.010393641688712943,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.10802224679214739,
+     "y": 0.6283571096579996,
+     "w": 0.010393641688712943,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.020002696216835078,
+     "y": 0.6115726254431045,
+     "w": 0.008969435190513256,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.020002696216835078,
+     "y": 0.4358617617943503,
+     "w": 0.008969435190513256,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.020002696216835078,
+     "y": 0.46305143445836494,
+     "w": 0.006454766233859261,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.20972989182600474,
+     "y": 0.3400538109873463,
+     "w": 0.008322121170155869,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.2726257622679172,
+     "y": 0.47183681684723155,
+     "w": 0.006451707014536216,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.23831893062824724,
+     "y": 0.06168994327013642,
+     "w": 0.012839860613013829,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.3363879513915419,
+     "y": 0.06168994327013642,
+     "w": 0.010393623034936583,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.30208111975187196,
+     "y": 0.6283571096579996,
+     "w": 0.010393623034936583,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.21406155984967146,
+     "y": 0.6115726254431045,
+     "w": 0.008969463171177796,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.21406155984967146,
+     "y": 0.4358617617943503,
+     "w": 0.008969463171177796,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.21406155984967146,
+     "y": 0.46305143445836494,
+     "w": 0.006454766233859261,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.40378878343950564,
+     "y": 0.3400538109873463,
+     "w": 0.008322158477708588,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.4666846165738654,
+     "y": 0.47183681684723155,
+     "w": 0.006451707014536216,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.43237778493419543,
+     "y": 0.06168994327013642,
+     "w": 0.01283984195923747,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.5304468430050427,
+     "y": 0.06168994327013642,
+     "w": 0.010393623034936583,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.49614001136537283,
+     "y": 0.6283571096579996,
+     "w": 0.010393623034936583,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.4081204514631724,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.4081204514631724,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.4081204514631724,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.5978476377454538,
+     "y": 0.3400538109873463,
+     "w": 0.008322195785261308,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.6607434708798136,
+     "y": 0.47183681684723155,
+     "w": 0.006451744322088937,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.6264366392401436,
+     "y": 0.06168994327013642,
+     "w": 0.01283991657434291,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.7245057346185437,
+     "y": 0.06168994327013642,
+     "w": 0.010393734957594743,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.6901989029788738,
+     "y": 0.6283571096579996,
+     "w": 0.010393734957594743,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.6021793430766733,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.6021793430766733,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.6021793430766733,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.7919065293589548,
+     "y": 0.3400538109873463,
+     "w": 0.008322195785261308,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.8548023624933145,
+     "y": 0.47183681684723155,
+     "w": 0.006451744322088937,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.8204955308536446,
+     "y": 0.06168994327013642,
+     "w": 0.01019197571248472,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.9185645516169392,
+     "y": 0.06168994327013642,
+     "w": 0.010393734957594743,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.8842577199772692,
+     "y": 0.6283571096579996,
+     "w": 0.010393734957594743,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.7962381600750688,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.7962381600750688,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.7962381600750688,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "ES-01",
+     "x": 0.4219817742158848,
+     "y": 0.7777114950945665,
+     "w": 0.010191938404931999,
+     "h": 0.012803329978107483
+    },
+    {
+     "codigo": "DU-02",
+     "x": 0.5034172225989456,
+     "y": 0.7345701070374427,
+     "w": 0.00971238712226849,
+     "h": 0.011710784954488799
+    },
+    {
+     "codigo": "PT-01",
+     "x": 0.5675259242722341,
+     "y": 0.8443894677562543,
+     "w": 0.009154303441129278,
+     "h": 0.011710784954488799
+    },
+    {
+     "codigo": "C3A",
+     "x": 0.6021793430766733,
+     "y": 0.7354030177359092,
+     "w": 0.005944361605096271,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.955643707499236,
+     "y": 0.7777114950945665,
+     "w": 0.010800834972875917,
+     "h": 0.012803329978107483
+    }
+   ],
+   "ubicaciones": [
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.03934441452212905,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.13766112012793208,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.02476645098921722,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.10416337272065776,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "1A",
+     "num": "1",
+     "letra": "A",
+     "clase": "unidad",
+     "x": 0.10439248306535567,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.23340327815496542,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.3317199744338803,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.21882530529516542,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.2982222503438264,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "1B",
+     "num": "1",
+     "letra": "B",
+     "clase": "unidad",
+     "x": 0.2984513746788566,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.4274621417878018,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.5257788287398285,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.4128842155624427,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.4922811419573273,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "1C",
+     "num": "1",
+     "letra": "C",
+     "clase": "unidad",
+     "x": 0.4925102289848048,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.6215209587861973,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.7198377763146585,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.6069430698683909,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.6863399589557228,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "1D",
+     "num": "1",
+     "letra": "D",
+     "clase": "unidad",
+     "x": 0.6865691019445294,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.8155798503996982,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.9138966679281594,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.8010018868667864,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.8803988505692237,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "1E",
+     "num": "1",
+     "letra": "E",
+     "clase": "unidad",
+     "x": 0.8804263089280256,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "PALIER",
+     "clase": "ambiente",
+     "x": 0.27949494079739073,
+     "y": 0.7840527206177651
+    }
+   ],
+   "tiles": {
+    "ancho_px": 4097,
+    "alto_px": 1617,
+    "zoom_max": 4,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/ar-nomenclados__planta-tipo-1-nivel-1"
+   }
+  },
+  "ar-nomenclados__planta-tipo-1-nivel-2": {
+   "id": "ar-nomenclados__planta-tipo-1-nivel-2",
+   "plano": "ar-nomenclados",
+   "hoja": 1,
+   "titulo": "Planta Tipo 1 - Nivel 2",
+   "niveles": [
+    "N2"
+   ],
+   "compartida": false,
+   "bbox_pdf": [
+    92.0,
+    822.0,
+    1728.0,
+    1469.3
+   ],
+   "origen": "propuesto",
+   "huella": "c07dce4c5119",
+   "codigos": [
+    {
+     "codigo": "LHM",
+     "x": 0.07856688930819263,
+     "y": 0.47347526151157265,
+     "w": 0.006451707014536216,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.044260057668522694,
+     "y": 0.06460041612535734,
+     "w": 0.010191929078043819,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.1423290970855937,
+     "y": 0.06460041612535734,
+     "w": 0.010393641688712943,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.10802224679214739,
+     "y": 0.6295100126746058,
+     "w": 0.010393641688712943,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.020002696216835078,
+     "y": 0.612777496266545,
+     "w": 0.008969435190513256,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.020002696216835078,
+     "y": 0.43761184099734307,
+     "w": 0.008969435190513256,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.020002696216835078,
+     "y": 0.46471694103168387,
+     "w": 0.006454766233859261,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.20972989182600474,
+     "y": 0.3421008314775279,
+     "w": 0.008322121170155869,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.2726257622679172,
+     "y": 0.47347526151157265,
+     "w": 0.006451707014536216,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.23831893062824724,
+     "y": 0.06460041612535734,
+     "w": 0.012839860613013829,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.3363879513915419,
+     "y": 0.06460041612535734,
+     "w": 0.010393623034936583,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.30208111975187196,
+     "y": 0.6295100126746058,
+     "w": 0.010393623034936583,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.21406155984967146,
+     "y": 0.612777496266545,
+     "w": 0.008969463171177796,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.21406155984967146,
+     "y": 0.43761184099734307,
+     "w": 0.008969463171177796,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.21406155984967146,
+     "y": 0.46471694103168387,
+     "w": 0.006454766233859261,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.40378878343950564,
+     "y": 0.3421008314775279,
+     "w": 0.008322158477708588,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.4666846165738654,
+     "y": 0.47347526151157265,
+     "w": 0.006451707014536216,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.43237778493419543,
+     "y": 0.06460041612535734,
+     "w": 0.01283984195923747,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.5304468430050427,
+     "y": 0.06460041612535734,
+     "w": 0.010393623034936583,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.49614001136537283,
+     "y": 0.6295100126746058,
+     "w": 0.010393623034936583,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.4081204514631724,
+     "y": 0.612777496266545,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.4081204514631724,
+     "y": 0.43761184099734307,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.4081204514631724,
+     "y": 0.46471694103168387,
+     "w": 0.006454803541411981,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.5978476377454538,
+     "y": 0.3421008314775279,
+     "w": 0.008322195785261308,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.6607434708798136,
+     "y": 0.47347526151157265,
+     "w": 0.006451744322088937,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.6264366392401436,
+     "y": 0.06460041612535734,
+     "w": 0.01283991657434291,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.7245057346185437,
+     "y": 0.06460041612535734,
+     "w": 0.010393734957594743,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.6901989029788738,
+     "y": 0.6295100126746058,
+     "w": 0.010393734957594743,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.6021793430766733,
+     "y": 0.612777496266545,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.6021793430766733,
+     "y": 0.43761184099734307,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.6021793430766733,
+     "y": 0.46471694103168387,
+     "w": 0.006454803541411981,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.7919065293589548,
+     "y": 0.3421008314775279,
+     "w": 0.008322195785261308,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.8548023624933145,
+     "y": 0.47347526151157265,
+     "w": 0.006451744322088937,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.8204955308536446,
+     "y": 0.06460041612535734,
+     "w": 0.01019197571248472,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.9185645516169392,
+     "y": 0.06460041612535734,
+     "w": 0.010393734957594743,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.8842577199772692,
+     "y": 0.6295100126746058,
+     "w": 0.010393734957594743,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.7962381600750688,
+     "y": 0.612777496266545,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.7962381600750688,
+     "y": 0.43761184099734307,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.7962381600750688,
+     "y": 0.46471694103168387,
+     "w": 0.006454803541411981,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "ES-01",
+     "x": 0.4219817742158848,
+     "y": 0.7784008950862848,
+     "w": 0.010191938404931999,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "DU-02",
+     "x": 0.5034172225989456,
+     "y": 0.735393605820701,
+     "w": 0.00971238712226849,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "PT-01",
+     "x": 0.5675259242722341,
+     "y": 0.8448723289460955,
+     "w": 0.009154303441129278,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "C3A",
+     "x": 0.6021793430766733,
+     "y": 0.7362239329975189,
+     "w": 0.005944361605096271,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.955643707499236,
+     "y": 0.7784008950862848,
+     "w": 0.010800834972875917,
+     "h": 0.012763805202943616
+    }
+   ],
+   "ubicaciones": [
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.03934441452212905,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.13766112012793208,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.02476645098921722,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.10416337272065776,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "2A",
+     "num": "2",
+     "letra": "A",
+     "clase": "unidad",
+     "x": 0.10439248306535567,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.23340327815496542,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.3317199744338803,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.21882530529516542,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.2982222503438264,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "2B",
+     "num": "2",
+     "letra": "B",
+     "clase": "unidad",
+     "x": 0.2984513746788566,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.4274621417878018,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.5257788287398285,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.4128842155624427,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.4922811419573273,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "2C",
+     "num": "2",
+     "letra": "C",
+     "clase": "unidad",
+     "x": 0.4925102289848048,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.6215209587861973,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.7198377763146585,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.6069430698683909,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.6863399589557228,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "2D",
+     "num": "2",
+     "letra": "D",
+     "clase": "unidad",
+     "x": 0.6865691019445294,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.8155798503996982,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.9138966679281594,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.8010018868667864,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.8803988505692237,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "2E",
+     "num": "2",
+     "letra": "E",
+     "clase": "unidad",
+     "x": 0.8804263089280256,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "PALIER",
+     "clase": "ambiente",
+     "x": 0.27949494079739073,
+     "y": 0.7847225456929818
+    }
+   ],
+   "tiles": {
+    "ancho_px": 4097,
+    "alto_px": 1621,
+    "zoom_max": 4,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/ar-nomenclados__planta-tipo-1-nivel-2"
+   }
+  },
+  "ar-nomenclados__planta-tipo-2": {
+   "id": "ar-nomenclados__planta-tipo-2",
+   "plano": "ar-nomenclados",
+   "hoja": 2,
+   "titulo": "Planta Tipo 2",
+   "niveles": [
+    "N3",
+    "N4",
+    "N5"
+   ],
+   "compartida": true,
+   "bbox_pdf": [
+    92.0,
+    87.0,
+    1728.0,
+    732.3
+   ],
+   "origen": "propuesto",
+   "huella": "65707c99139b",
+   "codigos": [
+    {
+     "codigo": "LHM",
+     "x": 0.09797277660416508,
+     "y": 0.47183681684723155,
+     "w": 0.006451716341424396,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.044260057668522694,
+     "y": 0.06168994327013642,
+     "w": 0.010191929078043819,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.16901218628825068,
+     "y": 0.06168994327013642,
+     "w": 0.010393641688712943,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.12742814341500802,
+     "y": 0.6283571096579996,
+     "w": 0.010393641688712943,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.020002696216835078,
+     "y": 0.6115726254431045,
+     "w": 0.008969435190513256,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.020002696216835078,
+     "y": 0.4358617617943503,
+     "w": 0.008969435190513256,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.020002696216835078,
+     "y": 0.46305143445836494,
+     "w": 0.006454766233859261,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.2582445960756036,
+     "y": 0.3400538109873463,
+     "w": 0.008322158477708588,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.3405463631403767,
+     "y": 0.47183681684723155,
+     "w": 0.006451707014536216,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.28683363487784613,
+     "y": 0.06168994327013642,
+     "w": 0.01283984195923747,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.4115857634975741,
+     "y": 0.06168994327013642,
+     "w": 0.010393623034936583,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.37000172062433145,
+     "y": 0.6283571096579996,
+     "w": 0.010393623034936583,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.26257630140682303,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.26257630140682303,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.26257630140682303,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.5008181919387034,
+     "y": 0.3400538109873463,
+     "w": 0.008322158477708588,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.5831199590034765,
+     "y": 0.47183681684723155,
+     "w": 0.006451744322088937,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.5294072307409459,
+     "y": 0.06168994327013642,
+     "w": 0.01283984195923747,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.6541593593606739,
+     "y": 0.06168994327013642,
+     "w": 0.010393734957594743,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.6125753164874312,
+     "y": 0.6283571096579996,
+     "w": 0.010393734957594743,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.5051498599623702,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.5051498599623702,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.5051498599623702,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.7433917878018031,
+     "y": 0.3400538109873463,
+     "w": 0.008322195785261308,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.8256935175590235,
+     "y": 0.47183681684723155,
+     "w": 0.006451744322088937,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.7719807892964929,
+     "y": 0.06168994327013642,
+     "w": 0.01283991657434291,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.8967329925313264,
+     "y": 0.06168994327013642,
+     "w": 0.010393734957594743,
+     "h": 0.012803377270334286
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.8551489496580837,
+     "y": 0.6283571096579996,
+     "w": 0.010393734957594743,
+     "h": 0.01280342456256109
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.7477234931330227,
+     "y": 0.6115726254431045,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.7477234931330227,
+     "y": 0.4358617617943503,
+     "w": 0.008969407209848717,
+     "h": 0.011710879538942405
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.7477234931330227,
+     "y": 0.46305143445836494,
+     "w": 0.006454803541411981,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "ES-01",
+     "x": 0.4219817742158848,
+     "y": 0.7777114950945665,
+     "w": 0.010191938404931999,
+     "h": 0.012803329978107483
+    },
+    {
+     "codigo": "DU-02",
+     "x": 0.5034172225989456,
+     "y": 0.7345701070374427,
+     "w": 0.00971238712226849,
+     "h": 0.011710784954488799
+    },
+    {
+     "codigo": "PT-01",
+     "x": 0.5675259242722341,
+     "y": 0.8443894677562543,
+     "w": 0.009154303441129278,
+     "h": 0.011710784954488799
+    },
+    {
+     "codigo": "C3A",
+     "x": 0.6021793430766733,
+     "y": 0.7354030177359092,
+     "w": 0.005944361605096271,
+     "h": 0.010646236929137895
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.955643707499236,
+     "y": 0.7777114950945665,
+     "w": 0.010800834972875917,
+     "h": 0.012803329978107483
+    }
+   ],
+   "ubicaciones": [
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.03934441452212905,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.1643442093305891,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.02476645098921722,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.1235692646800743,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "DTO A",
+     "num": null,
+     "letra": "A",
+     "clase": "unidad",
+     "x": 0.13537234840299797,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.2819179917314525,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.4069177865399125,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.26734006550609335,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.3661428512162859,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "DTO B",
+     "num": null,
+     "letra": "B",
+     "clase": "unidad",
+     "x": 0.3779459349392096,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.5244915875945523,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.6494914010567887,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.5099136240616404,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.6087164470793857,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "DTO C",
+     "num": null,
+     "letra": "C",
+     "clase": "unidad",
+     "x": 0.620519512148533,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.7670651088425466,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.8920650342274412,
+     "y": 0.2132930977373318
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.7524872199247402,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.8512900056349327,
+     "y": 0.5207871564148784
+    },
+    {
+     "texto": "DTO D",
+     "num": null,
+     "letra": "D",
+     "clase": "unidad",
+     "x": 0.8630931453191855,
+     "y": 0.30614679772036335
+    },
+    {
+     "texto": "PALIER",
+     "clase": "ambiente",
+     "x": 0.27949494079739073,
+     "y": 0.7840527206177651
+    }
+   ],
+   "tiles": {
+    "ancho_px": 4097,
+    "alto_px": 1617,
+    "zoom_max": 4,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/ar-nomenclados__planta-tipo-2"
+   }
+  },
+  "ar-nomenclados__planta-baja": {
+   "id": "ar-nomenclados__planta-baja",
+   "plano": "ar-nomenclados",
+   "hoja": 2,
+   "titulo": "Planta Baja",
+   "niveles": [
+    "PB"
+   ],
+   "compartida": false,
+   "bbox_pdf": [
+    92.0,
+    822.0,
+    1728.0,
+    1469.3
+   ],
+   "origen": "propuesto",
+   "huella": "c07dce4c5119",
+   "codigos": [
+    {
+     "codigo": "LHM",
+     "x": 0.13031591587952704,
+     "y": 0.47347526151157265,
+     "w": 0.006451707014536216,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.044260057668522694,
+     "y": 0.06460041612535734,
+     "w": 0.010191929078043819,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.21348402027978874,
+     "y": 0.06460041612535734,
+     "w": 0.010393641688712943,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.15977129201725818,
+     "y": 0.6295100126746058,
+     "w": 0.010393641688712943,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.020002696216835078,
+     "y": 0.612777496266545,
+     "w": 0.008969435190513256,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.020002696216835078,
+     "y": 0.43761184099734307,
+     "w": 0.008969435190513256,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.020002696216835078,
+     "y": 0.46471694103168387,
+     "w": 0.006454766233859261,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.33910248623500533,
+     "y": 0.3421008314775279,
+     "w": 0.008322158477708588,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.45374736459447584,
+     "y": 0.47347526151157265,
+     "w": 0.006451707014536216,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.36769152503724783,
+     "y": 0.06460041612535734,
+     "w": 0.01283984195923747,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.5369154503409612,
+     "y": 0.06460041612535734,
+     "w": 0.010393623034936583,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.48320275938598334,
+     "y": 0.6295100126746058,
+     "w": 0.010393623034936583,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.3434341542586721,
+     "y": 0.612777496266545,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.3434341542586721,
+     "y": 0.43761184099734307,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.3434341542586721,
+     "y": 0.46471694103168387,
+     "w": 0.006454803541411981,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LH-10",
+     "x": 0.6625339349499542,
+     "y": 0.3421008314775279,
+     "w": 0.008322195785261308,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "LHM",
+     "x": 0.7771788506169773,
+     "y": 0.47347526151157265,
+     "w": 0.006451744322088937,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.691122936444644,
+     "y": 0.06460041612535734,
+     "w": 0.01283991657434291,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.8603469363634627,
+     "y": 0.06460041612535734,
+     "w": 0.010393734957594743,
+     "h": 0.012763616620800347
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.8066342081009321,
+     "y": 0.6295100126746058,
+     "w": 0.010393734957594743,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "A-105",
+     "x": 0.6668655656660681,
+     "y": 0.612777496266545,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "A-101",
+     "x": 0.6668655656660681,
+     "y": 0.43761184099734307,
+     "w": 0.008969407209848717,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "B-01",
+     "x": 0.6668655656660681,
+     "y": 0.46471694103168387,
+     "w": 0.006454803541411981,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "ES-01",
+     "x": 0.4219817742158848,
+     "y": 0.7784008950862848,
+     "w": 0.010191938404931999,
+     "h": 0.012763805202943616
+    },
+    {
+     "codigo": "DU-02",
+     "x": 0.5034172225989456,
+     "y": 0.735393605820701,
+     "w": 0.00971238712226849,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "PT-01",
+     "x": 0.5675259242722341,
+     "y": 0.8448723289460955,
+     "w": 0.009154303441129278,
+     "h": 0.011674554743416079
+    },
+    {
+     "codigo": "C3A",
+     "x": 0.6021793430766733,
+     "y": 0.7362239329975189,
+     "w": 0.005944361605096271,
+     "h": 0.010613214441092502
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.955643707499236,
+     "y": 0.7784008950862848,
+     "w": 0.010800834972875917,
+     "h": 0.012763805202943616
+    }
+   ],
+   "ubicaciones": [
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.03934441452212905,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.20881602466835078,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.02476645098921722,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.15591241328232447,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "LOCAL A",
+     "num": null,
+     "letra": "A",
+     "clase": "unidad",
+     "x": 0.18069002855669317,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.3627758818908542,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.5322474733832996,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.3481979183579424,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.4793438899779378,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "LOCAL B",
+     "num": null,
+     "letra": "B",
+     "clase": "unidad",
+     "x": 0.5041214586178656,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "ESTAR - COMEDOR",
+     "clase": "ambiente",
+     "x": 0.6862072559906975,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "DORMITORIO",
+     "clase": "ambiente",
+     "x": 0.8556789780595775,
+     "y": 0.21573349307498083
+    },
+    {
+     "texto": "BAÑO",
+     "clase": "ambiente",
+     "x": 0.6716292924577858,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "COCINA",
+     "clase": "ambiente",
+     "x": 0.8027752640777812,
+     "y": 0.5222736255237633
+    },
+    {
+     "texto": "LOCAL C",
+     "num": null,
+     "letra": "C",
+     "clase": "unidad",
+     "x": 0.8275529632941435,
+     "y": 0.30829894380799017
+    },
+    {
+     "texto": "PALIER",
+     "clase": "ambiente",
+     "x": 0.27949494079739073,
+     "y": 0.7847225456929818
+    }
+   ],
+   "tiles": {
+    "ancho_px": 4097,
+    "alto_px": 1621,
+    "zoom_max": 4,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/ar-nomenclados__planta-baja"
+   }
+  },
+  "ard-carpinteria-de-aluminio-y-vidrio__hoja-1": {
+   "id": "ard-carpinteria-de-aluminio-y-vidrio__hoja-1",
+   "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+   "hoja": 1,
+   "titulo": "Hoja 1",
+   "niveles": [],
+   "compartida": false,
+   "bbox_pdf": [
+    0.0,
+    0.0,
+    2383.9,
+    1683.8
+   ],
+   "origen": "hoja",
+   "huella": "75d130d22f4e",
+   "codigos": [
+    {
+     "codigo": "PV-04",
+     "x": 0.042806181836727464,
+     "y": 0.06390644372771508,
+     "w": 0.018651495001436823,
+     "h": 0.013084851533930204
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.08323424672741532,
+     "y": 0.3449733867825781,
+     "w": 0.006411453006910878,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV-04",
+     "x": 0.08323424672741532,
+     "y": 0.3584414480942576,
+     "w": 0.006411453006910878,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.30439953235184297,
+     "y": 0.06390644372771508,
+     "w": 0.02349726143584288,
+     "h": 0.013084851533930204
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.34482758444119505,
+     "y": 0.3449733867825781,
+     "w": 0.00795029517832056,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.34482758444119505,
+     "y": 0.3584414480942576,
+     "w": 0.00795029517832056,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-A",
+     "x": 0.34482758444119505,
+     "y": 0.37190943690813705,
+     "w": 0.00795029517832056,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.5659928828669585,
+     "y": 0.06390644372771508,
+     "w": 0.02349726143584288,
+     "h": 0.013084851533930204
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.6064209349563106,
+     "y": 0.3449733867825781,
+     "w": 0.007950243972977507,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.6064209349563106,
+     "y": 0.3584414480942576,
+     "w": 0.007950243972977507,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "PV07-B",
+     "x": 0.6064209349563106,
+     "y": 0.37190943690813705,
+     "w": 0.007950243972977507,
+     "h": 0.004488085059058883
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.042806181836727464,
+     "y": 0.5184519225764094,
+     "w": 0.01902063431950045,
+     "h": 0.013084837940592692
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.08323424672741532,
+     "y": 0.7995188611001599,
+     "w": 0.006411453006910878,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.08323424672741532,
+     "y": 0.8129869224118395,
+     "w": 0.006411453006910878,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "VA-01",
+     "x": 0.08323424672741532,
+     "y": 0.8264549112257189,
+     "w": 0.006411453006910878,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.30439953235184297,
+     "y": 0.5184519225764094,
+     "w": 0.01902063431950045,
+     "h": 0.013084837940592692
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.34482758444119505,
+     "y": 0.7995188611001599,
+     "w": 0.006411446606242996,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.34482758444119505,
+     "y": 0.8129869224118395,
+     "w": 0.006411446606242996,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "VA-02",
+     "x": 0.34482758444119505,
+     "y": 0.8264549112257189,
+     "w": 0.006411446606242996,
+     "h": 0.00448812130795891
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.5659928828669585,
+     "y": 0.5184519225764094,
+     "w": 0.019765620855567545,
+     "h": 0.013084837940592692
+    },
+    {
+     "codigo": "MV-01",
+     "x": 0.6064209349563106,
+     "y": 0.7995188611001599,
+     "w": 0.006794436969602255,
+     "h": 0.00448812130795891
+    }
+   ],
+   "ubicaciones": [],
+   "tiles": {
+    "ancho_px": 4096,
+    "alto_px": 2894,
+    "zoom_max": 3,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/ard-carpinteria-de-aluminio-y-vidrio__hoja-1"
+   }
+  },
+  "minuta-modificacion-carp-aluminio__hoja-1": {
+   "id": "minuta-modificacion-carp-aluminio__hoja-1",
+   "plano": "minuta-modificacion-carp-aluminio",
+   "hoja": 1,
+   "titulo": "Hoja 1",
+   "niveles": [],
+   "compartida": false,
+   "bbox_pdf": [
+    0.0,
+    0.0,
+    595.0,
+    842.0
+   ],
+   "origen": "hoja",
+   "huella": "0c7956de21f8",
+   "codigos": [
+    {
+     "codigo": "PV-04",
+     "x": 0.10084033613445378,
+     "y": 0.1284738753583822,
+     "w": 0.05137645817604385,
+     "h": 0.01795011688014957
+    }
+   ],
+   "ubicaciones": [],
+   "tiles": {
+    "ancho_px": 2480,
+    "alto_px": 3509,
+    "zoom_max": 3,
+    "tile_px": 512,
+    "formato": "webp",
+    "ruta": "tiles/minuta-modificacion-carp-aluminio__hoja-1"
+   }
+  }
+ },
+ "codigos": {
+  "A-101": {
+   "tipo": "detalle",
+   "grupo": "A-101",
+   "prefijo": "A",
+   "variante": null,
+   "descripcion": "Puerta de madera",
+   "rubro": "carp-madera",
+   "codigo": "A-101",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  },
+  "A-105": {
+   "tipo": "detalle",
+   "grupo": "A-105",
+   "prefijo": "A",
+   "variante": null,
+   "descripcion": "Puerta de madera",
+   "rubro": "carp-madera",
+   "codigo": "A-105",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  },
+  "B-01": {
+   "tipo": "sin_definir",
+   "grupo": "B-01",
+   "prefijo": "B",
+   "variante": null,
+   "descripcion": "Prefijo sin definir en la tabla oficial",
+   "rubro": null,
+   "codigo": "B-01",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  },
+  "C3A": {
+   "tipo": "muro",
+   "grupo": "C3A",
+   "prefijo": "C3A",
+   "descripcion": "Muro de ladrillo panderete 10 cm",
+   "rubro": "mamposteria",
+   "codigo": "C3A",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "DU-02": {
+   "tipo": "sin_definir",
+   "grupo": "DU-02",
+   "prefijo": "DU",
+   "variante": null,
+   "descripcion": "Prefijo sin definir en la tabla oficial",
+   "rubro": null,
+   "codigo": "DU-02",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "ES-01": {
+   "tipo": "sin_definir",
+   "grupo": "ES-01",
+   "prefijo": "ES",
+   "variante": null,
+   "descripcion": "Prefijo sin definir en la tabla oficial",
+   "rubro": null,
+   "codigo": "ES-01",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "LH-10": {
+   "tipo": "muro",
+   "grupo": "LH-10",
+   "prefijo": "LH-10",
+   "descripcion": "Muro de ladrillo hueco 8 cm – 6 agujeros",
+   "rubro": "mamposteria",
+   "codigo": "LH-10",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 4,
+    "N2": 4,
+    "N3": 3,
+    "N4": 3,
+    "N5": 3,
+    "PB": 2
+   }
+  },
+  "LHM": {
+   "tipo": "muro",
+   "grupo": "LHM",
+   "prefijo": "LHM",
+   "descripcion": "Muro de paneles de Durlock, espesor variable",
+   "rubro": "mamposteria",
+   "codigo": "LHM",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  },
+  "MV-01": {
+   "tipo": "detalle",
+   "grupo": "MV-01",
+   "prefijo": "MV",
+   "variante": null,
+   "descripcion": "Muro cortina de vidrio",
+   "rubro": "carp-aluminio",
+   "codigo": "MV-01",
+   "detalle": {
+    "imagen": "detalles/mv-01.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     1319.0,
+     834.0,
+     1926.0,
+     1586.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "PB-N5",
+     "cantidad": "6",
+     "descripcion": "Muro cortina palier, perfileria oculta, DVH control"
+    }
+   ],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "PT-01": {
+   "tipo": "sin_definir",
+   "grupo": "PT-01",
+   "prefijo": "PT",
+   "variante": null,
+   "descripcion": "Prefijo sin definir en la tabla oficial",
+   "rubro": null,
+   "codigo": "PT-01",
+   "detalle": null,
+   "planilla": [],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "PV-04": {
+   "tipo": "detalle",
+   "grupo": "PV-04",
+   "prefijo": "PV",
+   "variante": null,
+   "descripcion": "Puerta de vidrio / Carpintería de aluminio",
+   "rubro": "carp-aluminio",
+   "codigo": "PV-04",
+   "detalle": {
+    "imagen": "detalles/pv-04.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     69.0,
+     69.0,
+     681.0,
+     821.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "N1",
+     "cantidad": "2",
+     "descripcion": "Puerta ventana corrediza 2 hojas, aluminio linea Mod"
+    },
+    {
+     "ubicacion": "N2",
+     "cantidad": "2",
+     "descripcion": "Puerta ventana corrediza 2 hojas, aluminio linea Mod"
+    }
+   ],
+   "niveles": {
+    "N1": 2,
+    "N2": 2,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "PV07-A": {
+   "tipo": "detalle",
+   "grupo": "PV-07",
+   "prefijo": "PV",
+   "variante": "A",
+   "descripcion": "Puerta de vidrio / Carpintería de aluminio",
+   "rubro": "carp-aluminio",
+   "codigo": "PV07-A",
+   "detalle": {
+    "imagen": "detalles/pv07-a.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     694.0,
+     69.0,
+     1301.0,
+     821.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "N1",
+     "cantidad": "2",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo izq., DVH"
+    },
+    {
+     "ubicacion": "N2",
+     "cantidad": "2",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo izq., DVH"
+    },
+    {
+     "ubicacion": "N3-N5",
+     "cantidad": "6",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo izq., DVH"
+    }
+   ],
+   "niveles": {
+    "N1": 2,
+    "N2": 2,
+    "N3": 2,
+    "N4": 2,
+    "N5": 2,
+    "PB": 1
+   }
+  },
+  "PV07-B": {
+   "tipo": "detalle",
+   "grupo": "PV-07",
+   "prefijo": "PV",
+   "variante": "B",
+   "descripcion": "Puerta de vidrio / Carpintería de aluminio",
+   "rubro": "carp-aluminio",
+   "codigo": "PV07-B",
+   "detalle": {
+    "imagen": "detalles/pv07-b.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     1319.0,
+     69.0,
+     1926.0,
+     821.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "N1",
+     "cantidad": "1",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo der., DVH"
+    },
+    {
+     "ubicacion": "N2",
+     "cantidad": "1",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo der., DVH"
+    },
+    {
+     "ubicacion": "N3-N5",
+     "cantidad": "3",
+     "descripcion": "Puerta ventana 1 hoja batiente + paño fijo der., DVH"
+    }
+   ],
+   "niveles": {
+    "N1": 1,
+    "N2": 1,
+    "N3": 1,
+    "N4": 1,
+    "N5": 1,
+    "PB": 1
+   }
+  },
+  "VA-01": {
+   "tipo": "detalle",
+   "grupo": "VA-01",
+   "prefijo": "VA",
+   "variante": null,
+   "descripcion": "Ventana de vidrio / Carpintería de aluminio",
+   "rubro": "carp-aluminio",
+   "codigo": "VA-01",
+   "detalle": {
+    "imagen": "detalles/va-01.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     69.0,
+     834.0,
+     681.0,
+     1586.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "N1",
+     "cantidad": "5",
+     "descripcion": "Ventana corrediza 2 hojas dormitorio, vidrio laminad"
+    },
+    {
+     "ubicacion": "N2",
+     "cantidad": "5",
+     "descripcion": "Ventana corrediza 2 hojas dormitorio, vidrio laminad"
+    },
+    {
+     "ubicacion": "N3-N5",
+     "cantidad": "12",
+     "descripcion": "Ventana corrediza 2 hojas dormitorio, vidrio laminad"
+    }
+   ],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  },
+  "VA-02": {
+   "tipo": "detalle",
+   "grupo": "VA-02",
+   "prefijo": "VA",
+   "variante": null,
+   "descripcion": "Ventana de vidrio / Carpintería de aluminio",
+   "rubro": "carp-aluminio",
+   "codigo": "VA-02",
+   "detalle": {
+    "imagen": "detalles/va-02.webp",
+    "plano": "ard-carpinteria-de-aluminio-y-vidrio",
+    "hoja": 1,
+    "bbox_pdf": [
+     694.0,
+     834.0,
+     1301.0,
+     1586.0
+    ],
+    "origen": "propuesto"
+   },
+   "planilla": [
+    {
+     "ubicacion": "N1",
+     "cantidad": "5",
+     "descripcion": "Ventana banderola cocina/baño, vidrio esmerilado"
+    },
+    {
+     "ubicacion": "N2",
+     "cantidad": "5",
+     "descripcion": "Ventana banderola cocina/baño, vidrio esmerilado"
+    },
+    {
+     "ubicacion": "N3-N5",
+     "cantidad": "12",
+     "descripcion": "Ventana banderola cocina/baño, vidrio esmerilado"
+    }
+   ],
+   "niveles": {
+    "N1": 5,
+    "N2": 5,
+    "N3": 4,
+    "N4": 4,
+    "N5": 4,
+    "PB": 3
+   }
+  }
+ },
+ "pendientes": {
+  "versiones": [
+   {
+    "grupo": "ie-instalacion-electrica",
+    "opciones": [
+     "03. Instalaciones/BeGar-IE- Instalación Eléctrica_C.dwg",
+     "05. Otros/19. Modificación Eléctrica/BeGar-IE- Instalación Eléctrica_M.dwg"
+    ],
+    "estado": "pendiente"
+   },
+   {
+    "grupo": "tm-termomecanica",
+    "opciones": [
+     "03. Instalaciones/BeGar-TM- Termomecánica_C.dwg",
+     "05. Otros/14. Modif. Extracción Baños y Cocinas/BeGar-TM- Termomecánica_M.dwg"
+    ],
+    "estado": "pendiente"
+   }
+  ],
+  "faltantes_pdf": [
+   "01. Arquitectura/BeGar-AR- Arquitectónico_C.dwg",
+   "01. Arquitectura/BeGar-AR- Cielorraso_C.dwg",
+   "01. Arquitectura/BeGar-ARD- Muros Cortina_C.dwg",
+   "01. Arquitectura/BeGar-ARD- Puertas de Madera_C.dwg",
+   "02. Estructuras/BeGar-EH- Pasantes_C.dwg",
+   "03. Instalaciones/BeGar-IE- Instalación Eléctrica_C.dwg",
+   "03. Instalaciones/BeGar-TM- Termomecánica_C.dwg",
+   "05. Otros/10. Planos Complementarios/Modelo de Dinteles.dwg",
+   "05. Otros/14. Modif. Extracción Baños y Cocinas/BeGar-TM- Termomecánica_M.dwg",
+   "05. Otros/19. Modificación Eléctrica/BeGar-IE- Instalación Eléctrica_M.dwg"
+  ],
+  "prefijos_sin_definir": {
+   "B": [
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 2)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 2)",
+    "B-01 (Nomenclados, Planta Tipo 1 - Nivel 2)"
+   ],
+   "ES": [
+    "ES-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "ES-01 (Nomenclados, Planta Tipo 1 - Nivel 2)",
+    "ES-01 (Nomenclados, Planta Tipo 2)",
+    "ES-01 (Nomenclados, Planta Baja)"
+   ],
+   "DU": [
+    "DU-02 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "DU-02 (Nomenclados, Planta Tipo 1 - Nivel 2)",
+    "DU-02 (Nomenclados, Planta Tipo 2)",
+    "DU-02 (Nomenclados, Planta Baja)"
+   ],
+   "PT": [
+    "PT-01 (Nomenclados, Planta Tipo 1 - Nivel 1)",
+    "PT-01 (Nomenclados, Planta Tipo 1 - Nivel 2)",
+    "PT-01 (Nomenclados, Planta Tipo 2)",
+    "PT-01 (Nomenclados, Planta Baja)"
+   ]
+  }
+ }
+}

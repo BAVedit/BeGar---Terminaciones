@@ -1,0 +1,207 @@
+{
+  "_comentario": "Rubros y planos por rubro. 'planos' son nombres normalizados (sin disciplina ni estado); se comparan sin acentos ni mayusculas. Se puede anteponer la disciplina (ej. 'TM-Cortes') para desambiguar. 'contratistas' son prefijos de carpeta (ej. '19.') o una parte del nombre de la carpeta (ej. 'Juan Carlos') dentro de 02 Contratos y OT. 'responsables' son los nombres que se proponen como responsable de ejecutar los marcadores del rubro.",
+  "rubros": [
+    {
+      "id": "electricas",
+      "nombre": "Instalaciones eléctricas",
+      "planos": [
+        "Instalación Eléctrica",
+        "Señales Débiles",
+        "Portero Inteligente",
+        "Luces para Replanteo",
+        "Tomas y Llaves",
+        "Cielorraso"
+      ],
+      "contratistas": [
+        "23.",
+        "15."
+      ],
+      "responsables": [
+        "Ecoenergía",
+        "Javier Denis"
+      ]
+    },
+    {
+      "id": "hidro",
+      "nombre": "Instalaciones hidrosanitarias",
+      "planos": [
+        "Sanitarias",
+        "Pluvial",
+        "Drenaje",
+        "Agua Corriente",
+        "Pasantes Tanque Superior",
+        "Pasantes",
+        "Baño Tipo",
+        "Cocina Tipo y Lavadero",
+        "Arquitectónico"
+      ],
+      "contratistas": [
+        "21.",
+        "25."
+      ],
+      "responsables": [
+        "VM Instalaciones"
+      ]
+    },
+    {
+      "id": "termo",
+      "nombre": "Instalaciones termomecánicas",
+      "planos": [
+        "Climatización",
+        "Termomecánica",
+        "TM-Cortes",
+        "Cielorraso"
+      ],
+      "contratistas": [
+        "24."
+      ],
+      "responsables": [
+        "Tecnoservice"
+      ]
+    },
+    {
+      "id": "pci",
+      "nombre": "PCI",
+      "planos": [
+        "Prevención Contra Incendios"
+      ],
+      "contratistas": [
+        "22."
+      ],
+      "responsables": [
+        "Altha Ingeniería"
+      ]
+    },
+    {
+      "id": "carp-aluminio",
+      "nombre": "Carpintería de aluminio y vidrio",
+      "planos": [
+        "Nomenclados",
+        "Carpintería de Aluminio y Vidrio",
+        "Muros Cortina",
+        "Modelo de Dinteles",
+        "Minuta Modificación Carp. Aluminio"
+      ],
+      "contratistas": [
+        "19."
+      ],
+      "piloto": true,
+      "responsables": [
+        "MENA CC"
+      ]
+    },
+    {
+      "id": "carp-madera",
+      "nombre": "Carpintería de madera (puertas)",
+      "planos": [
+        "Nomenclados",
+        "Puertas de Madera"
+      ],
+      "contratistas": [],
+      "responsables": []
+    },
+    {
+      "id": "muebles",
+      "nombre": "Muebles y placares",
+      "planos": [
+        "Armarios y Muebles"
+      ],
+      "contratistas": [],
+      "responsables": []
+    },
+    {
+      "id": "pisos",
+      "nombre": "Pisos y revestimientos",
+      "planos": [
+        "Pisos y Revestimientos",
+        "Pétreos"
+      ],
+      "contratistas": [],
+      "responsables": []
+    },
+    {
+      "id": "cielorrasos",
+      "nombre": "Cielorrasos",
+      "planos": [
+        "Cielorraso"
+      ],
+      "contratistas": [],
+      "responsables": []
+    },
+    {
+      "id": "mamposteria",
+      "nombre": "Mampostería y tabiques",
+      "planos": [
+        "Acotadas",
+        "Arquitectónico",
+        "Nomenclados"
+      ],
+      "contratistas": [
+        "19."
+      ],
+      "responsables": [
+        "MENA CC"
+      ]
+    },
+    {
+      "id": "pintura",
+      "nombre": "Pintura",
+      "planos": [
+        "Acabados"
+      ],
+      "contratistas": [
+        "Juan Carlos"
+      ],
+      "responsables": [
+        "Juan Carlos"
+      ]
+    },
+    {
+      "id": "herreria",
+      "nombre": "Herrería / carpintería metálica",
+      "planos": [
+        "Carpintería Metálica",
+        "Herrería"
+      ],
+      "contratistas": [],
+      "responsables": []
+    },
+    {
+      "id": "aislaciones",
+      "nombre": "Aislaciones e impermeabilización",
+      "planos": [
+        "Aislaciones"
+      ],
+      "contratistas": [
+        "19."
+      ],
+      "responsables": [
+        "MENA CC"
+      ]
+    },
+    {
+      "id": "ascensor",
+      "nombre": "Ascensor",
+      "planos": [
+        "Núcleo Escalera y Ascensor"
+      ],
+      "contratistas": [
+        "18."
+      ],
+      "responsables": [
+        "OTIS"
+      ]
+    },
+    {
+      "id": "amenities",
+      "nombre": "Amenities",
+      "planos": [
+        "Piscina",
+        "Lobby y Palieres",
+        "Señalética"
+      ],
+      "contratistas": [],
+      "responsables": []
+    }
+  ]
+}

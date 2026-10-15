@@ -1,0 +1,60 @@
+{
+  "_comentario": "Diccionario de codigos de los planos. Editable. Primero se compara con 'muros' (codigo exacto) y despues con 'detalles' (prefijo). 'regex_local' reconoce los rótulos de local de los planos (A-103 = dpto A del nivel 1, local 03) y 'regex_comun' los de áreas comunes (PT-100 palier, SS-101, PB-102, AZ-104).",
+  "regex_codigo": "^(?P<prefijo>[A-Z]{1,3})-?(?P<numero>\\d{1,3})(?:[-.]?(?P<variante>[A-Z]))?$",
+  "detalles": {
+    "G": {
+      "descripcion": "Herrería / Carpintería metálica",
+      "rubro": "herreria",
+      "lamina": "ARD- Carpintería Metálica"
+    },
+    "PV": {
+      "descripcion": "Puerta de vidrio / Carpintería de aluminio",
+      "rubro": "carp-aluminio",
+      "lamina": "ARD- Carpintería de Aluminio y Vidrio"
+    },
+    "A": {
+      "descripcion": "Puerta de madera",
+      "rubro": "carp-madera",
+      "lamina": "ARD- Puertas de Madera"
+    },
+    "VA": {
+      "descripcion": "Ventana de vidrio / Carpintería de aluminio",
+      "rubro": "carp-aluminio",
+      "lamina": "ARD- Carpintería de Aluminio y Vidrio"
+    },
+    "MV": {
+      "descripcion": "Muro cortina de vidrio",
+      "rubro": "carp-aluminio",
+      "lamina": "ARD- Muros Cortina"
+    },
+    "PDR": {
+      "descripcion": "Piedra",
+      "rubro": "pisos",
+      "lamina": "ARD- Pétreos"
+    },
+    "MB": {
+      "descripcion": "Mueble",
+      "rubro": "muebles",
+      "lamina": "ARD- Armarios y Muebles"
+    }
+  },
+  "muros": {
+    "C3A": "Muro de ladrillo panderete 10 cm",
+    "LH-10": "Muro de ladrillo hueco 8 cm – 6 agujeros",
+    "LH-15": "Muro de ladrillo hueco 12 cm – 9 agujeros",
+    "LH-20": "Muro de ladrillo hueco 17 cm – 9 agujeros",
+    "LHA": "Muro de concreto, espesor variable",
+    "LHM": "Muro de paneles de Durlock, espesor variable",
+    "M1": "Muro de concreto con relleno superior de ladrillo hueco 12 cm – parapetos cubierta y viga de remate",
+    "M4": "Muro parapeto de concreto terminación vista con goterón, espesor variable"
+  },
+  "rubro_muros": "mamposteria",
+  "prefijos_sin_definir": {
+    "_comentario": "B, C, D, E y PT resultaron ser rótulos de local (ver regex_local / regex_comun). Quedan por definir los de abajo.",
+    "ES": null,
+    "DU": null,
+    "BA": null
+  },
+  "regex_local": "^(?P<unidad>[A-E])-(?P<nivel>[1-5])(?P<num>\\d{2})$",
+  "regex_comun": "^(?P<zona>PT|SS|PB|AZ)-(?P<num>\\d{3})$"
+}

@@ -1,0 +1,7 @@
+# Los PDF originales de la obra no se suben (solo los recortes que usa la app).
+planos/
+datos-real*/
+visor/datos-old/
+__pycache__/
+*.pyc
+salida*/

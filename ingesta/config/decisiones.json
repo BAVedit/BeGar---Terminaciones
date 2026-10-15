@@ -1,0 +1,5 @@
+{
+  "_comentario": "Lo completa la oficina tecnica (o la herramienta de calibracion). 'vigentes': para cada grupo de versiones que aparece en revisar.md, el archivo (ruta relativa a la carpeta de planos) que es el vigente. 'recortes': correcciones manuales de bbox por recorte (x0,y0,x1,y1 en puntos PDF).",
+  "vigentes": {},
+  "recortes": {}
+}
