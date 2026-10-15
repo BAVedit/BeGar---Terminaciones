@@ -237,7 +237,7 @@ function pantallaAcceso(sb) {
         } else {
           const nombre = $('#acc-nom').value.trim();
           const { data, error } = await sb.auth.signUp({ email, password, options: { data: { nombre }, emailRedirectTo: location.href.split('#')[0] } });
-          if (error) return pintar(esc(error.message));
+          if (error) return pintar(errorAlta(error));
           if (data.session) return resolver(data.session);
           modo = 'entrar'; pintar('Listo. Confirmá tu mail desde el correo que te llegó y después entrá acá.');
         }
@@ -245,6 +245,17 @@ function pantallaAcceso(sb) {
     };
     pintar();
   });
+}
+
+/** Errores de Supabase al crear la cuenta, en castellano. */
+function errorAlta(error) {
+  const m = error.message || '';
+  if (/rate limit/i.test(m)) return 'Se mandaron demasiados correos de confirmación en poco tiempo. Probá de nuevo en una hora, o pedile a quien administra la obra que te cree la cuenta.';
+  if (/already registered|already exists/i.test(m)) return 'Ese mail ya tiene cuenta: tocá "Ya tengo cuenta" y entrá con tu contraseña.';
+  if (/password/i.test(m)) return 'La contraseña tiene que tener al menos 6 caracteres.';
+  if (/invalid/i.test(m) && /email/i.test(m)) return 'Revisá el mail: parece que está mal escrito.';
+  if (!error.status || /fetch/i.test(error.name || '')) return 'No hay conexión con el servidor. Probá de nuevo cuando tengas señal.';
+  return esc(m);
 }
 
 function pantallaSinPermiso(sb, email) {
