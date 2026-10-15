@@ -14,6 +14,9 @@ const PRIORIDADES = ['Alta', 'Media', 'Baja'];
 const COMUN = 'Áreas comunes';
 const VERSION_EJEMPLOS = '4';
 const EN_IFRAME = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+/* App Android (carpeta android-app): la misma página abierta dentro de la app, con acceso a compartir, botón atrás y giro de pantalla. */
+const NATIVO = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const nativo = (nombre) => (NATIVO ? (window.Capacitor.Plugins && window.Capacitor.Plugins[nombre]) || window.Capacitor.registerPlugin(nombre) : null);
 
 let M = null;          // manifest
 let pines = [];        // marcadores
@@ -550,6 +553,7 @@ function montarMapa(nv, rec, params) {
   btnC.onclick = () => {
     const on = !app.classList.contains('completa');
     marcarCompleta(on);
+    if (NATIVO) { const so = nativo('ScreenOrientation'); (on ? so.lock({ orientation: 'landscape' }) : so.unlock()).catch(() => {}); return; }
     try {
       if (!EN_IFRAME && on && !document.fullscreenElement) document.documentElement.requestFullscreen?.().then(() => screen.orientation?.lock?.('landscape')).catch(() => {});
       if (!on && document.fullscreenElement) { try { screen.orientation?.unlock?.(); } catch (e) { /* nada */ } document.exitFullscreen?.().catch(() => {}); }
@@ -630,6 +634,15 @@ function abrirHoja(html, alAbrir) {
   document.body.classList.add('con-hoja');
   $('#hoja-cuerpo').scrollTop = 0;
   if (alAbrir) alAbrir($('#hoja-cuerpo'));
+}
+if (NATIVO) {
+  // botón atrás de Android: cierra la hoja, sale de pantalla completa o vuelve una pantalla; en el inicio minimiza la app
+  nativo('App').addListener('backButton', () => {
+    if (!$('#hoja').hidden) return cerrarHoja();
+    if ($('#app').classList.contains('completa') && $('#t-completa')) return $('#t-completa').click();
+    if (!$('#volver').hidden) return $('#volver').click();
+    nativo('App').minimizeApp();
+  });
 }
 function cerrarHoja() { document.body.classList.remove('con-hoja'); $('#hoja').hidden = true; $('#hoja-fondo').hidden = true; $('#hoja-cuerpo').innerHTML = ''; }
 $('#hoja-fondo').addEventListener('click', cerrarHoja);
@@ -1123,6 +1136,15 @@ async function entregar(blob, nombre, compartir) {
       catch (e) { if (e && e.code !== 'declined') aviso('No se pudo guardar el archivo acá. Probalo desde la app instalada.'); }
       return;
     }
+  }
+  if (NATIVO) {
+    // en la app Android se guarda en el teléfono y se abre el menú de compartir (WhatsApp, Drive, Archivos…)
+    try {
+      const data = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1]); fr.onerror = rej; fr.readAsDataURL(blob); });
+      const { uri } = await nativo('Filesystem').writeFile({ path: nombre, data, directory: 'CACHE' });
+      await nativo('Share').share({ title: nombre, files: [uri], dialogTitle: compartir ? 'Compartir informe' : 'Guardar o enviar informe' });
+    } catch (e) { if (!/cancel/i.test(String(e && e.message))) aviso('No se pudo abrir el menú para compartir el archivo'); }
+    return;
   }
   const tipo = nombre.endsWith('.pdf') ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   const archivo = new File([blob], nombre, { type: tipo });
