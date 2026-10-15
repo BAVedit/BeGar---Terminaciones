@@ -533,10 +533,11 @@ function montarMapa(nv, rec, params) {
 function abrirHoja(html, alAbrir) {
   $('#hoja-cuerpo').innerHTML = html;
   $('#hoja').hidden = false; $('#hoja-fondo').hidden = false;
+  document.body.classList.add('con-hoja');
   $('#hoja-cuerpo').scrollTop = 0;
   if (alAbrir) alAbrir($('#hoja-cuerpo'));
 }
-function cerrarHoja() { $('#hoja').hidden = true; $('#hoja-fondo').hidden = true; $('#hoja-cuerpo').innerHTML = ''; }
+function cerrarHoja() { document.body.classList.remove('con-hoja'); $('#hoja').hidden = true; $('#hoja-fondo').hidden = true; $('#hoja-cuerpo').innerHTML = ''; }
 $('#hoja-fondo').addEventListener('click', cerrarHoja);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarHoja(); });
 
