@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="iconos/icono-192.png">
+<link rel="apple-touch-icon" href="iconos/icono-192.png">
+<script>
+if ('serviceWorker' in navigator && window.top === window) {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+<!--INICIO (todo lo que sigue es lo que se publica como artifact)-->
+<title>Terminaciones Belive Garay</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="estilos.css">
+<script src="vendor/leaflet.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <header class="barra" id="barra">
+    <button class="btn-icono" id="volver" aria-label="Volver" hidden>
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="barra-titulo">
+      <img class="barra-logo" id="barra-logo" src="iconos/codesarrollos-logo.svg" alt="Codesarrollos">
+      <div class="barra-eyebrow" id="barra-eyebrow">Codesarrollos</div>
+      <h1 id="barra-h1">Proyectos activos</h1>
+    </div>
+    <button class="btn-icono" id="btn-ajustes" aria-label="Ajustes">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+  <main id="vista"></main>
+</div>
+
+<div class="hoja-fondo" id="hoja-fondo" hidden></div>
+<section class="hoja" id="hoja" hidden aria-modal="true" role="dialog">
+  <div class="hoja-asa"></div>
+  <div class="hoja-cuerpo" id="hoja-cuerpo"></div>
+</section>
+<div class="aviso" id="aviso" hidden></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="nube.js"></script>
+</body>
+</html>
