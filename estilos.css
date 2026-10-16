@@ -365,7 +365,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .btn[disabled] { opacity: .5; cursor: default; }
 
 /* versión compartida */
-.solo-lectura #t-pin, .solo-lectura .hoja .acciones, .solo-lectura .foto-add, .solo-lectura .foto-quitar { display: none !important; }
+.solo-lectura #t-pin, .solo-lectura .hoja .acciones, .solo-lectura .foto-add, .solo-lectura .foto-quitar, .solo-lectura .foto-marcar { display: none !important; }
 .msj.consulta { border-left: 3px solid var(--acento); }
 .etq-consulta { font: 600 12px/1 var(--f-titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--acento-fuerte); }
 .sin-sync #btn-ajustes { position: relative; }
@@ -378,3 +378,18 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 body:has(.acceso) .barra-logo { display: none; }
 
 .nuevo-rubro { display: grid; gap: 10px; padding: 12px; border: 1px dashed var(--acento-fuerte); border-radius: 12px; background: color-mix(in srgb, var(--acento) 8%, var(--sup)); }
+
+/* marcar fotos: círculos y flechas */
+.foto-marcar { position: absolute; left: 4px; bottom: 22px; border: 0; border-radius: 14px; padding: 4px 8px; background: rgba(0,0,0,.62); color: #fff; font: 600 12px/1 var(--f-titulo); }
+.marcador-foto { position: fixed; inset: 0; z-index: 3000; background: #111; display: flex; flex-direction: column; gap: 8px;
+  padding: max(10px, env(safe-area-inset-top, 0px)) 10px max(10px, env(safe-area-inset-bottom, 0px)); }
+.mf-barra { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mf-barra button { border: 1px solid #444; background: #222; color: #fff; border-radius: 10px; padding: 9px 12px; font: 600 15px/1 var(--f-titulo); }
+.mf-barra button[aria-pressed="true"] { border-color: var(--acento); background: #3a3215; }
+.mf-barra button:disabled { opacity: .4; }
+.mf-color { width: 38px; height: 38px; padding: 0 !important; background: var(--c) !important; border-width: 3px !important; }
+.mf-color[aria-pressed="true"] { border-color: #fff !important; }
+.mf-lienzo { flex: 1; min-height: 0; display: grid; place-items: center; overflow: hidden; }
+.mf-lienzo canvas { touch-action: none; border-radius: 6px; }
+.mf-ayuda { margin: 0; color: #aaa; font-size: 13px; text-align: center; }
+.mf-pie { display: flex; gap: 8px; justify-content: flex-end; }
