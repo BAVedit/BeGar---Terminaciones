@@ -402,14 +402,27 @@ function vEdificio(main) {
         <span class="fila-der">${htmlAvance(r)}</span>
         <span class="fila-s"><span>${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')}</span>${r.pend ? `<span><span class="punto e-abierto"></span> ${r.pend} pendientes</span>` : ''}</span>
       </button>`).join('')}</div>
-    <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
+    <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="inf-dpto">Informe por dpto</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
     ${nube ? '' : '<p class="nota">Los marcadores de ejemplo son de prueba y se pueden quitar desde el ícono de usuario.</p>'}
   </div>`;
   enlazarChipRubro(main);
   main.querySelectorAll('.unidad').forEach((b) => (b.onclick = () => ir('espacio', { nivel: b.dataset.nv, unidad: b.dataset.u })));
   main.querySelectorAll('[data-inf]').forEach((b) => (b.onclick = () => ir('informe', { filtro: { rubro: b.dataset.inf } })));
   $('#inf-todos').onclick = () => ir('informe', { filtro: { rubro: '' } });
+  $('#inf-dpto').onclick = elegirDptoInforme;
   $('#ver-pend').onclick = abrirPendientes;
+}
+
+/** Elegir el dpto para su informe (pendientes y resueltos, para el cierre). */
+function elegirDptoInforme() {
+  const filas = M.niveles.flatMap((n) => [...(n.unidades || []), COMUN].map((u) => ({ nv: n.id, u, r: resumen(pines.filter((p) => p.nivel === n.id && espacioDe(p) === u)) })))
+    .filter((x) => x.r.total);
+  abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">Informe por dpto</h2><p>Elegí el dpto o espacio. Después elegís si va con pendientes, resueltos o los dos.</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="lista">${filas.map((x) => `<button class="fila" data-esp="${esc(x.nv + '|' + x.u)}"><span class="fila-t">${esc(etiquetaEspacio(x.nv, x.u))}</span>
+      <span class="fila-der">${htmlAvance(x.r)}</span><span class="fila-s"><span class="cod">${x.nv}</span><span>${x.r.pend} pendientes · ${x.r.total - x.r.pend} resueltos</span></span></button>`).join('') || '<p class="nota">Todavía no hay marcadores.</p>'}</div>`, (h) => {
+    $('[data-cerrar]', h).onclick = cerrarHoja;
+    h.querySelectorAll('[data-esp]').forEach((b) => (b.onclick = () => { cerrarHoja(); ir('informe', { filtro: { rubro: '', espacio: b.dataset.esp, alcance: 'ambos' } }); }));
+  });
 }
 
 function htmlAvance(r) {
@@ -442,6 +455,7 @@ function vEspacio(main, params) {
     </div>
     <div class="acciones">
       <button class="btn primario ancho" id="abrir-plano" ${tienePlano ? '' : 'disabled'}>${tienePlano ? (puedeEditar() ? 'Abrir plano y marcar' : 'Ver plano') : 'Este nivel todavía no tiene plano'}</button>
+      <button class="btn ancho" id="inf-espacio" ${todos.length ? '' : 'disabled'}>Informe de ${esc(titulo)}</button>
     </div>
     ${chipRubro()}
     <nav class="pestanas" role="tablist">
@@ -460,6 +474,7 @@ function vEspacio(main, params) {
   const act = main.querySelector('.nivel-btn[aria-current="true"]');
   if (act) { const sc = act.parentElement; sc.scrollLeft = act.offsetLeft - sc.offsetLeft - (sc.clientWidth - act.offsetWidth) / 2; }
   if (tienePlano) $('#abrir-plano').onclick = () => ir('visor', { nivel: nv.id, unidad: u });
+  if (todos.length) $('#inf-espacio').onclick = () => ir('informe', { filtro: { rubro: '', espacio: `${nv.id}|${u}`, alcance: 'ambos' } });
   main.querySelectorAll('[data-pin]').forEach((b) => (b.onclick = () => {
     const p = pines.find((x) => x.id === b.dataset.pin);
     ir('visor', { nivel: p.nivel, unidad: u, capa: p.recorte, abrirPin: p.id });
@@ -933,17 +948,22 @@ function comprimir(file, leyenda, lado = 1600, calidad = 0.75) {
 
 /* ---------- informe ---------- */
 function vInforme(main, params) {
-  const f = params.filtro = { rubro: '', resp: '', nivel: '', estados: ['abierto'], ...params.filtro };
+  const f = params.filtro = { rubro: '', resp: '', nivel: '', espacio: '', alcance: 'pend', ...params.filtro };
+  if (!ALCANCES[f.alcance]) f.alcance = 'pend';
+  f.estados = ALCANCES[f.alcance].estados;
   const inc = f.incluir = { fotos: true, plano: true, datos: true, historial: false, ...f.incluir };
   const rb = f.rubro ? rubro(f.rubro) : null;
-  cabecera(M.proyecto.nombre, rb ? `Informe · ${rb.nombre}` : 'Informe general');
-  const base = pines.filter((p) => (!f.rubro || p.rubro === f.rubro));
+  const [eNv, eU] = f.espacio ? f.espacio.split('|') : [];
+  cabecera(M.proyecto.nombre, f.espacio ? `Informe · ${etiquetaEspacio(eNv, eU)}` : rb ? `Informe · ${rb.nombre}` : 'Informe general');
+  const base = pines.filter((p) => (!f.rubro || p.rubro === f.rubro) && (!f.espacio || (p.nivel === eNv && espacioDe(p) === eU)));
+  const ordenRubro = (p) => M.rubros.findIndex((r) => r.id === p.rubro);
+  const resuelto = (p) => p.estado !== 'abierto';
   const lista = base
-    .filter((p) => (!f.nivel || p.nivel === f.nivel) && f.estados.includes(p.estado) && (!f.resp || p.responsable === f.resp))
+    .filter((p) => (!f.nivel || f.espacio || p.nivel === f.nivel) && f.estados.includes(p.estado) && (!f.resp || p.responsable === f.resp))
     .sort((a, b) => M.niveles.findIndex((n) => n.id === a.nivel) - M.niveles.findIndex((n) => n.id === b.nivel)
-      || espacioDe(a).localeCompare(espacioDe(b)) || a.n - b.n);
+      || espacioDe(a).localeCompare(espacioDe(b)) || resuelto(a) - resuelto(b) || ordenRubro(a) - ordenRubro(b) || a.n - b.n);
   const resps = [...new Set(base.map((p) => p.responsable).filter(Boolean))];
-  // agrupar por nivel + dpto
+  // agrupar por nivel + dpto; con pendientes y resueltos juntos, cada dpto se divide en las dos partes
   const grupos = [];
   for (const p of lista) {
     const k = `${p.nivel}|${espacioDe(p)}`;
@@ -951,13 +971,22 @@ function vInforme(main, params) {
     if (!g || g.k !== k) grupos.push(g = { k, nv: p.nivel, u: espacioDe(p), ps: [] });
     g.ps.push(p);
   }
+  for (const g of grupos) {
+    g.pend = g.ps.filter((p) => !resuelto(p)).length;
+    g.res = g.ps.length - g.pend;
+    g.secciones = f.alcance === 'ambos'
+      ? [{ t: 'Pendientes', ps: g.ps.filter((p) => !resuelto(p)) }, { t: 'Resueltos', ps: g.ps.filter(resuelto) }]
+      : [{ t: '', ps: g.ps }];
+  }
+  const espacios = M.niveles.flatMap((n) => [...(n.unidades || []), COMUN].map((u) => ({ k: `${n.id}|${u}`, t: etiquetaEspacio(n.id, u) })));
   const nFotos = lista.reduce((a, p) => a + p.fotos.length, 0);
   main.innerHTML = `<div class="pagina">
     <div class="campos no-imprimir">
       <div class="campo"><label for="r-rb">Rubro</label><select id="r-rb"><option value="">Todos</option>${M.rubros.map((r) => `<option value="${r.id}" ${f.rubro === r.id ? 'selected' : ''}>${esc(r.nombre)}</option>`).join('')}</select></div>
       <div class="campo"><label for="r-resp">Responsable</label><select id="r-resp"><option value="">Todos</option>${resps.map((x) => `<option ${f.resp === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>
-      <div class="campo"><label for="r-nv">Nivel</label><select id="r-nv"><option value="">Todos</option>${M.niveles.map((n) => `<option ${f.nivel === n.id ? 'selected' : ''}>${n.id}</option>`).join('')}</select></div>
-      <div class="campo"><span class="lbl">Estados</span><div class="estados">${ESTADOS.map((e) => `<button type="button" class="e-${e.id}" data-e="${e.id}" aria-pressed="${f.estados.includes(e.id)}">${e.nombre}</button>`).join('')}</div></div>
+      <div class="campo"><label for="r-nv">Nivel</label><select id="r-nv" ${f.espacio ? 'disabled' : ''}><option value="">Todos</option>${M.niveles.map((n) => `<option ${f.nivel === n.id ? 'selected' : ''}>${n.id}</option>`).join('')}</select></div>
+      <div class="campo"><label for="r-esp">Dpto / espacio</label><select id="r-esp"><option value="">Todos</option>${espacios.map((x) => `<option value="${esc(x.k)}" ${f.espacio === x.k ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}</select></div>
+      <div class="campo todo"><span class="lbl">Marcadores</span><div class="estados alcance">${Object.entries(ALCANCES).map(([id, a]) => `<button type="button" data-alc="${id}" aria-pressed="${f.alcance === id}">${a.nombre}</button>`).join('')}</div></div>
     </div>
     <div class="campo no-imprimir"><span class="lbl">Qué incluir</span>
       <div class="incluir">${INCLUIR.map((o) => `<button type="button" data-inc="${o.id}" aria-pressed="${!!inc[o.id]}">${o.nombre}</button>`).join('')}</div></div>
@@ -972,47 +1001,67 @@ function vInforme(main, params) {
       <button class="btn" id="r-copiar">Copiar para WhatsApp</button>
     </div>
     <header class="rep-portada">
-      <div class="barra-eyebrow" style="opacity:1;color:var(--tenue)">Informe de pendientes</div>
+      <div class="barra-eyebrow" style="opacity:1;color:var(--tenue)">${ALCANCES[f.alcance].eyebrow}</div>
       <h2 id="r-tit-vista">${esc(f.titulo ?? tituloInforme(rb, f))}</h2>
       ${f.nota ? `<p class="nota-rep">${esc(f.nota)}</p>` : ''}
       <p class="nota num">${f.resp ? 'Responsable: <b>' + esc(f.resp) + '</b> · ' : ''}${lista.length} marcadores en ${grupos.length} espacios · ${nFotos} fotos · ${f.estados.map(estadoNombre).join(', ')} · emitido ${fechaCorta(hoyISO())} por ${esc(autor())}</p>
-      ${grupos.length ? `<div class="tabla-caja"><table><thead><tr><th>Nivel</th><th>Dpto / espacio</th><th class="num">Marcadores</th></tr></thead><tbody>
-        ${grupos.map((g) => `<tr><td class="cod">${g.nv}</td><td>${esc(g.u)}</td><td class="num">${g.ps.length}</td></tr>`).join('')}</tbody></table></div>` : ''}
+      ${grupos.length ? `<div class="tabla-caja"><table><thead><tr><th>Nivel</th><th>Dpto / espacio</th>${f.alcance === 'ambos' ? '<th class="num">Pendientes</th><th class="num">Resueltos</th><th class="num">Avance</th>' : '<th class="num">Marcadores</th>'}</tr></thead><tbody>
+        ${grupos.map((g) => `<tr><td class="cod">${g.nv}</td><td>${esc(g.u)}</td>${f.alcance === 'ambos' ? `<td class="num">${g.pend}</td><td class="num">${g.res}</td><td class="num">${Math.round(100 * g.res / g.ps.length)}%</td>` : `<td class="num">${g.ps.length}</td>`}</tr>`).join('')}</tbody></table></div>` : ''}
     </header>
     ${grupos.map((g) => `
       <section class="rep-grupo">
         <h3 class="rep-grupo-t"><span class="cod">${g.nv}</span> · ${esc(g.u || COMUN)}</h3>
-        <div class="rep">${g.ps.map((p) => `
+        ${f.alcance === 'ambos' ? `<p class="nota num">${resumenGrupo(g)}</p>` : ''}
+        ${g.secciones.map((sc) => `${sc.t ? `<h4 class="rep-seccion-t">${sc.t} (${sc.ps.length})</h4>` : ''}
+        <div class="rep">${sc.ps.length ? '' : `<p class="nota">${sc.t === 'Pendientes' ? 'No quedan pendientes.' : 'Todavía no hay resueltos.'}</p>`}${sc.ps.map((p, i) => `${cabContratista(p, sc.ps[i - 1], f) ? `<h5 class="rep-contratista">${esc(cabContratista(p, sc.ps[i - 1], f))}</h5>` : ''}
           <article class="rep-item">
             <div class="rep-cab"><h4>#${p.n} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
             <p class="nota">${esc(lineaUbicacion(p))}${inc.datos ? `<br>${esc(lineaDatos(p))}` : ''}</p>
             ${inc.plano || (inc.fotos && p.fotos.length) ? `<div class="rep-fotos">${inc.plano ? `<canvas data-snip="${p.id}" width="${RECORTE_W}" height="${RECORTE_H}" aria-label="Ubicación en el plano"></canvas>` : ''}${inc.fotos ? p.fotos.map((x) => `<img src="${x.src}" alt="">`).join('') : ''}</div>` : ''}
             ${inc.historial && (p.comentarios || []).length ? `<div class="hilo">${p.comentarios.map((c) => `<div class="msj${c.sistema ? ' sistema' : ''}">${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('')}</div>` : ''}
-          </article>`).join('')}</div>
+          </article>`).join('')}</div>`).join('')}
       </section>`).join('') || '<p class="vacio-txt">No hay marcadores con esos filtros.</p>'}
   </div>`;
   const setF = (k, v) => { f[k] = v; render(); };
   $('#r-rb').onchange = (e) => setF('rubro', e.target.value);
   $('#r-resp').onchange = (e) => setF('resp', e.target.value);
   $('#r-nv').onchange = (e) => setF('nivel', e.target.value);
-  main.querySelectorAll('[data-e]').forEach((b) => (b.onclick = () => {
-    const e = b.dataset.e;
-    setF('estados', f.estados.includes(e) ? f.estados.filter((x) => x !== e) : [...f.estados, e]);
-  }));
+  $('#r-esp').onchange = (e) => setF('espacio', e.target.value);
+  main.querySelectorAll('[data-alc]').forEach((b) => (b.onclick = () => setF('alcance', b.dataset.alc)));
   main.querySelectorAll('[data-inc]').forEach((b) => (b.onclick = () => { inc[b.dataset.inc] = !inc[b.dataset.inc]; render(); }));
   $('#r-tit').oninput = (e) => { f.titulo = e.target.value; $('#r-tit-vista').textContent = f.titulo; };
   $('#r-nota').onchange = (e) => { f.nota = e.target.value.trim(); render(); };
-  const datosDoc = () => ({ titulo: f.titulo ?? tituloInforme(rb, f), nota: f.nota || '', rb, f, inc, lista, grupos });
+  const datosDoc = () => ({ titulo: f.titulo ?? tituloInforme(rb, f), nota: f.nota || '', rb, f, inc, lista, grupos, eyebrow: ALCANCES[f.alcance].eyebrow });
   const conEspera = (btn, fn) => async () => {
     const txt = btn.textContent; btn.disabled = true; btn.textContent = 'Armando…';
     try { await fn(); } catch (e) { console.error(e); aviso('No se pudo armar el archivo'); }
     btn.disabled = false; btn.textContent = txt;
   };
-  if (lista.length) {
-    $('#r-pdf').onclick = conEspera($('#r-pdf'), async () => entregar(await informePDF(datosDoc()), nombreArchivo(datosDoc(), 'pdf'), false));
-    $('#r-word').onclick = conEspera($('#r-word'), async () => entregar(await informeWord(datosDoc()), nombreArchivo(datosDoc(), 'docx'), false));
+  // antes de armar el archivo se pregunta qué marcadores lleva: pendientes, resueltos o los dos
+  const preguntar = (btnId, armar, ext, compartir) => () => {
+    const cuenta = (id) => base.filter((p) => (!f.nivel || f.espacio || p.nivel === f.nivel) && (!f.resp || p.responsable === f.resp) && ALCANCES[id].estados.includes(p.estado)).length;
+    abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">¿Qué incluye el informe?</h2><p>${esc(f.espacio ? etiquetaEspacio(eNv, eU) : rb ? rb.nombre : 'Todos los rubros')}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+      <div class="lista">${Object.entries(ALCANCES).map(([id, a]) => `<button class="fila" data-elegir="${id}" ${cuenta(id) ? '' : 'disabled'}><span class="fila-t">${a.nombre}</span>
+        <span class="fila-der">${f.alcance === id ? '<span class="chip piloto">actual</span>' : ''}</span><span class="fila-s"><span>${a.ayuda}</span><span class="num">${cuenta(id)} ${cuenta(id) === 1 ? 'marcador' : 'marcadores'}</span></span></button>`).join('')}</div>`, (h) => {
+      $('[data-cerrar]', h).onclick = cerrarHoja;
+      h.querySelectorAll('[data-elegir]').forEach((b) => (b.onclick = async () => {
+        cerrarHoja();
+        if (b.dataset.elegir !== f.alcance) { f.alcance = b.dataset.elegir; if (!/^\s*$/.test(f.titulo ?? '') && f.titulo === tituloAnterior) delete f.titulo; render(); }
+        const btn = $('#' + btnId);
+        if (btn) await conEspera(btn, async () => entregar(await armar(datosDoc2()), nombreArchivo(datosDoc2(), ext), compartir))();
+      }));
+    });
+  };
+  const tituloAnterior = tituloInforme(rb, f);
+  // después de re-dibujar, los datos salen de la vista nueva
+  const datosDoc2 = () => (pila[pila.length - 1].params.datosDoc || datosDoc)();
+  params.datosDoc = datosDoc;
+  if (lista.length || base.length) {
+    $('#r-pdf').disabled = !base.length; $('#r-word').disabled = !base.length;
+    $('#r-pdf').onclick = preguntar('r-pdf', informePDF, 'pdf', false);
+    $('#r-word').onclick = preguntar('r-word', informeWord, 'docx', false);
     const comp = $('#r-compartir');
-    if (comp) comp.onclick = conEspera(comp, async () => entregar(await informePDF(datosDoc()), nombreArchivo(datosDoc(), 'pdf'), true));
+    if (comp) { comp.disabled = !base.length; comp.onclick = preguntar('r-compartir', informePDF, 'pdf', true); }
   }
   $('#r-copiar').onclick = () => {
     const lineas = [`*${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}*`, `${f.resp ? 'Responsable: ' + f.resp + ' · ' : ''}${lista.length} ${f.estados.map(estadoNombre).join('/').toLowerCase()} (${fechaCorta(hoyISO())})`];
@@ -1036,12 +1085,28 @@ const INCLUIR = [
   { id: 'datos', nombre: 'Responsable y fechas' },
   { id: 'historial', nombre: 'Historial' },
 ];
-const tituloInforme = (rb, f) => `${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}${f.resp ? ' · ' + f.resp : ''}`;
+const ALCANCES = {
+  pend: { nombre: 'Solo pendientes', estados: ['abierto'], eyebrow: 'Informe de pendientes', ayuda: 'Lo que falta hacer' },
+  res: { nombre: 'Solo resueltos', estados: ['corregido', 'aprobado'], eyebrow: 'Informe de resueltos', ayuda: 'Realizados y verificados' },
+  ambos: { nombre: 'Pendientes y resueltos', estados: ['abierto', 'corregido', 'aprobado'], eyebrow: 'Cierre de terminaciones', ayuda: 'Los dos en el mismo archivo, separados' },
+};
+const tituloInforme = (rb, f) => {
+  const [nv, u] = f.espacio ? f.espacio.split('|') : [];
+  return `${M.proyecto.nombre} · ${f.espacio ? etiquetaEspacio(nv, u) + (rb ? ' · ' + rb.nombre : '') : rb ? rb.nombre : 'Todos los rubros'}${f.resp ? ' · ' + f.resp : ''}`;
+};
+/** Encabezado de contratista dentro de un dpto: aparece cada vez que cambia el rubro (solo si el informe no es de un único rubro). */
+const cabContratista = (p, ant, f) => {
+  if (f.rubro || (ant && ant.rubro === p.rubro)) return '';
+  const rb = rubro(p.rubro);
+  return `${rb ? rb.nombre : p.rubro} · ${(rb && responsablesRubro(rb).join(', ')) || p.responsable || 'sin contratista'}`;
+};
+const resumenGrupo = (g) => `${g.pend} pendientes · ${g.res} resueltos · avance ${Math.round(100 * g.res / g.ps.length)}%`;
 const lineaUbicacion = (p) => [(rubro(p.rubro) || {}).nombre || p.rubro, p.ambiente, p.codigo, 'Prioridad ' + p.prioridad].filter(Boolean).join(' · ');
 const lineaDatos = (p) => `Responsable: ${p.responsable || 'sin asignar'} · Relevó: ${p.autor} el ${fechaCorta(p.creado)}${p.limite ? ' · Límite ' + fechaCorta(p.limite + 'T12:00') : ''}`
   + `${p.realizadoPor ? ` · Realizado (marcó ${p.realizadoPor}) el ${fechaCorta(p.realizadoEn)}` : ''}${p.verificadoPor ? ` · Verificó ${p.verificadoPor} el ${fechaCorta(p.verificadoEn)}` : ''}`;
 const nombreArchivo = (d, ext) => `${d.titulo.replace(/[\\/:*?"<>|·]+/g, ' ').replace(/\s+/g, ' ').trim()} ${new Date().toISOString().slice(0, 10)}.${ext}`;
-const resumenFiltro = (d) => `${d.f.resp ? 'Responsable: ' + d.f.resp + ' · ' : ''}${d.lista.length} marcadores en ${d.grupos.length} espacios · ${d.f.estados.map(estadoNombre).join(', ')} · emitido ${fechaCorta(hoyISO())} por ${autor()}`;
+const resumenFiltro = (d) => `${d.f.resp ? 'Responsable: ' + d.f.resp + ' · ' : ''}${d.lista.length} marcadores en ${d.grupos.length} ${d.grupos.length === 1 ? 'espacio' : 'espacios'} · ${ALCANCES[d.f.alcance].nombre.toLowerCase()}`
+  + `${d.f.alcance === 'ambos' ? ` (${d.lista.filter((p) => p.estado === 'abierto').length} pendientes, ${d.lista.filter((p) => p.estado !== 'abierto').length} resueltos)` : ''} · emitido ${fechaCorta(hoyISO())} por ${autor()}`;
 
 const cargados = {};
 function cargarScript(src) {
@@ -1078,15 +1143,19 @@ const bytes = (dataUrl) => Uint8Array.from(atob(dataUrl.split(',')[1]), (c) => c
 async function armarContenido(d) {
   const items = [];
   for (const g of d.grupos) {
-    const ps = [];
-    for (const p of g.ps) {
-      ps.push({
-        p,
-        plano: d.inc.plano ? await snipJPEG(p).catch(() => null) : null,
-        fotos: d.inc.fotos ? await Promise.all(p.fotos.map((x) => aJPEG(x.src, 900).catch(() => null))).then((a) => a.filter(Boolean)) : [],
-      });
+    const secciones = [];
+    for (const sc of g.secciones) {
+      const ps = [];
+      for (const p of sc.ps) {
+        ps.push({
+          p,
+          plano: d.inc.plano ? await snipJPEG(p).catch(() => null) : null,
+          fotos: d.inc.fotos ? await Promise.all(p.fotos.map((x) => aJPEG(x.src, 900).catch(() => null))).then((a) => a.filter(Boolean)) : [],
+        });
+      }
+      secciones.push({ t: sc.t, ps });
     }
-    items.push({ titulo: `${g.nv} · ${g.u || COMUN}`, ps });
+    items.push({ titulo: `${g.nv} · ${g.u || COMUN}`, resumen: d.f.alcance === 'ambos' ? resumenGrupo(g) : '', secciones });
   }
   return { logo: await logoJPEG(), items };
 }
@@ -1119,6 +1188,7 @@ async function informePDF(d) {
   };
   if (c.logo) { const h = 12; doc.addImage(c.logo.url, 'JPEG', m, y, h * c.logo.w / c.logo.h, h); y += h + 4; }
   doc.setFillColor(...ORO); doc.rect(m, y, ancho, 1.2, 'F'); y += 6;
+  texto(d.eyebrow.toUpperCase(), 9, GRIS, 'bold', 1);
   texto(d.titulo, 18, NEGRO, 'bold', 2);
   texto(resumenFiltro(d), 9.5, GRIS);
   if (d.nota) texto(d.nota, 11, NEGRO, 'normal', 3);
@@ -1129,8 +1199,18 @@ async function informePDF(d) {
     texto(g.titulo, 14, NEGRO, 'bold', 0.5);
     grupoActual = g.titulo;
     doc.setFillColor(...ORO); doc.rect(m, y, ancho, 0.8, 'F'); y += 4;
-    for (const it of g.ps) {
+    if (g.resumen) texto(g.resumen, 9.5, GRIS, 'normal', 2);
+    for (const sc of g.secciones) {
+    if (sc.t) {
+      // los resueltos arrancan en otra página, así el pendiente queda separado de lo terminado
+      if (sc.t === 'Resueltos' && g.secciones[0].ps.length) { doc.addPage(); y = m; texto(g.titulo, 9.5, GRIS, 'bold', 1.5); } else salto(14);
+      texto(`${sc.t} (${sc.ps.length})`, 12, sc.t === 'Pendientes' ? COL.abierto : COL.aprobado, 'bold', 1.5);
+      if (!sc.ps.length) texto(sc.t === 'Pendientes' ? 'No quedan pendientes.' : 'Todavía no hay resueltos.', 9.5, GRIS, 'normal', 3);
+    }
+    for (const [ii, it] of sc.ps.entries()) {
       const p = it.p;
+      const cab = cabContratista(p, ii ? sc.ps[ii - 1].p : null, d.f);
+      if (cab) { salto(26); y += 1; doc.setFillColor(242, 242, 242); doc.rect(m, y, ancho, 7, 'F'); doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(...NEGRO); doc.text(latin1(cab), m + 2.5, y + 4.8); y += 10; }
       salto(18);
       const est = estadoNombre(p.estado);
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
@@ -1161,6 +1241,7 @@ async function informePDF(d) {
       if (d.inc.historial) for (const h of p.comentarios || []) texto(`${fechaHora(h.fecha)} · ${h.autor}: ${h.texto}`, 9, GRIS, 'normal', 0.3);
       y += 2; doc.setDrawColor(226, 226, 226); salto(4); doc.line(m, y, W - m, y); y += 5;
     }
+    }
   });
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) {
@@ -1182,6 +1263,7 @@ async function informeWord(d) {
   const linea = () => ({ bottom: { style: X.BorderStyle.SINGLE, size: 12, color: ORO, space: 4 } });
   const hijos = [];
   if (c.logo) hijos.push(new X.Paragraph({ spacing: { after: 120 }, children: [img(c.logo, 230)] }));
+  hijos.push(par(d.eyebrow.toUpperCase(), { tam: 9, color: GRIS, bold: true, after: 40 }));
   hijos.push(new X.Paragraph({ border: linea(), spacing: { after: 160 }, children: [new X.TextRun({ text: d.titulo, bold: true, size: 36, font: 'Calibri' })] }));
   hijos.push(par(resumenFiltro(d), { tam: 9.5, color: GRIS, after: 160 }));
   if (d.nota) hijos.push(par(d.nota, { tam: 11, after: 200 }));
@@ -1189,8 +1271,17 @@ async function informeWord(d) {
     // cada dpto / espacio arranca en una página nueva
     hijos.push(new X.Paragraph({ heading: X.HeadingLevel.HEADING_2, border: linea(), spacing: { before: 240, after: 120 }, pageBreakBefore: gi > 0,
       children: [new X.TextRun({ text: g.titulo, bold: true, size: 28, color: '1A1A1A', font: 'Calibri' })] }));
-    for (const it of g.ps) {
+    if (g.resumen) hijos.push(par(g.resumen, { tam: 9.5, color: GRIS, after: 120 }));
+    for (const sc of g.secciones) {
+    if (sc.t) {
+      hijos.push(new X.Paragraph({ spacing: { before: 200, after: 80 }, keepNext: true, pageBreakBefore: sc.t === 'Resueltos' && g.secciones[0].ps.length > 0, children: [new X.TextRun({ text: `${sc.t} (${sc.ps.length})`, bold: true, size: 24, color: sc.t === 'Pendientes' ? COL.abierto : COL.aprobado, font: 'Calibri' })] }));
+      if (!sc.ps.length) hijos.push(par(sc.t === 'Pendientes' ? 'No quedan pendientes.' : 'Todavía no hay resueltos.', { tam: 9.5, color: GRIS, after: 120 }));
+    }
+    for (const [ii, it] of sc.ps.entries()) {
       const p = it.p;
+      const cab = cabContratista(p, ii ? sc.ps[ii - 1].p : null, d.f);
+      if (cab) hijos.push(new X.Paragraph({ spacing: { before: 160, after: 60 }, keepNext: true, shading: { type: X.ShadingType.CLEAR, fill: 'F2F2F2', color: 'auto' },
+        children: [new X.TextRun({ text: cab, bold: true, size: 21, font: 'Calibri' })] }));
       hijos.push(new X.Paragraph({ spacing: { before: 120, after: 60 }, keepNext: true, children: [
         new X.TextRun({ text: `#${p.n} · ${p.texto || 'Sin descripción'}  `, bold: true, size: 23, font: 'Calibri' }),
         new X.TextRun({ text: ` ${estadoNombre(p.estado)} `, bold: true, size: 18, color: 'FFFFFF', font: 'Calibri', shading: { type: X.ShadingType.CLEAR, fill: COL[p.estado] || GRIS, color: 'auto' } }),
@@ -1209,6 +1300,7 @@ async function informeWord(d) {
         hijos.push(par('', { after: 60 }));
       }
       if (d.inc.historial) for (const h of p.comentarios || []) hijos.push(par(`${fechaHora(h.fecha)} · ${h.autor}: ${h.texto}`, { tam: 9, color: GRIS, after: 20 }));
+    }
     }
   }
   const doc = new X.Document({
