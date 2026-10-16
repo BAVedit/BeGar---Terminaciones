@@ -408,3 +408,7 @@ body:has(.acceso) .barra-logo { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .inicio-logo, .inicio-logo path { animation: none; fill-opacity: 1; stroke-width: 0; }
 }
+.rep-seccion-t { margin: 14px 0 6px; font-family: var(--f-titulo); font-size: 1.05rem; }
+.rep-grupo .rep-seccion-t:first-of-type { margin-top: 6px; }
+.rep-contratista { margin: 10px 0 4px; padding: 6px 10px; background: var(--bg); border-radius: 8px; font-size: .9rem; font-weight: 600; }
+.estados.alcance button[aria-pressed="true"] { background: var(--tinta); color: var(--pagina); border-color: var(--tinta); }
