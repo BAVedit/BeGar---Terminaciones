@@ -1,17 +1,30 @@
 {
   "name": "Terminaciones Belive Garay",
-  "short_name": "BeGar Obra",
+  "short_name": "BAV BeGar",
   "description": "Relevamiento de terminaciones por dpto con fotos sobre los planos.",
   "lang": "es-AR",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#1d232b",
-  "theme_color": "#1d232b",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
-    {"src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "iconos/icono-512-mask.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {
+      "src": "iconos/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "iconos/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "iconos/icono-512-mask.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
