@@ -913,8 +913,7 @@ function vInforme(main, params) {
           <article class="rep-item">
             <div class="rep-cab"><h4>#${p.n} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
             <p class="nota">${esc(lineaUbicacion(p))}${inc.datos ? `<br>${esc(lineaDatos(p))}` : ''}</p>
-            ${inc.plano ? `<canvas data-snip="${p.id}" width="640" height="280" aria-label="Ubicación en el plano"></canvas>` : ''}
-            ${inc.fotos && p.fotos.length ? `<div class="rep-fotos">${p.fotos.map((x) => `<img src="${x.src}" alt="">`).join('')}</div>` : ''}
+            ${inc.plano || (inc.fotos && p.fotos.length) ? `<div class="rep-fotos">${inc.plano ? `<canvas data-snip="${p.id}" width="${RECORTE_W}" height="${RECORTE_H}" aria-label="Ubicación en el plano"></canvas>` : ''}${inc.fotos ? p.fotos.map((x) => `<img src="${x.src}" alt="">`).join('') : ''}</div>` : ''}
             ${inc.historial && (p.comentarios || []).length ? `<div class="hilo">${p.comentarios.map((c) => `<div class="msj${c.sistema ? ' sistema' : ''}">${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('')}</div>` : ''}
           </article>`).join('')}</div>
       </section>`).join('') || '<p class="vacio-txt">No hay marcadores con esos filtros.</p>'}
@@ -995,7 +994,7 @@ function aJPEG(src, lado = 1000, calidad = 0.82) {
   });
 }
 async function snipJPEG(p) {
-  const cv = document.createElement('canvas'); cv.width = 960; cv.height = 400;
+  const cv = document.createElement('canvas'); cv.width = RECORTE_W; cv.height = RECORTE_H;
   await dibujarRecorte(cv, p);
   return { url: cv.toDataURL('image/jpeg', 0.85), w: cv.width, h: cv.height };
 }
@@ -1070,14 +1069,19 @@ async function informePDF(d) {
       lineas.forEach((l, i) => doc.text(l, m, y + 4 + i * 5)); y += Math.max(6, lineas.length * 5) + 1.5;
       texto(lineaUbicacion(p), 9.5, GRIS, 'normal', 0.5);
       if (d.inc.datos) texto(lineaDatos(p), 9.5, GRIS, 'normal', 1);
-      if (it.plano) { const h = ancho * it.plano.h / it.plano.w; salto(h + 2); doc.addImage(it.plano.url, 'JPEG', m, y, ancho, h); doc.setDrawColor(226, 226, 226); doc.rect(m, y, ancho, h); y += h + 3; }
-      if (it.fotos.length) {
+      // recorte del plano (el ambiente) primero y después las fotos, en una grilla de 3
+      const celdas = [...(it.plano ? [{ ...it.plano, plano: true }] : []), ...it.fotos];
+      if (celdas.length) {
         const gap = 3, wf = (ancho - 2 * gap) / 3;
-        for (let i = 0; i < it.fotos.length; i += 3) {
-          const fila = it.fotos.slice(i, i + 3);
+        for (let i = 0; i < celdas.length; i += 3) {
+          const fila = celdas.slice(i, i + 3);
           const hf = Math.max(...fila.map((x) => wf * x.h / x.w));
           salto(hf + 2);
-          fila.forEach((x, j) => doc.addImage(x.url, 'JPEG', m + j * (wf + gap), y, wf, wf * x.h / x.w));
+          fila.forEach((x, j) => {
+            const xx = m + j * (wf + gap), hh = wf * x.h / x.w;
+            doc.addImage(x.url, 'JPEG', xx, y, wf, hh);
+            if (x.plano) { doc.setDrawColor(200, 200, 200); doc.rect(xx, y, wf, hh); }
+          });
           y += hf + gap;
         }
       }
@@ -1120,13 +1124,13 @@ async function informeWord(d) {
       ] }));
       hijos.push(par(lineaUbicacion(p), { tam: 9.5, color: GRIS, after: 40 }));
       if (d.inc.datos) hijos.push(par(lineaDatos(p), { tam: 9.5, color: GRIS, after: 80 }));
-      if (it.plano) hijos.push(new X.Paragraph({ spacing: { after: 80 }, children: [img(it.plano, ancho)] }));
-      if (it.fotos.length) {
+      const celdas = [...(it.plano ? [it.plano] : []), ...it.fotos]; // el ambiente en el plano, después las fotos
+      if (celdas.length) {
         const w = Math.floor((ancho - 16) / 3);
-        for (let i = 0; i < it.fotos.length; i += 3) {
+        for (let i = 0; i < celdas.length; i += 3) {
           hijos.push(new X.Table({ width: { size: 100, type: X.WidthType.PERCENTAGE }, borders: X.TableBorders.NONE, rows: [new X.TableRow({
             children: [0, 1, 2].map((j) => new X.TableCell({ width: { size: 33, type: X.WidthType.PERCENTAGE },
-              children: [new X.Paragraph({ children: it.fotos[i + j] ? [img(it.fotos[i + j], w)] : [] })] })),
+              children: [new X.Paragraph({ children: celdas[i + j] ? [img(celdas[i + j], w)] : [] })] })),
           })] }));
         }
         hijos.push(par('', { after: 60 }));
@@ -1181,10 +1185,11 @@ async function entregar(blob, nombre, compartir) {
 }
 
 /** Vista del plano alrededor del marcador, armada con los tiles. */
+const RECORTE_W = 600, RECORTE_H = 450; // px del plano a resolución completa ≈ un ambiente (cocina, baño)
 async function dibujarRecorte(cv, p) {
   const rec = recorte(p.recorte); if (!rec) return;
   const t = rec.tiles;
-  const z = Math.max(0, t.zoom_max - 1); const f = 2 ** (z - t.zoom_max);
+  const z = t.zoom_max, f = 1; // resolución completa: el recorte es del tamaño de un ambiente
   const W = t.ancho_px * f, H = t.alto_px * f, T = t.tile_px;
   const cx = p.x * W, cy = p.y * H;
   const x0 = Math.max(0, Math.min(cx - cv.width / 2, W - cv.width)), y0 = Math.max(0, Math.min(cy - cv.height / 2, H - cv.height));

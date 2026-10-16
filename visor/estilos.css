@@ -255,7 +255,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 /* reporte */
 .rep { display: grid; gap: 12px; }
 .rep-item { background: var(--sup); border: 1px solid var(--linea); border-radius: 12px; padding: 12px; display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
-.rep-item canvas { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--linea); display: block; }
+.rep-item canvas { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--linea); display: block; background: #fff; }
 .rep-cab { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: center; }
 .rep-cab h3 { margin: 0; font: 700 19px/1.2 var(--f-titulo); }
 .rep-fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
