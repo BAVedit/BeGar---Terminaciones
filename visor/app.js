@@ -642,6 +642,7 @@ function abrirHoja(html, alAbrir) {
 if (NATIVO) {
   // botón atrás de Android: cierra la hoja, sale de pantalla completa o vuelve una pantalla; en el inicio minimiza la app
   nativo('App').addListener('backButton', () => {
+    const mf = $('.marcador-foto'); if (mf) return mf.cerrar();
     if (!$('#hoja').hidden) return cerrarHoja();
     if ($('#app').classList.contains('completa') && $('#t-completa')) return $('#t-completa').click();
     if (!$('#volver').hidden) return $('#volver').click();
@@ -772,7 +773,8 @@ function formPin(p, esNuevo, { nv, rec }) {
     }));
     const pintarFotos = () => {
       $('#f-fotos', h).innerHTML = p.fotos.map((f, i) => `<figure><img src="${f.src}" alt="Foto ${i + 1}"><figcaption>${fechaHora(f.fecha)}</figcaption>
-          <button type="button" class="foto-quitar" data-q="${i}" aria-label="Quitar foto ${i + 1}">✕</button></figure>`).join('')
+          <button type="button" class="foto-quitar" data-q="${i}" aria-label="Quitar foto ${i + 1}">✕</button>
+          <button type="button" class="foto-marcar" data-m="${i}" aria-label="Marcar foto ${i + 1} con círculos o flechas">✎ Marcar</button></figure>`).join('')
         + `<label class="foto-add camara">📷<br>Sacar foto<input type="file" accept="image/*" capture="environment" id="f-cam"></label>
            <label class="foto-add">＋<br>De galería<input type="file" accept="image/*" multiple id="f-gal"></label>`;
       const agregar = async (e) => {
@@ -784,6 +786,7 @@ function formPin(p, esNuevo, { nv, rec }) {
       };
       $('#f-cam', h).onchange = agregar; $('#f-gal', h).onchange = agregar;
       h.querySelectorAll('[data-q]').forEach((b) => (b.onclick = () => { p.fotos.splice(+b.dataset.q, 1); pintarFotos(); }));
+      h.querySelectorAll('[data-m]').forEach((b) => (b.onclick = () => marcarFoto(p.fotos[+b.dataset.m], pintarFotos)));
     };
     pintarFotos();
     const leer = () => {
@@ -831,6 +834,76 @@ function formPin(p, esNuevo, { nv, rec }) {
       await almacen.borrar(p.id); pines = pines.filter((x) => x.id !== p.id); cerrarHoja(); aviso('Marcador eliminado'); render();
     };
   });
+}
+
+/** Editor para resaltar en una foto: círculos (óvalos) y flechas, en rojo o amarillo. Se guardan dentro de la imagen. */
+function marcarFoto(foto, alGuardar) {
+  const capa = document.createElement('div');
+  capa.className = 'marcador-foto';
+  capa.innerHTML = `
+    <div class="mf-barra">
+      <button type="button" data-h="circulo" aria-pressed="true">◯ Círculo</button>
+      <button type="button" data-h="flecha" aria-pressed="false">➜ Flecha</button>
+      <button type="button" class="mf-color" data-c="#e0322b" aria-pressed="true" aria-label="Rojo" style="--c:#e0322b"></button>
+      <button type="button" class="mf-color" data-c="#febe10" aria-pressed="false" aria-label="Amarillo" style="--c:#febe10"></button>
+      <button type="button" id="mf-deshacer" disabled>↶ Deshacer</button>
+    </div>
+    <div class="mf-lienzo"><canvas></canvas></div>
+    <p class="mf-ayuda">Arrastrá el dedo sobre la foto para dibujar.</p>
+    <div class="mf-pie"><button type="button" class="btn" id="mf-no">Cancelar</button><button type="button" class="btn primario" id="mf-ok" disabled>Guardar marcas</button></div>`;
+  document.body.appendChild(capa);
+  const cv = $('canvas', capa), ctx = cv.getContext('2d');
+  let herr = 'circulo', color = '#e0322b', trazos = [], actual = null;
+  const im = new Image();
+  if (/^https?:/.test(foto.src)) im.crossOrigin = 'anonymous';
+  const ajustar = () => { // la foto entera, lo más grande que entre en pantalla
+    const caja = $('.mf-lienzo', capa), k = Math.min(caja.clientWidth / cv.width, caja.clientHeight / cv.height);
+    cv.style.width = Math.floor(cv.width * k) + 'px'; cv.style.height = Math.floor(cv.height * k) + 'px';
+  };
+  im.onload = () => { cv.width = im.naturalWidth; cv.height = im.naturalHeight; dibujar(); ajustar(); };
+  window.addEventListener('resize', ajustar);
+  im.onerror = () => { aviso('No se pudo abrir la foto (revisá la conexión)'); capa.remove(); };
+  im.src = foto.src;
+  const grosor = () => Math.max(4, Math.round(Math.max(cv.width, cv.height) * 0.007));
+  const pintar = (t) => {
+    ctx.strokeStyle = t.color; ctx.fillStyle = t.color; ctx.lineWidth = grosor(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    // borde oscuro debajo para que se vea sobre fondos claros
+    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = grosor() * 0.8;
+    if (t.h === 'circulo') {
+      const rx = Math.abs(t.x2 - t.x1) / 2, ry = Math.abs(t.y2 - t.y1) / 2;
+      ctx.beginPath(); ctx.ellipse((t.x1 + t.x2) / 2, (t.y1 + t.y2) / 2, Math.max(rx, 2), Math.max(ry, 2), 0, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      const a = Math.atan2(t.y2 - t.y1, t.x2 - t.x1), L = grosor() * 4.5;
+      ctx.beginPath(); ctx.moveTo(t.x1, t.y1); ctx.lineTo(t.x2 - Math.cos(a) * L * 0.6, t.y2 - Math.sin(a) * L * 0.6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(t.x2, t.y2);
+      ctx.lineTo(t.x2 - L * Math.cos(a - 0.45), t.y2 - L * Math.sin(a - 0.45));
+      ctx.lineTo(t.x2 - L * Math.cos(a + 0.45), t.y2 - L * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  };
+  const dibujar = () => { ctx.drawImage(im, 0, 0); [...trazos, ...(actual ? [actual] : [])].forEach(pintar); };
+  const aImagen = (e) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; };
+  cv.onpointerdown = (e) => { cv.setPointerCapture(e.pointerId); const q = aImagen(e); actual = { h: herr, color, x1: q.x, y1: q.y, x2: q.x, y2: q.y }; };
+  cv.onpointermove = (e) => { if (!actual) return; const q = aImagen(e); actual.x2 = q.x; actual.y2 = q.y; dibujar(); };
+  cv.onpointerup = cv.onpointercancel = () => {
+    if (!actual) return;
+    if (Math.hypot(actual.x2 - actual.x1, actual.y2 - actual.y1) > grosor() * 3) trazos.push(actual);
+    actual = null; dibujar();
+    $('#mf-deshacer', capa).disabled = $('#mf-ok', capa).disabled = !trazos.length;
+  };
+  capa.querySelectorAll('[data-h]').forEach((b) => (b.onclick = () => { herr = b.dataset.h; capa.querySelectorAll('[data-h]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
+  capa.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => { color = b.dataset.c; capa.querySelectorAll('[data-c]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
+  $('#mf-deshacer', capa).onclick = () => { trazos.pop(); dibujar(); $('#mf-deshacer', capa).disabled = $('#mf-ok', capa).disabled = !trazos.length; };
+  const cerrar = () => { window.removeEventListener('resize', ajustar); capa.remove(); };
+  capa.cerrar = cerrar;
+  $('#mf-no', capa).onclick = cerrar;
+  $('#mf-ok', capa).onclick = () => {
+    try { foto.src = cv.toDataURL('image/jpeg', 0.85); }
+    catch (e) { aviso('No se pudo guardar sobre esta foto'); return; }
+    // es una imagen nueva: en la versión compartida se sube como archivo nuevo
+    delete foto.path; delete foto.vence; foto.id = uid(); foto.marcada = true;
+    cerrar(); alGuardar(); aviso('Marcas agregadas. Tocá "Guardar cambios" para conservarlas.');
+  };
 }
 
 /** Reduce la foto a 1600 px y le estampa fecha, hora, ubicación y autor (registro fotográfico). */
