@@ -908,7 +908,7 @@ function vInforme(main, params) {
     </header>
     ${grupos.map((g) => `
       <section class="rep-grupo">
-        <h3 class="rep-grupo-t"><span class="cod">${g.nv}</span> · ${esc(etiquetaEspacio(g.nv, g.u))}</h3>
+        <h3 class="rep-grupo-t"><span class="cod">${g.nv}</span> · ${esc(g.u || COMUN)}</h3>
         <div class="rep">${g.ps.map((p) => `
           <article class="rep-item">
             <div class="rep-cab"><h4>#${p.n} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
@@ -1014,7 +1014,7 @@ async function armarContenido(d) {
         fotos: d.inc.fotos ? await Promise.all(p.fotos.map((x) => aJPEG(x.src, 900).catch(() => null))).then((a) => a.filter(Boolean)) : [],
       });
     }
-    items.push({ titulo: `${g.nv} · ${etiquetaEspacio(g.nv, g.u)}`, ps });
+    items.push({ titulo: `${g.nv} · ${g.u || COMUN}`, ps });
   }
   return { logo: await logoJPEG(), items };
 }
@@ -1031,7 +1031,15 @@ async function informePDF(d) {
   const ORO = [254, 190, 16], NEGRO = [26, 26, 26], GRIS = [95, 95, 95];
   const COL = { abierto: [214, 69, 61], corregido: [47, 111, 219], aprobado: [46, 155, 87] };
   let y = m;
-  const salto = (alto) => { if (y + alto > H - m - 8) { doc.addPage(); y = m; } };
+  let grupoActual = null; // para repetir el encabezado si un espacio sigue en la página siguiente
+  const salto = (alto) => {
+    if (y + alto <= H - m - 8) return;
+    doc.addPage(); y = m;
+    if (grupoActual) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(...GRIS);
+      doc.text(latin1(`${grupoActual} (continuación)`), m, y + 3.5); y += 7;
+    }
+  };
   const texto = (t, tam, color = NEGRO, estilo = 'normal', sep = 1.5) => {
     doc.setFont('helvetica', estilo); doc.setFontSize(tam); doc.setTextColor(...color);
     for (const l of doc.splitTextToSize(latin1(t), ancho)) { salto(tam * 0.42); doc.text(l, m, y + tam * 0.35); y += tam * 0.42 + sep * 0.3; }
@@ -1043,9 +1051,11 @@ async function informePDF(d) {
   texto(resumenFiltro(d), 9.5, GRIS);
   if (d.nota) texto(d.nota, 11, NEGRO, 'normal', 3);
   y += 2;
-  for (const g of c.items) {
-    salto(20);
+  c.items.forEach((g, gi) => {
+    // cada dpto / espacio arranca en una página nueva (el primero va debajo del encabezado)
+    if (gi > 0) { grupoActual = null; doc.addPage(); y = m; } else salto(20);
     texto(g.titulo, 14, NEGRO, 'bold', 0.5);
+    grupoActual = g.titulo;
     doc.setFillColor(...ORO); doc.rect(m, y, ancho, 0.8, 'F'); y += 4;
     for (const it of g.ps) {
       const p = it.p;
@@ -1074,7 +1084,7 @@ async function informePDF(d) {
       if (d.inc.historial) for (const h of p.comentarios || []) texto(`${fechaHora(h.fecha)} · ${h.autor}: ${h.texto}`, 9, GRIS, 'normal', 0.3);
       y += 2; doc.setDrawColor(226, 226, 226); salto(4); doc.line(m, y, W - m, y); y += 5;
     }
-  }
+  });
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) {
     doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(...GRIS);
@@ -1098,8 +1108,9 @@ async function informeWord(d) {
   hijos.push(new X.Paragraph({ border: linea(), spacing: { after: 160 }, children: [new X.TextRun({ text: d.titulo, bold: true, size: 36, font: 'Calibri' })] }));
   hijos.push(par(resumenFiltro(d), { tam: 9.5, color: GRIS, after: 160 }));
   if (d.nota) hijos.push(par(d.nota, { tam: 11, after: 200 }));
-  for (const g of c.items) {
-    hijos.push(new X.Paragraph({ heading: X.HeadingLevel.HEADING_2, border: linea(), spacing: { before: 240, after: 120 },
+  for (const [gi, g] of c.items.entries()) {
+    // cada dpto / espacio arranca en una página nueva
+    hijos.push(new X.Paragraph({ heading: X.HeadingLevel.HEADING_2, border: linea(), spacing: { before: 240, after: 120 }, pageBreakBefore: gi > 0,
       children: [new X.TextRun({ text: g.titulo, bold: true, size: 28, color: '1A1A1A', font: 'Calibri' })] }));
     for (const it of g.ps) {
       const p = it.p;
