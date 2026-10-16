@@ -1,7 +1,11 @@
--- Rol administrador: el único que elimina marcadores y edita rubros.
--- Editores: cargan, editan y cierran marcadores. Lectores: miran y dejan consultas en los comentarios.
+-- Rol administrador: el único que elimina marcadores y rubros.
+-- Editores: cargan, editan y cierran marcadores; agregan y editan rubros. Lectores: miran y dejan consultas en los comentarios.
 -- Correr una vez en Supabase → SQL Editor → Run (se puede repetir sin problema).
 -- Después, en Table Editor → miembros, poner rol = admin a quien administra la obra.
+
+-- (incluye lo de 2-editar-rubros.sql, por si no se corrió)
+alter table public.rubros add column if not exists eliminado boolean not null default false;
+alter table public.rubros add column if not exists actualizado timestamptz;
 
 alter table public.miembros drop constraint if exists miembros_rol_check;
 alter table public.miembros add constraint miembros_rol_check check (rol in ('admin', 'editor', 'lector'));
@@ -37,7 +41,7 @@ create policy "editores agregan rubros" on public.rubros for insert to authentic
   with check (public.mi_rol() in ('admin', 'editor'));
 drop policy if exists "editores cambian rubros" on public.rubros;
 create policy "editores cambian rubros" on public.rubros for update to authenticated
-  using (public.mi_rol() = 'admin') with check (public.mi_rol() = 'admin');
+  using (public.mi_rol() in ('admin', 'editor')) with check (public.mi_rol() in ('admin', 'editor'));
 drop policy if exists "editores suben fotos" on storage.objects;
 create policy "editores suben fotos" on storage.objects for insert to authenticated
   with check (bucket_id = 'fotos' and public.mi_rol() in ('admin', 'editor'));
@@ -67,3 +71,16 @@ begin
 end $$;
 revoke execute on function public.comentar(text, text) from public;
 grant execute on function public.comentar(text, text) to authenticated;
+
+-- Rubros: los editores los agregan y editan; eliminarlos es sólo del administrador.
+create or replace function public.cuidar_rubro() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.eliminado and (tg_op = 'INSERT' or not old.eliminado) and public.mi_rol() is distinct from 'admin' then
+    raise exception 'Solo el administrador puede eliminar rubros' using errcode = '42501';
+  end if;
+  return new;
+end $$;
+drop trigger if exists rubros_cuidar on public.rubros;
+create trigger rubros_cuidar before insert or update on public.rubros
+  for each row execute function public.cuidar_rubro();

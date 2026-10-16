@@ -278,11 +278,11 @@ function elegirRubro(alElegir, editando = false) {
   const act = rubroActivo().id;
   const editor = puedeEditar();
   abrirHoja(`
-    <div class="ficha-cab"><div><h2 class="h-hoja">${editando ? 'Editar rubros' : '¿Qué rubro relevás?'}</h2><p>${editando ? 'Tocá un rubro para cambiarle el nombre o el contratista, o para eliminarlo.' : 'Los marcadores nuevos se cargan con este rubro. Se puede cambiar en cada marcador.'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="ficha-cab"><div><h2 class="h-hoja">${editando ? 'Editar rubros' : '¿Qué rubro relevás?'}</h2><p>${editando ? `Tocá un rubro para cambiarle el nombre o el contratista${esAdmin() ? ', o para eliminarlo' : ''}.` : 'Los marcadores nuevos se cargan con este rubro. Se puede cambiar en cada marcador.'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="lista">${M.rubros.map((r) => `<button class="fila" data-r="${r.id}"><span class="fila-t">${esc(r.nombre)}</span>
       <span class="fila-der">${editando ? '<span class="chip">editar</span>' : r.id === act ? '<span class="chip piloto">actual</span>' : ''}</span>
       <span class="fila-s"><span>${esc(responsablesRubro(r).join(', ') || 'Sin contratista asignado')}</span>${r.propio ? '<span class="chip">agregado</span>' : ''}</span></button>`).join('')}</div>
-    ${editor && !editando ? `<div class="acciones"><button class="btn" id="r-nuevo">+ Agregar rubro</button>${esAdmin() ? '<button class="btn" id="r-editar">Editar rubros</button>' : ''}</div><div class="nuevo-rubro" id="r-nuevo-caja" hidden></div>` : ''}
+    ${editor && !editando ? `<div class="acciones"><button class="btn" id="r-nuevo">+ Agregar rubro</button><button class="btn" id="r-editar">Editar rubros</button></div><div class="nuevo-rubro" id="r-nuevo-caja" hidden></div>` : ''}
     ${editando ? '<button class="btn" id="r-listo">Listo</button>' : ''}`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     const nb = $('#r-nuevo', h);
@@ -309,7 +309,7 @@ function editarRubro(id, volver) {
     <label class="check" id="er-pasar-caja" hidden><input type="checkbox" id="er-pasar" checked> <span id="er-pasar-txt"></span></label>
     <div class="acciones"><button class="btn primario" id="er-ok">Guardar cambios</button><button class="btn" id="er-no">Volver</button></div>
     <hr class="sep">
-    ${otros.length ? `<button class="btn peligro" id="er-borrar">Eliminar este rubro</button>
+    ${otros.length && esAdmin() ? `<button class="btn peligro" id="er-borrar">Eliminar este rubro</button>
     <div class="nuevo-rubro" id="er-borrar-caja" hidden>
       <p><b>¿Eliminar "${esc(rb.nombre)}"?</b> Deja de aparecer en las listas para todo el equipo.</p>
       ${suyos().length ? `<div class="campo"><label for="er-destino">Sus ${suyos().length} marcadores pasan al rubro</label><select id="er-destino">${otros.map((r) => `<option value="${r.id}">${esc(r.nombre)}</option>`).join('')}</select></div>` : ''}

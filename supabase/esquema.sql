@@ -4,7 +4,7 @@
 
 -- 1. Miembros: solo estos mails pueden ver o editar.
 --    rol = 'admin'  (edita y elimina todo: marcadores y rubros)
---        | 'editor' (carga, edita y cierra marcadores; no elimina)
+--        | 'editor' (carga, edita y cierra marcadores; agrega y edita rubros; no elimina)
 --        | 'lector' (mira y deja consultas en los comentarios).
 create table if not exists public.miembros (
   email  text primary key,
@@ -113,6 +113,18 @@ create table if not exists public.rubros (
 -- Para bases creadas antes de "editar rubros" (mismo contenido que 2-editar-rubros.sql).
 alter table public.rubros add column if not exists eliminado boolean not null default false;
 alter table public.rubros add column if not exists actualizado timestamptz;
+-- Rubros: los editores los agregan y editan; eliminarlos es sólo del administrador.
+create or replace function public.cuidar_rubro() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.eliminado and (tg_op = 'INSERT' or not old.eliminado) and public.mi_rol() is distinct from 'admin' then
+    raise exception 'Solo el administrador puede eliminar rubros' using errcode = '42501';
+  end if;
+  return new;
+end $$;
+drop trigger if exists rubros_cuidar on public.rubros;
+create trigger rubros_cuidar before insert or update on public.rubros
+  for each row execute function public.cuidar_rubro();
 do $$ begin
   alter publication supabase_realtime add table public.rubros;
 exception when duplicate_object then null; end $$;
@@ -125,7 +137,7 @@ create policy "editores agregan rubros" on public.rubros for insert to authentic
   with check (public.mi_rol() in ('admin', 'editor'));
 drop policy if exists "editores cambian rubros" on public.rubros;
 create policy "editores cambian rubros" on public.rubros for update to authenticated
-  using (public.mi_rol() = 'admin') with check (public.mi_rol() = 'admin');
+  using (public.mi_rol() in ('admin', 'editor')) with check (public.mi_rol() in ('admin', 'editor'));
 
 -- 3. Fotos: carpeta privada "fotos"; las ven los miembros y las suben los editores.
 insert into storage.buckets (id, name, public) values ('fotos', 'fotos', false)
