@@ -57,7 +57,11 @@ Sin configurar, cada teléfono guarda sus marcadores. Para que todos vean lo mis
 2. En **SQL Editor → New query**, pegar `supabase/esquema.sql`, cambiar los mails del final por los reales y tocar **Run**.
    - Si la base ya estaba creada antes de "Editar rubros", correr también `supabase/2-editar-rubros.sql` (una línea por columna nueva; se puede correr de nuevo sin problema).
 3. En **Project Settings → API**, copiar la *Project URL* y la *anon public key* en `visor/config.js`.
-4. Para sumar o quitar gente después: **Table Editor → miembros** (rol `editor` o `lector`).
+4. Para sumar o quitar gente después: **Table Editor → miembros**. Roles:
+   - `admin`: edita y elimina todo (marcadores de cualquiera, rubros) y tiene "Administrar marcadores" para borrar varios.
+   - `editor`: carga, edita y cierra marcadores; no elimina.
+   - `lector`: mira y deja consultas en los comentarios de cada marcador.
+   - Bases creadas antes de estos roles: correr `supabase/3-administrador.sql`.
 
 Cada persona entra una sola vez con su mail y contraseña; la sesión queda guardada. Los editores cargan y cierran marcadores; los lectores ven todo, con fotos e informes. Cada marcador guarda quién lo relevó, quién lo marcó realizado y quién lo verificó, con fecha. Sin señal se sigue trabajando y se sube solo cuando vuelve.
 

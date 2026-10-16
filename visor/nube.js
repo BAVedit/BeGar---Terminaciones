@@ -26,7 +26,7 @@ async function iniciarNube(cfg) {
     return null; // no vuelve: la pantalla ofrece cerrar sesión y recargar
   }
   nube.perfil = miembro;
-  document.body.classList.toggle('solo-lectura', miembro.rol !== 'editor');
+  document.body.classList.toggle('solo-lectura', !['admin', 'editor'].includes(miembro.rol));
 
   /* ---------- fotos ---------- */
   const rutaFoto = (p, f) => `${p.proyecto}/${p.id}/${f.id || (f.id = uid())}.jpg`;
@@ -71,6 +71,12 @@ async function iniciarNube(cfg) {
       for (const p of pines.filter((x) => x._pendiente).concat(borradosPendientes())) {
         await subirFotos(p);
         const { data, error } = await sb.from('marcadores').upsert(aFila(p)).select('n').single();
+        if (error && (error.code === '42501' || /row-level|permiso/i.test(error.message || ''))) {
+          // la base no lo permite (p. ej. eliminar sin ser administrador): se descarta el cambio
+          if (p.borrado) quitarBorrado(p.id); else { delete p._pendiente; await almacen.guardarLocal(p); }
+          aviso(/administrador/i.test(error.message || '') ? 'Solo el administrador puede eliminar marcadores' : 'Tu usuario no tiene permiso para ese cambio');
+          continue;
+        }
         if (error) throw error;
         delete p._pendiente;
         if (data && data.n && p.n !== data.n) { p.n = data.n; }
@@ -119,6 +125,13 @@ async function iniciarNube(cfg) {
     await firmarFotos(resultado);
     for (const p of resultado) await almacen.guardarLocal(p);
     return resultado;
+  };
+
+  /* ---------- consultas (cualquier miembro, también lectores) ---------- */
+  nube.comentar = async (id, texto) => {
+    const { data, error } = await sb.rpc('comentar', { marcador: id, texto });
+    if (error) throw error;
+    return data;
   };
 
   /* ---------- rubros agregados por el equipo ---------- */

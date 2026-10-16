@@ -41,7 +41,11 @@ const pref = (k, v) => {
 const CFG = window.OBRA_CONFIG || {};
 let nube = null;       // versión compartida (nube.js); null = todo local en el dispositivo
 const autor = () => (nube && nube.perfil ? nube.perfil.nombre : pref('autor') || 'Fiscal de obra');
-const puedeEditar = () => !nube || nube.perfil.rol === 'editor';
+/* Roles: admin (todo), editor (carga, edita y cierra; no elimina), lector (mira y comenta). Sin nube, el teléfono es admin. */
+const miRol = () => (nube ? nube.perfil.rol : 'admin');
+const puedeEditar = () => ['admin', 'editor'].includes(miRol());
+const esAdmin = () => miRol() === 'admin';
+const puedeBorrar = () => esAdmin(); // los editores cambian y cierran, pero no eliminan
 
 function aviso(txt) {
   const a = $('#aviso');
@@ -278,7 +282,7 @@ function elegirRubro(alElegir, editando = false) {
     <div class="lista">${M.rubros.map((r) => `<button class="fila" data-r="${r.id}"><span class="fila-t">${esc(r.nombre)}</span>
       <span class="fila-der">${editando ? '<span class="chip">editar</span>' : r.id === act ? '<span class="chip piloto">actual</span>' : ''}</span>
       <span class="fila-s"><span>${esc(responsablesRubro(r).join(', ') || 'Sin contratista asignado')}</span>${r.propio ? '<span class="chip">agregado</span>' : ''}</span></button>`).join('')}</div>
-    ${editor && !editando ? '<div class="acciones"><button class="btn" id="r-nuevo">+ Agregar rubro</button><button class="btn" id="r-editar">Editar rubros</button></div><div class="nuevo-rubro" id="r-nuevo-caja" hidden></div>' : ''}
+    ${editor && !editando ? `<div class="acciones"><button class="btn" id="r-nuevo">+ Agregar rubro</button>${esAdmin() ? '<button class="btn" id="r-editar">Editar rubros</button>' : ''}</div><div class="nuevo-rubro" id="r-nuevo-caja" hidden></div>` : ''}
     ${editando ? '<button class="btn" id="r-listo">Listo</button>' : ''}`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     const nb = $('#r-nuevo', h);
@@ -734,15 +738,16 @@ function formPin(p, esNuevo, { nv, rec }) {
     <div class="campo todo"><span class="lbl">Estado</span>
       <div class="estados" id="f-estado">${ESTADOS.map((e) => `<button type="button" class="e-${e.id}" data-e="${e.id}" aria-pressed="${p.estado === e.id}">${e.nombre}</button>`).join('')}</div></div>
     ${esNuevo ? '' : `<div class="campo todo"><span class="lbl">Seguimiento</span>
-      <div class="hilo">${p.comentarios.map((c) => `<div class="msj ${c.sistema ? 'sistema' : ''}">${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('') || '<p class="nota">Sin comentarios.</p>'}</div>
-      <div style="display:flex;gap:8px"><input id="f-com" class="input" placeholder="Escribí un comentario" style="flex:1"><button class="btn" id="f-com-ok">Enviar</button></div></div>`}
+      <div class="hilo">${p.comentarios.map((c) => `<div class="msj ${c.sistema ? 'sistema' : ''}${c.consulta ? ' consulta' : ''}">${c.consulta ? '<b class="etq-consulta">Consulta</b> ' : ''}${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('') || '<p class="nota">Sin comentarios.</p>'}</div>
+      <div style="display:flex;gap:8px"><input id="f-com" class="input" placeholder="${puedeEditar() ? 'Escribí un comentario' : 'Escribí una consulta'}" style="flex:1"><button class="btn" id="f-com-ok">Enviar</button></div></div>`}
     <div class="acciones">
       <button class="btn primario ancho" id="f-guardar">${esNuevo ? 'Guardar marcador' : 'Guardar cambios'}</button>
-      ${esNuevo ? '' : '<button class="btn peligro" id="f-borrar">Eliminar</button>'}
+      ${esNuevo || !puedeBorrar() ? '' : '<button class="btn peligro" id="f-borrar">Eliminar</button>'}
     </div>
   `, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
-    if (!puedeEditar()) h.querySelectorAll('input, select, textarea, .estados button').forEach((e) => (e.disabled = true));
+    // lector: todo bloqueado menos la caja de comentarios, para dejar consultas
+    if (!puedeEditar()) h.querySelectorAll('input, select, textarea, .estados button').forEach((e) => { if (e.id !== 'f-com') e.disabled = true; });
     const llenarResp = () => { $('#f-resp-l', h).innerHTML = respOpc($('#f-rubro', h).value).map((x) => `<option value="${esc(x)}">`).join(''); };
     llenarResp();
     let rubroPrevio = p.rubro;
@@ -810,6 +815,13 @@ function formPin(p, esNuevo, { nv, rec }) {
     const com = $('#f-com-ok', h);
     if (com) com.onclick = async () => {
       const t = $('#f-com', h).value.trim(); if (!t) return;
+      if (!puedeEditar()) {
+        // lector: la consulta va directo a la base (no puede guardar el resto del marcador)
+        com.disabled = true;
+        try { p.comentarios = await nube.comentar(p.id, t); await almacen.guardarLocal(p); aviso('Consulta enviada'); abrirPin(p); }
+        catch (e) { com.disabled = false; aviso('No se pudo enviar: revisá la conexión y probá de nuevo'); }
+        return;
+      }
       leer(); p.comentarios.push({ texto: t, autor: autor(), fecha: hoyISO() });
       await persistir(); abrirPin(p);
     };
@@ -1190,15 +1202,50 @@ async function dibujarRecorte(cv, p) {
 function abrirCuenta() {
   const pend = pines.filter((x) => x._pendiente).length;
   abrirHoja(`
-    <div class="ficha-cab"><div><h2 class="h-hoja">${esc(nube.perfil.nombre)}</h2><p>${esc(nube.email)} · ${nube.perfil.rol === 'editor' ? 'Editor: carga y cierra marcadores' : 'Lector: ve avances, fotos e informes'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="ficha-cab"><div><h2 class="h-hoja">${esc(nube.perfil.nombre)}</h2><p>${esc(nube.email)} · ${{ admin: 'Administrador: edita y elimina todo', editor: 'Editor: carga y cierra marcadores', lector: 'Lector: ve avances, fotos e informes' }[miRol()] || miRol()}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <p class="nota">${pend ? `<b>${pend} marcador${pend > 1 ? 'es' : ''} sin subir.</b> Se suben solos cuando vuelva la señal.` : 'Todo sincronizado: lo que cargás lo ven al instante los demás.'}</p>
     <div class="acciones">
       ${pend ? '<button class="btn primario" id="c-subir">Subir ahora</button>' : ''}
+      ${esAdmin() ? '<button class="btn" id="c-admin">Administrar marcadores</button>' : ''}
       <button class="btn" id="c-salir">Cerrar sesión</button>
     </div>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     const sub = $('#c-subir', h); if (sub) sub.onclick = async () => { await nube.vaciarCola(); cerrarHoja(); aviso(pines.some((x) => x._pendiente) ? 'Sin señal: queda en cola' : 'Subido'); };
     $('#c-salir', h).onclick = () => nube.salir();
+    if ($('#c-admin', h)) $('#c-admin', h).onclick = () => administrarMarcadores();
+  });
+}
+
+/** Sólo administrador: lista de todos los marcadores para eliminar varios de una vez (pruebas, duplicados). */
+function administrarMarcadores(filtro = '') {
+  if (!esAdmin()) return;
+  const sel = new Set();
+  const lista = () => pines.filter((p) => !filtro || `#${p.n} ${p.texto} ${p.autor} ${p.nivel} ${p.unidad || ''} ${(rubro(p.rubro) || {}).nombre || ''}`.toLowerCase().includes(filtro.toLowerCase()))
+    .sort((a, b) => (b.creado || '').localeCompare(a.creado || ''));
+  abrirHoja(`
+    <div class="ficha-cab"><div><h2 class="h-hoja">Administrar marcadores</h2><p>Elegí los que querés eliminar, por ejemplo los de prueba. Se borran para todo el equipo.</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="campo"><label for="am-buscar">Buscar</label><input id="am-buscar" value="${esc(filtro)}" placeholder="Texto, #número, quién lo cargó, nivel…"></div>
+    <div class="acciones"><button class="btn" id="am-todos">Elegir todos los de la lista</button><button class="btn" id="am-ninguno">Ninguno</button></div>
+    <div class="lista" id="am-lista">${lista().map((p) => `<label class="fila fila-check"><input type="checkbox" data-id="${p.id}">
+      <span class="fila-t">#${p.n ?? '–'} ${esc((p.texto || 'Sin descripción').slice(0, 60))}</span>
+      <span class="fila-s"><span>${esc(p.nivel)}${p.unidad ? ' · ' + esc(p.unidad) : ''} · ${esc((rubro(p.rubro) || {}).nombre || p.rubro || '')}</span><span>${esc(p.autor || '')} · ${fechaCorta(p.creado)}</span><span>${esc(estadoNombre(p.estado))}</span>${p.ejemplo ? '<span class="chip">ejemplo</span>' : ''}</span></label>`).join('') || '<p class="nota" style="padding:12px">No hay marcadores con ese filtro.</p>'}</div>
+    <button class="btn peligro" id="am-borrar" disabled>Eliminar seleccionados</button>`, (h) => {
+    $('[data-cerrar]', h).onclick = cerrarHoja;
+    const btn = $('#am-borrar', h);
+    const contar = () => { btn.disabled = !sel.size; btn.textContent = sel.size ? `Eliminar ${sel.size} marcador${sel.size > 1 ? 'es' : ''}` : 'Eliminar seleccionados'; delete btn.dataset.ok; };
+    h.querySelectorAll('[data-id]').forEach((c) => (c.onchange = () => { c.checked ? sel.add(c.dataset.id) : sel.delete(c.dataset.id); contar(); }));
+    const marcar = (v) => h.querySelectorAll('[data-id]').forEach((c) => { c.checked = v; v ? sel.add(c.dataset.id) : sel.delete(c.dataset.id); });
+    $('#am-todos', h).onclick = () => { marcar(true); contar(); };
+    $('#am-ninguno', h).onclick = () => { marcar(false); contar(); };
+    let t; $('#am-buscar', h).oninput = (e) => { clearTimeout(t); t = setTimeout(() => { administrarMarcadores(e.target.value); const i = $('#am-buscar'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 350); };
+    btn.onclick = async () => {
+      if (!btn.dataset.ok) { btn.dataset.ok = '1'; btn.textContent = `Tocá de nuevo para eliminar ${sel.size}`; return; }
+      btn.disabled = true;
+      for (const id of sel) await almacen.borrar(id);
+      pines = pines.filter((x) => !sel.has(x.id));
+      aviso(`${sel.size} marcador${sel.size > 1 ? 'es' : ''} eliminado${sel.size > 1 ? 's' : ''}`);
+      administrarMarcadores(filtro); render();
+    };
   });
 }
 
@@ -1213,11 +1260,13 @@ function abrirAjustes() {
     <p class="nota">${almacen.persistente ? 'Los marcadores y fotos quedan guardados en este dispositivo y funcionan sin señal.' : 'Este navegador no permite guardar datos: los marcadores se pierden al cerrar.'} Compartirlos entre varias personas es el paso siguiente.</p>
     <div class="acciones">
       <button class="btn primario" id="a-ok">Guardar</button>
+      <button class="btn" id="a-admin">Administrar marcadores</button>
       <button class="btn" id="a-json">Copiar respaldo</button>
       <button class="btn peligro" id="a-ej">Quitar ejemplos</button>
     </div>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     $('#a-ok', h).onclick = () => { pref('autor', $('#a-nombre', h).value.trim() || 'Fiscal de obra'); pref('rol', $('#a-rol', h).value); cerrarHoja(); aviso('Ajustes guardados'); render(); };
+    $('#a-admin', h).onclick = () => administrarMarcadores();
     $('#a-json', h).onclick = () => navigator.clipboard.writeText(JSON.stringify(pines)).then(() => aviso('Respaldo copiado'), () => aviso('No se pudo copiar'));
     $('#a-ej', h).onclick = async () => {
       for (const p of pines.filter((x) => x.ejemplo)) await almacen.borrar(p.id);
