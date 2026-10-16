@@ -394,20 +394,6 @@ body:has(.acceso) .barra-logo { display: none; }
 .mf-ayuda { margin: 0; color: #aaa; font-size: 13px; text-align: center; }
 .mf-pie { display: flex; gap: 8px; justify-content: flex-end; }
 
-/* Pantalla de inicio con el logo BAV */
-.inicio { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: var(--pagina); transition: opacity .55s ease .1s, visibility 0s linear .65s; }
-.inicio-logo { width: min(62vw, 340px); height: auto; overflow: visible; }
-.inicio-logo path { fill: var(--tinta); fill-opacity: 0; stroke: var(--tinta); stroke-width: 5; stroke-dasharray: 1; stroke-dashoffset: 1;
-  animation: inicio-trazo 1.15s cubic-bezier(.65, 0, .35, 1) .15s forwards, inicio-relleno .45s ease 1.05s forwards; }
-.inicio-logo { animation: inicio-entra 1.5s cubic-bezier(.2, .7, .2, 1) both; }
-.inicio.sale { opacity: 0; visibility: hidden; }
-.inicio.sale .inicio-logo { animation: none; transform: scale(1.08); opacity: 0; filter: blur(2px); transition: transform .55s cubic-bezier(.5, 0, .75, 0), opacity .45s ease, filter .45s ease; }
-@keyframes inicio-trazo { to { stroke-dashoffset: 0; } }
-@keyframes inicio-relleno { to { fill-opacity: 1; stroke-width: 0; } }
-@keyframes inicio-entra { from { transform: scale(.94); } to { transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) {
-  .inicio-logo, .inicio-logo path { animation: none; fill-opacity: 1; stroke-width: 0; }
-}
 .rep-seccion-t { margin: 14px 0 6px; font-family: var(--f-titulo); font-size: 1.05rem; }
 .rep-grupo .rep-seccion-t:first-of-type { margin-top: 6px; }
 .rep-contratista { margin: 10px 0 4px; padding: 6px 10px; background: var(--bg); border-radius: 8px; font-size: .9rem; font-weight: 600; }
