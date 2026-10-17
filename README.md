@@ -62,6 +62,7 @@ Sin configurar, cada teléfono guarda sus marcadores. Para que todos vean lo mis
    - `editor`: carga, edita y cierra marcadores; agrega y edita rubros; no elimina nada.
    - `lector`: mira y deja consultas en los comentarios de cada marcador.
    - Bases creadas antes de estos roles: correr `supabase/3-administrador.sql`.
+   - Bases creadas antes de que cada uno vea solo su fila de miembros: correr `supabase/4-miembros-privados.sql`.
 
 Cada persona entra una sola vez con su mail y contraseña; la sesión queda guardada. Los editores cargan y cierran marcadores; los lectores ven todo, con fotos e informes. Cada marcador guarda quién lo relevó, quién lo marcó realizado y quién lo verificó, con fecha. Sin señal se sigue trabajando y se sube solo cuando vuelve.
 
