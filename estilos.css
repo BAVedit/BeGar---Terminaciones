@@ -402,3 +402,21 @@ body:has(.acceso) .barra-logo { display: none; }
 .novedad h3 { margin: 0 0 6px; font-family: var(--f-titulo); font-size: 1.05rem; }
 .novedad h3 small { font-family: var(--f-texto); font-weight: 400; margin-left: 4px; }
 .novedad ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.4; }
+
+/* marcadores: color por contratista, estado en el puntito */
+.pin-ico .pin-est { position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; background: var(--e);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .35); color: #fff; font: 700 9px/10px var(--f-texto); text-align: center; font-style: normal; }
+.pin-ico.e-abierto { --e: var(--abierto); } .pin-ico.e-corregido { --e: var(--corregido); } .pin-ico.e-aprobado { --e: var(--aprobado); }
+.leyenda-pines { position: absolute; z-index: 800; left: max(10px, env(safe-area-inset-left, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  max-width: min(62%, 300px); max-height: 46%; overflow-y: auto; display: grid; gap: 2px; padding: 6px; border-radius: 12px;
+  background: color-mix(in srgb, var(--sup) 92%, transparent); border: 1px solid var(--linea); box-shadow: var(--sombra); }
+.leyenda-pines button { display: grid; grid-template-columns: 14px 1fr; column-gap: 8px; align-items: center; text-align: left; padding: 5px 6px; border: 0; border-radius: 8px;
+  background: none; color: var(--tinta); font: 600 13px/1.15 var(--f-titulo); }
+.leyenda-pines button small { grid-column: 2; font: 400 11px/1.2 var(--f-texto); color: var(--tenue); }
+.leyenda-pines button[aria-pressed="true"] { background: var(--bg); }
+.leyenda-pines button.apagado { opacity: .45; }
+.leyenda-pines button i { width: 14px; height: 14px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
+.ley-est { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 6px 6px 2px; border-top: 1px solid var(--linea); margin-top: 2px; font: 500 11px/1 var(--f-texto); color: var(--tenue); }
+.ley-est span { display: inline-flex; align-items: center; gap: 4px; }
+.ley-est i { width: 10px; height: 10px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font: 700 7px/1 var(--f-texto); font-style: normal; background: var(--c); }
+.punto-rubro { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
