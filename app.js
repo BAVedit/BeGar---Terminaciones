@@ -102,20 +102,37 @@ const almacen = (() => {
 /* ---------- consultas ---------- */
 const rubrosBorrados = []; // rubros eliminados: sólo para mostrar el nombre en marcadores viejos
 const rubro = (id) => M.rubros.find((r) => r.id === id) || rubrosBorrados.find((r) => r.id === id);
-/* Color de marcador por rubro / contratista. El estado va en el puntito del marcador.
-   Cada rubro toma un color fijo según su id (no cambia si se agregan o borran otros); si dos chocan, el segundo toma el siguiente libre. */
-const COLORES_RUBRO = ['#7b3fb5', '#0f8b8d', '#d9480f', '#1e3a8a', '#d63384', '#4d7c0f', '#5b4636', '#0284c7', '#a16207', '#9f1239', '#1a1a1a', '#c026d3', '#0d9488', '#854d0e'];
-let ordenRubrosBase = null; // orden de los rubros de la obra (manifest), tomado al cargar: no cambia aunque se borren
-let coloresRubro = null;
-function colorRubro(id) {
-  if (!coloresRubro || !coloresRubro.has(id)) {
-    // los rubros de la obra en su orden; los agregados después, por id. Así los colores no se corren al borrar uno.
-    const base = ordenRubrosBase || [];
-    const todos = [...new Set([...M.rubros, ...rubrosBorrados].map((r) => r.id))];
-    const orden = [...base.filter((x) => todos.includes(x)), ...todos.filter((x) => !base.includes(x)).sort()];
-    coloresRubro = new Map(orden.map((rid, i) => [rid, (rubro(rid) || {}).color || COLORES_RUBRO[i % COLORES_RUBRO.length]]));
+/* Color de marcador por contratista (el estado va en el puntito del marcador).
+   colores.json fija el color de cada contratista por nombre; los que no figuran toman uno libre de la paleta, siempre el mismo. */
+const PALETA_AUTO = ['#0284c7', '#c026d3', '#a16207', '#0d9488', '#854d0e', '#be185d', '#1a1a1a', '#65a30d', '#6d28d9', '#ea580c', '#155e75', '#9d174d'];
+const SIN_CONTRATISTA = 'Sin contratista';
+let coloresFijos = {};
+const normNombre = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const contratistaDe = (p) => (p.responsable || '').trim() || responsablesRubro(rubro(p.rubro))[0] || SIN_CONTRATISTA;
+const coloresAuto = new Map();
+function colorContratista(nombre) {
+  const k = normNombre(nombre);
+  if (!k || k === normNombre(SIN_CONTRATISTA)) return '#6b7280';
+  if (coloresFijos[k]) return coloresFijos[k];
+  // "VM" también encuentra "VM Instalaciones" (y al revés)
+  const parecido = Object.keys(coloresFijos).find((f) => f.startsWith(k + ' ') || k.startsWith(f + ' '));
+  if (parecido) return coloresFijos[parecido];
+  if (!coloresAuto.has(k)) {
+    const usados = new Set([...Object.values(coloresFijos), ...coloresAuto.values()]);
+    let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    let i = h % PALETA_AUTO.length, n = 0;
+    while (usados.has(PALETA_AUTO[i]) && n++ < PALETA_AUTO.length) i = (i + 1) % PALETA_AUTO.length;
+    coloresAuto.set(k, PALETA_AUTO[i]);
   }
-  return coloresRubro.get(id) || '#475569';
+  return coloresAuto.get(k);
+}
+/** Texto blanco u oscuro según lo claro que sea el color (el amarillo lleva número negro). */
+const tintaSobre = (hex) => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) > 160 ? '#1a1a1a' : '#fff'; };
+async function cargarColores() {
+  try {
+    const c = await fetch('colores.json', { cache: 'no-store' }).then((r) => r.json());
+    coloresFijos = Object.fromEntries(Object.entries(c).filter(([k]) => !k.startsWith('_')).map(([k, v]) => [normNombre(k), v]));
+  } catch (e) { /* sin archivo: todos automáticos */ }
 }
 const nivel = (id) => M.niveles.find((n) => n.id === id);
 const recorte = (id) => M.recortes[id];
@@ -479,7 +496,7 @@ function vEspacio(main, params) {
     </nav>
     ${grupos.length ? grupos.map(({ rb, ps }) => `
       <div class="grupo-rubro">
-        <div class="grupo-cab"><b><i class="punto-rubro" style="background:${colorRubro(rb.id)}"></i>${esc(rb.nombre)}</b><span class="nota">${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')} · ${ps.length}</span></div>
+        <div class="grupo-cab"><b>${esc(rb.nombre)}</b><span class="nota">${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')} · ${ps.length}</span></div>
         <div class="lista">${ps.map(filaPin).join('')}</div>
       </div>`).join('') : `<p class="vacio-txt">${todos.length ? 'No quedan pendientes en ' + esc(titulo) + '.' : 'Todavía no hay marcadores en ' + esc(titulo) + '. Abrí el plano y mantené apretado donde va el primero.'}</p>`}
   </div>`;
@@ -498,7 +515,7 @@ function vEspacio(main, params) {
 
 function filaPin(p) {
   return `<button class="fila" data-pin="${p.id}">
-    <span class="fila-t"><i class="punto-rubro" style="background:${colorRubro(p.rubro)}"></i>#${p.n} · ${esc(p.texto || 'Sin descripción')}</span>
+    <span class="fila-t"><i class="punto-rubro" style="background:${colorContratista(contratistaDe(p))}" title="${esc(contratistaDe(p))}"></i>#${p.n} · ${esc(p.texto || 'Sin descripción')}</span>
     <span class="fila-der"><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></span>
     <span class="fila-s">${p.ambiente ? `<span>${esc(p.ambiente)}</span>` : ''}${p.codigo ? `<span class="cod">${esc(p.codigo)}</span>` : ''}
       <span>Resp.: ${esc(p.responsable || 'sin asignar')}</span><span>Relevó: ${esc(p.autor)}</span>
@@ -625,13 +642,13 @@ function montarMapa(nv, rec, params) {
   };
 
   // leyenda de colores por contratista; tocar uno deja solo ese en primer plano
-  const soloRubro = params.soloRubro && pinesNivel.some((p) => p.rubro === params.soloRubro) ? params.soloRubro : '';
-  const rubrosNivel = M.rubros.filter((r) => pinesNivel.some((p) => p.rubro === r.id))
-    .concat(rubrosBorrados.filter((r) => pinesNivel.some((p) => p.rubro === r.id)));
-  if (rubrosNivel.length) {
+  const contratistas = [...new Set(pinesNivel.map(contratistaDe))].sort((a, b) => (a === SIN_CONTRATISTA) - (b === SIN_CONTRATISTA) || a.localeCompare(b));
+  const soloRubro = params.soloRubro && contratistas.includes(params.soloRubro) ? params.soloRubro : ''; // contratista elegido en la referencia
+  if (contratistas.length) {
     const ley = document.createElement('div');
     ley.className = 'leyenda-pines';
-    ley.innerHTML = rubrosNivel.map((r) => `<button data-sr="${r.id}" aria-pressed="${soloRubro === r.id}" class="${soloRubro && soloRubro !== r.id ? 'apagado' : ''}"><i style="background:${colorRubro(r.id)}"></i>${esc(r.nombre)}<small>${esc(responsablesRubro(r).join(', '))}</small></button>`).join('')
+    const rubrosDe = (c) => [...new Set(pinesNivel.filter((p) => contratistaDe(p) === c).map((p) => (rubro(p.rubro) || {}).nombre || p.rubro))].join(', ');
+    ley.innerHTML = contratistas.map((c) => `<button data-sr="${esc(c)}" aria-pressed="${soloRubro === c}" class="${soloRubro && soloRubro !== c ? 'apagado' : ''}"><i style="background:${colorContratista(c)}"></i>${esc(c)}<small>${esc(rubrosDe(c))}</small></button>`).join('')
       + `<div class="ley-est"><span><i class="e-abierto"></i>Pendiente</span><span><i class="e-corregido"></i>Realizado</span><span><i class="e-aprobado">✓</i>Verificado</span></div>`;
     L.DomEvent.disableClickPropagation(ley); L.DomEvent.disableScrollPropagation(ley);
     $('.mapa-caja').appendChild(ley);
@@ -640,9 +657,10 @@ function montarMapa(nv, rec, params) {
   for (const p of pinesNivel) {
     const desact = p.huella && p.huella !== rec.huella;
     const atenuado = params.unidad && espacioDe(p) !== params.unidad;
-    const otroRubro = soloRubro && p.rubro !== soloRubro;
+    const otroRubro = soloRubro && contratistaDe(p) !== soloRubro;
+    const col = colorContratista(contratistaDe(p));
     const ico = L.divIcon({ className: `pin-ico e-${p.estado}${desact ? ' alerta' : ''}${atenuado || otroRubro ? ' tenue' : ''}`,
-      html: `<div style="--c:${colorRubro(p.rubro)}"><span>${p.n}</span></div><i class="pin-est" title="${estadoNombre(p.estado)}">${p.estado === 'aprobado' ? '✓' : ''}</i>`, iconSize: [30, 30], iconAnchor: [15, 36] });
+      html: `<div style="--c:${col}"><span style="color:${tintaSobre(col)}">${p.n}</span></div><i class="pin-est" title="${estadoNombre(p.estado)}">${p.estado === 'aprobado' ? '✓' : ''}</i>`, iconSize: [30, 30], iconAnchor: [15, 36] });
     L.marker(pt(p.x, p.y), { icon: ico, keyboard: true, title: `#${p.n} ${p.texto}` }).on('click', () => abrirPin(p)).addTo(mapa);
   }
 
@@ -1452,7 +1470,7 @@ async function dibujarRecorte(cv, p) {
     }
   }
   await Promise.all(cargas);
-  const color = colorRubro(p.rubro);
+  const color = colorContratista(contratistaDe(p));
   const px = cx - x0, py = cy - y0;
   ctx.lineWidth = 4; ctx.strokeStyle = color; ctx.beginPath(); ctx.arc(px, py, 22, 0, Math.PI * 2); ctx.stroke();
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
@@ -1609,7 +1627,7 @@ function migrar(p) {
     return;
   }
   for (const n of M.niveles) n.unidades = n.unidades || [];
-  ordenRubrosBase = M.rubros.map((r) => r.id);
+  await cargarColores();
   sumarRubros(rubrosPropios());
   await almacen.abrir();
   if (CFG.supabaseUrl && CFG.supabaseKey) {
