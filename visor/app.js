@@ -104,7 +104,7 @@ const rubrosBorrados = []; // rubros eliminados: sólo para mostrar el nombre en
 const rubro = (id) => M.rubros.find((r) => r.id === id) || rubrosBorrados.find((r) => r.id === id);
 /* Color de marcador por contratista (el estado va en el puntito del marcador).
    colores.json fija el color de cada contratista por nombre; los que no figuran toman uno libre de la paleta, siempre el mismo. */
-const PALETA_AUTO = ['#0284c7', '#c026d3', '#a16207', '#0d9488', '#854d0e', '#be185d', '#1a1a1a', '#65a30d', '#6d28d9', '#ea580c', '#155e75', '#9d174d'];
+const PALETA_AUTO = ['#c026d3', '#65a30d', '#ea580c', '#155e75', '#a16207', '#be185d', '#6d28d9', '#0d9488', '#854d0e', '#9d174d', '#2f855a', '#b91c1c'];
 const SIN_CONTRATISTA = 'Sin contratista';
 let coloresFijos = {};
 const normNombre = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
