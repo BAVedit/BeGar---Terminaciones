@@ -31,6 +31,8 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
 - HTML + JS sin build, Leaflet 1.9.4 (copiado en `vendor/` para que funcione offline).
 - Pines en coordenadas normalizadas 0–1 del recorte, guardados en IndexedDB (`obra-terminaciones/pines`).
 - `index.html` es un documento completo; lo que sigue al comentario `INICIO` es lo que se publica como demo.
+- Cada publicación con cambios visibles suma una entrada arriba en `visor/novedades.json` (la app se la muestra a cada persona una vez).
+- APK nuevo (cambios en `android-app/`): Actions lo compila; copiarlo a `visor/descargas/BAV-BeGar.apk` y poner el número de corrida en `visor/descargas/version.json` → la app avisa a los teléfonos con un APK anterior.
 
 ## Fases
 1. ✅ Ingesta + inventario (probada con muestra sintética; falta correr con los planos reales).

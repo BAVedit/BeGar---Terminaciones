@@ -73,5 +73,6 @@ Los cambios en `visor/` llegan solos; sólo hace falta un APK nuevo si se cambia
 
 - Se compila sola en GitHub Actions (`.github/workflows/apk.yml`) con cada cambio en `android-app/`, o a mano desde Actions → APK Android → Run workflow.
 - Descarga: https://bavedit.github.io/BeGar---Terminaciones/descargas/BAV-BeGar.apk (copia en `visor/descargas/`, sigue andando con el repositorio privado). También queda en Releases → `apk`, que con el repositorio privado pide login.
-- Al generar un APK nuevo, copiarlo a `visor/descargas/BAV-BeGar.apk` y publicar `visor` en gh-pages.
+- Al generar un APK nuevo, copiarlo a `visor/descargas/BAV-BeGar.apk`, poner `build` (número de la corrida de Actions) y `version` en `visor/descargas/version.json` y publicar `visor` en gh-pages. La app instalada compara su número con ese archivo y ofrece actualizar.
+- Novedades: `visor/novedades.json`, una entrada por publicación (la más nueva primero). Se muestran al abrir la app y desde Ajustes/Cuenta → Novedades.
 - Firma: `android-app/firma/debug.keystore` (clave de depuración, pública en el repo) para que cada APK se instale encima del anterior. Si la app se distribuye fuera del equipo, conviene cambiarla por una clave propia guardada como secreto.

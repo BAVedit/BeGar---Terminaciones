@@ -1,5 +1,6 @@
-# Compila la app Android (android-app/) y la deja para descargar en
-# https://github.com/BAVedit/BeGar---Terminaciones/releases/download/apk/Terminaciones-BeGar.apk
+# Compila la app Android (android-app/) y la deja en Releases → apk.
+# Para que la app avise a los teléfonos: copiar el APK a visor/descargas/BAV-BeGar.apk,
+# poner el número de esta corrida en visor/descargas/version.json y publicar visor en gh-pages.
 name: APK Android
 on:
   push:
