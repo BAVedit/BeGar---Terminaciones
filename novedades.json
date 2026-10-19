@@ -1,5 +1,14 @@
 [
   {
+    "id": "2026-10-19d",
+    "fecha": "2026-10-19",
+    "titulo": "Números por rubro",
+    "items": [
+      "Cada marcador lleva el código de su rubro y su propio número: IH1, IH2 (hidrosanitarias), AA1 (aire acondicionado), IE1 (eléctricas), PI1 (pintura), CA1 (carpintería de aluminio), etc.",
+      "Los marcadores que ya estaban se numeraron por orden de carga dentro de cada rubro. El código sale en el plano, en las listas y en los informes."
+    ]
+  },
+  {
     "id": "2026-10-19c",
     "fecha": "2026-10-19",
     "titulo": "Un color por contratista",

@@ -126,6 +126,49 @@ function colorContratista(nombre) {
   }
   return coloresAuto.get(k);
 }
+/* Código de cada marcador: prefijo del rubro + número propio del rubro (IH1, IH2, AA1, IE1…).
+   Queda guardado en el marcador (p.cod) para que no cambie aunque se borren otros. */
+const PREFIJOS = { electricas: 'IE', hidro: 'IH', termo: 'AA', pci: 'PCI', 'carp-aluminio': 'CA', 'carp-madera': 'CM', muebles: 'MU', pisos: 'PR',
+  cielorrasos: 'CR', mamposteria: 'MA', pintura: 'PI', herreria: 'HE', aislaciones: 'AI', ascensor: 'AS', amenities: 'AM' };
+const prefijosAuto = new Map();
+function prefijoRubro(id) {
+  if (PREFIJOS[id]) return PREFIJOS[id];
+  if (prefijosAuto.has(id)) return prefijosAuto.get(id);
+  // rubros agregados: iniciales de las palabras (Mobiliario dptos → MD); si ya existe, se suma una letra
+  const nombre = normNombre((rubro(id) || {}).nombre || id).toUpperCase().replace(/[^A-Z0-9 ]/g, ' ');
+  const palabras = nombre.split(' ').filter((w) => w && !['DE', 'Y', 'DEL', 'LA', 'EL', 'LOS', 'LAS', 'E'].includes(w));
+  let base = palabras.length > 1 ? palabras.map((w) => w[0]).join('').slice(0, 3) : (palabras[0] || 'X').slice(0, 2);
+  const usados = new Set([...Object.values(PREFIJOS), ...prefijosAuto.values()]);
+  let pre = base, k = 1;
+  while (usados.has(pre)) pre = base + ((palabras[palabras.length - 1] || 'X')[k++] || k);
+  prefijosAuto.set(id, pre);
+  return pre;
+}
+const numCod = (cod, pre) => (cod && cod.startsWith(pre) && /^\d+$/.test(cod.slice(pre.length)) ? +cod.slice(pre.length) : 0);
+const codValido = (p) => numCod(p.cod, prefijoRubro(p.rubro)) > 0;
+/** Siguiente código libre del rubro. */
+function proximoCod(rubroId, excepto) {
+  const pre = prefijoRubro(rubroId);
+  const max = Math.max(0, ...pines.filter((q) => q.rubro === rubroId && q.id !== excepto).map((q) => numCod(q.cod, pre)));
+  return pre + (max + 1);
+}
+/** Código para mostrar. Los marcadores viejos sin código guardado se numeran por orden de creación hasta que se les asigna. */
+function codigoPin(p) {
+  if (codValido(p)) return p.cod;
+  const pre = prefijoRubro(p.rubro);
+  const conCod = pines.filter((q) => q.rubro === p.rubro && codValido(q));
+  const sinCod = pines.filter((q) => q.rubro === p.rubro && !codValido(q)).sort((a, b) => a.n - b.n);
+  return pre + (Math.max(0, ...conCod.map((q) => numCod(q.cod, pre))) + sinCod.findIndex((q) => q.id === p.id) + 1);
+}
+/** Una sola vez: guarda el código en los marcadores que todavía no lo tienen (lo hace quien puede editar). */
+async function asignarCodigos() {
+  if (!puedeEditar()) return;
+  const faltan = pines.filter((p) => !codValido(p)).sort((a, b) => a.n - b.n);
+  if (!faltan.length) return;
+  const cods = new Map(faltan.map((p) => [p.id, codigoPin(p)]));
+  for (const p of faltan) { p.cod = cods.get(p.id); await almacen.guardar(p); }
+}
+
 /** Texto blanco u oscuro según lo claro que sea el color (el amarillo lleva número negro). */
 const tintaSobre = (hex) => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) > 160 ? '#1a1a1a' : '#fff'; };
 async function cargarColores() {
@@ -515,7 +558,7 @@ function vEspacio(main, params) {
 
 function filaPin(p) {
   return `<button class="fila" data-pin="${p.id}">
-    <span class="fila-t"><i class="punto-rubro" style="background:${colorContratista(contratistaDe(p))}" title="${esc(contratistaDe(p))}"></i>#${p.n} · ${esc(p.texto || 'Sin descripción')}</span>
+    <span class="fila-t"><i class="punto-rubro" style="background:${colorContratista(contratistaDe(p))}" title="${esc(contratistaDe(p))}"></i>${codigoPin(p)} · ${esc(p.texto || 'Sin descripción')}</span>
     <span class="fila-der"><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></span>
     <span class="fila-s">${p.ambiente ? `<span>${esc(p.ambiente)}</span>` : ''}${p.codigo ? `<span class="cod">${esc(p.codigo)}</span>` : ''}
       <span>Resp.: ${esc(p.responsable || 'sin asignar')}</span><span>Relevó: ${esc(p.autor)}</span>
@@ -660,8 +703,8 @@ function montarMapa(nv, rec, params) {
     const otroRubro = soloRubro && contratistaDe(p) !== soloRubro;
     const col = colorContratista(contratistaDe(p));
     const ico = L.divIcon({ className: `pin-ico e-${p.estado}${desact ? ' alerta' : ''}${atenuado || otroRubro ? ' tenue' : ''}`,
-      html: `<div style="--c:${col}"><span style="color:${tintaSobre(col)}">${p.n}</span></div><i class="pin-est" title="${estadoNombre(p.estado)}">${p.estado === 'aprobado' ? '✓' : ''}</i>`, iconSize: [30, 30], iconAnchor: [15, 36] });
-    L.marker(pt(p.x, p.y), { icon: ico, keyboard: true, title: `#${p.n} ${p.texto}` }).on('click', () => abrirPin(p)).addTo(mapa);
+      html: `<div style="--c:${col}"><span style="color:${tintaSobre(col)}" class="l${Math.min(5, codigoPin(p).length)}">${codigoPin(p)}</span></div><i class="pin-est" title="${estadoNombre(p.estado)}">${p.estado === 'aprobado' ? '✓' : ''}</i>`, iconSize: [32, 32], iconAnchor: [16, 38] });
+    L.marker(pt(p.x, p.y), { icon: ico, keyboard: true, title: `${codigoPin(p)} ${p.texto}` }).on('click', () => abrirPin(p)).addTo(mapa);
   }
 
   btnPin.onclick = () => setModo(!modoPin);
@@ -806,7 +849,7 @@ function nuevoPin(nv, rec, { x, y }, aparicion) {
   const ub = inferirUbicacion(rec, nv.id, x, y);
   const c = aparicion !== undefined ? rec.codigos[aparicion] : null;
   const p = {
-    id: uid(), n: Math.max(0, ...pines.map((q) => q.n)) + 1, proyecto: M.proyecto.id,
+    id: uid(), n: Math.max(0, ...pines.map((q) => q.n)) + 1, cod: proximoCod(rb.id), proyecto: M.proyecto.id,
     rubro: rb.id, nivel: nv.id, unidad: ub.unidad, ambiente: ub.ambiente, recorte: rec.id, huella: rec.huella, x, y,
     aparicion: c ? `${c.codigo}@${aparicion}` : null, codigo: c ? c.codigo : null,
     estado: 'abierto', prioridad: 'Media', responsable: responsablesRubro(rb)[0] || '', limite: '', texto: '',
@@ -827,7 +870,7 @@ function formPin(p, esNuevo, { nv, rec }) {
   const respOpc = (rbId) => [...new Set([...responsablesRubro(rubro(rbId)), ...M.rubros.flatMap(responsablesRubro), p.responsable].filter(Boolean))];
   abrirHoja(`
     <div class="ficha-cab">
-      <div><h2 class="h-hoja">${esNuevo ? 'Nuevo marcador' : 'Marcador #' + p.n}</h2>
+      <div><h2 class="h-hoja">${esNuevo ? 'Nuevo marcador' : 'Marcador ' + codigoPin(p)}</h2>
       <p><span class="cod">${nv.id}</span> · ${esc(etiquetaEspacio(nv.id, espacioDe(p)))}${p.ejemplo ? ' · ejemplo' : ''}</p></div>
       <button class="cerrar" data-cerrar aria-label="Cerrar">✕</button>
     </div>
@@ -915,6 +958,7 @@ function formPin(p, esNuevo, { nv, rec }) {
         prioridad: $('#f-prio', h).value, responsable: $('#f-resp', h).value.trim(), limite: $('#f-lim', h).value,
         texto: $('#f-txt', h).value.trim(), actualizado: hoyISO(),
       });
+      if (!codValido(p)) p.cod = proximoCod(p.rubro, p.id); // cambió de rubro: toma el código siguiente del rubro nuevo
     };
     const persistir = async () => {
       const i = pines.findIndex((x) => x.id === p.id);
@@ -925,7 +969,7 @@ function formPin(p, esNuevo, { nv, rec }) {
       leer();
       if (!p.texto && !p.fotos.length) { aviso('Agregá una descripción o una foto'); return; }
       await persistir(); cerrarHoja();
-      aviso(esNuevo ? `Marcador #${p.n} guardado` : 'Cambios guardados');
+      aviso(esNuevo ? `Marcador ${p.cod} guardado` : 'Cambios guardados');
       render();
     };
     const com = $('#f-com-ok', h);
@@ -1113,7 +1157,7 @@ function vInforme(main, params) {
         ${g.secciones.map((sc) => `${sc.t ? `<h4 class="rep-seccion-t">${sc.t} (${sc.ps.length})</h4>` : ''}
         <div class="rep">${sc.ps.length ? '' : `<p class="nota">${sc.t === 'Pendientes' ? 'No quedan pendientes.' : 'Todavía no hay resueltos.'}</p>`}${sc.ps.map((p, i) => `${cabContratista(p, sc.ps[i - 1], f) ? `<h5 class="rep-contratista">${esc(cabContratista(p, sc.ps[i - 1], f))}</h5>` : ''}
           <article class="rep-item">
-            <div class="rep-cab"><h4>#${p.n} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
+            <div class="rep-cab"><h4>${codigoPin(p)} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
             <p class="nota">${esc(lineaUbicacion(p))}${inc.datos ? `<br>${esc(lineaDatos(p))}` : ''}</p>
             ${inc.plano || (inc.fotos && p.fotos.length) ? `<div class="rep-fotos">${inc.plano ? `<canvas data-snip="${p.id}" width="${RECORTE_W}" height="${RECORTE_H}" aria-label="Ubicación en el plano"></canvas>` : ''}${inc.fotos ? p.fotos.map((x) => `<img src="${x.src}" alt="">`).join('') : ''}</div>` : ''}
             ${inc.historial && (p.comentarios || []).length ? `<div class="hilo">${p.comentarios.map((c) => `<div class="msj${c.sistema ? ' sistema' : ''}">${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('')}</div>` : ''}
@@ -1165,7 +1209,7 @@ function vInforme(main, params) {
     const lineas = [`*${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}*`, `${f.resp ? 'Responsable: ' + f.resp + ' · ' : ''}${lista.length} ${f.estados.map(estadoNombre).join('/').toLowerCase()} (${fechaCorta(hoyISO())})`];
     for (const g of grupos) {
       lineas.push('', `*${etiquetaEspacio(g.nv, g.u)}*`);
-      for (const p of g.ps) lineas.push(`#${p.n} ${p.texto || 'Sin descripción'}${p.ambiente ? ' (' + p.ambiente + ')' : ''}`);
+      for (const p of g.ps) lineas.push(`${codigoPin(p)} ${p.texto || 'Sin descripción'}${p.ambiente ? ' (' + p.ambiente + ')' : ''}`);
     }
     const txt = lineas.join('\n');
     navigator.clipboard.writeText(txt).then(() => aviso('Resumen copiado'), () => {
@@ -1316,7 +1360,7 @@ async function informePDF(d) {
       doc.setFillColor(...(COL[p.estado] || GRIS)); doc.roundedRect(W - m - wEst, y, wEst, 5.5, 2.5, 2.5, 'F');
       doc.setTextColor(255, 255, 255); doc.text(est, W - m - wEst + 3, y + 3.9);
       doc.setFontSize(11.5); doc.setTextColor(...NEGRO);
-      const lineas = doc.splitTextToSize(latin1(`#${p.n} · ${p.texto || 'Sin descripción'}`), ancho - wEst - 4);
+      const lineas = doc.splitTextToSize(latin1(`${codigoPin(p)} · ${p.texto || 'Sin descripción'}`), ancho - wEst - 4);
       lineas.forEach((l, i) => doc.text(l, m, y + 4 + i * 5)); y += Math.max(6, lineas.length * 5) + 1.5;
       texto(lineaUbicacion(p), 9.5, GRIS, 'normal', 0.5);
       if (d.inc.datos) texto(lineaDatos(p), 9.5, GRIS, 'normal', 1);
@@ -1381,7 +1425,7 @@ async function informeWord(d) {
       if (cab) hijos.push(new X.Paragraph({ spacing: { before: 160, after: 60 }, keepNext: true, shading: { type: X.ShadingType.CLEAR, fill: 'F2F2F2', color: 'auto' },
         children: [new X.TextRun({ text: cab, bold: true, size: 21, font: 'Calibri' })] }));
       hijos.push(new X.Paragraph({ spacing: { before: 120, after: 60 }, keepNext: true, children: [
-        new X.TextRun({ text: `#${p.n} · ${p.texto || 'Sin descripción'}  `, bold: true, size: 23, font: 'Calibri' }),
+        new X.TextRun({ text: `${codigoPin(p)} · ${p.texto || 'Sin descripción'}  `, bold: true, size: 23, font: 'Calibri' }),
         new X.TextRun({ text: ` ${estadoNombre(p.estado)} `, bold: true, size: 18, color: 'FFFFFF', font: 'Calibri', shading: { type: X.ShadingType.CLEAR, fill: COL[p.estado] || GRIS, color: 'auto' } }),
       ] }));
       hijos.push(par(lineaUbicacion(p), { tam: 9.5, color: GRIS, after: 40 }));
@@ -1474,7 +1518,7 @@ async function dibujarRecorte(cv, p) {
   const px = cx - x0, py = cy - y0;
   ctx.lineWidth = 4; ctx.strokeStyle = color; ctx.beginPath(); ctx.arc(px, py, 22, 0, Math.PI * 2); ctx.stroke();
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.font = '700 18px "Barlow Semi Condensed", sans-serif'; ctx.fillText('#' + p.n, px + 26, py - 10);
+  ctx.font = '700 18px "Barlow Semi Condensed", sans-serif'; ctx.fillText(codigoPin(p), px + 26, py - 10);
 }
 
 /* ---------- ajustes y pendientes ---------- */
@@ -1501,14 +1545,14 @@ function abrirCuenta() {
 function administrarMarcadores(filtro = '') {
   if (!esAdmin()) return;
   const sel = new Set();
-  const lista = () => pines.filter((p) => !filtro || `#${p.n} ${p.texto} ${p.autor} ${p.nivel} ${p.unidad || ''} ${(rubro(p.rubro) || {}).nombre || ''}`.toLowerCase().includes(filtro.toLowerCase()))
+  const lista = () => pines.filter((p) => !filtro || `${codigoPin(p)} #${p.n} ${p.texto} ${p.autor} ${p.nivel} ${p.unidad || ''} ${(rubro(p.rubro) || {}).nombre || ''}`.toLowerCase().includes(filtro.toLowerCase()))
     .sort((a, b) => (b.creado || '').localeCompare(a.creado || ''));
   abrirHoja(`
     <div class="ficha-cab"><div><h2 class="h-hoja">Administrar marcadores</h2><p>Elegí los que querés eliminar, por ejemplo los de prueba. Se borran para todo el equipo.</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="campo"><label for="am-buscar">Buscar</label><input id="am-buscar" value="${esc(filtro)}" placeholder="Texto, #número, quién lo cargó, nivel…"></div>
     <div class="acciones"><button class="btn" id="am-todos">Elegir todos los de la lista</button><button class="btn" id="am-ninguno">Ninguno</button></div>
     <div class="lista" id="am-lista">${lista().map((p) => `<label class="fila fila-check"><input type="checkbox" data-id="${p.id}">
-      <span class="fila-t">#${p.n ?? '–'} ${esc((p.texto || 'Sin descripción').slice(0, 60))}</span>
+      <span class="fila-t">${codigoPin(p)} ${esc((p.texto || 'Sin descripción').slice(0, 60))}</span>
       <span class="fila-s"><span>${esc(p.nivel)}${p.unidad ? ' · ' + esc(p.unidad) : ''} · ${esc((rubro(p.rubro) || {}).nombre || p.rubro || '')}</span><span>${esc(p.autor || '')} · ${fechaCorta(p.creado)}</span><span>${esc(estadoNombre(p.estado))}</span>${p.ejemplo ? '<span class="chip">ejemplo</span>' : ''}</span></label>`).join('') || '<p class="nota" style="padding:12px">No hay marcadores con ese filtro.</p>'}</div>
     <button class="btn peligro" id="am-borrar" disabled>Eliminar seleccionados</button>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
@@ -1642,5 +1686,6 @@ function migrar(p) {
     nube.vaciarCola();
   } else await sembrarEjemplos();
   ir('edificio');
+  asignarCodigos().catch((e) => console.warn('códigos', e));
   setTimeout(() => { if ($('#hoja').hidden) mostrarNovedades(); }, 2600); // cuando termina la animación del logo
 })();

@@ -420,3 +420,7 @@ body:has(.acceso) .barra-logo { display: none; }
 .ley-est span { display: inline-flex; align-items: center; gap: 4px; }
 .ley-est i { width: 10px; height: 10px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font: 700 7px/1 var(--f-texto); font-style: normal; background: var(--c); }
 .punto-rubro { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.pin-ico span.l3 { font-size: 11.5px; letter-spacing: -.2px; }
+.pin-ico span.l4 { font-size: 10px; letter-spacing: -.3px; }
+.pin-ico span.l5 { font-size: 8.5px; letter-spacing: -.3px; }
+.pin-ico div { width: 32px; height: 32px; }
