@@ -1,0 +1,22 @@
+[
+  {
+    "id": "2026-10-19",
+    "fecha": "2026-10-19",
+    "titulo": "Novedades y actualizaciones",
+    "items": [
+      "Cada vez que la app se actualiza, aparece esta pantalla con lo que cambió. Podés volver a verla desde el ícono de usuario → Novedades.",
+      "En la app de Android, cuando hay un APK nuevo, la app avisa y lo actualiza desde ahí, sin perder la sesión ni los marcadores."
+    ]
+  },
+  {
+    "id": "2026-10-16",
+    "fecha": "2026-10-16",
+    "titulo": "Informes por dpto y logo nuevo",
+    "items": [
+      "Informe por dpto: entrá a un dpto y tocá \"Informe de…\". Los marcadores salen agrupados por contratista.",
+      "Al guardar un PDF o Word, la app pregunta si va solo con pendientes, solo con resueltos o con los dos (cierre de terminaciones, con el avance del dpto).",
+      "Las fotos se pueden marcar con círculos y flechas: tocá \"✎ Marcar\" en la foto.",
+      "Pantalla de inicio con el logo BAV y nombre nuevo de la app: BAV BeGar."
+    ]
+  }
+]
