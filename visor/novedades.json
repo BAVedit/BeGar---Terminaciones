@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-10-19b",
+    "fecha": "2026-10-19",
+    "titulo": "Un color por contratista",
+    "items": [
+      "Cada contratista tiene su color de marcador en el plano. El estado se ve en el puntito del marcador: rojo pendiente, azul realizado, verde con ✓ verificado.",
+      "Abajo a la izquierda del plano está la referencia de colores. Tocá un contratista para dejar solo sus marcadores en primer plano; tocalo de nuevo para ver todos.",
+      "En las listas de cada dpto y en el recorte del plano de los informes también aparece el color del contratista."
+    ]
+  },
+  {
     "id": "2026-10-19",
     "fecha": "2026-10-19",
     "titulo": "Novedades y actualizaciones",

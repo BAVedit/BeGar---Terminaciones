@@ -102,6 +102,21 @@ const almacen = (() => {
 /* ---------- consultas ---------- */
 const rubrosBorrados = []; // rubros eliminados: sólo para mostrar el nombre en marcadores viejos
 const rubro = (id) => M.rubros.find((r) => r.id === id) || rubrosBorrados.find((r) => r.id === id);
+/* Color de marcador por rubro / contratista. El estado va en el puntito del marcador.
+   Cada rubro toma un color fijo según su id (no cambia si se agregan o borran otros); si dos chocan, el segundo toma el siguiente libre. */
+const COLORES_RUBRO = ['#7b3fb5', '#0f8b8d', '#d9480f', '#1e3a8a', '#d63384', '#4d7c0f', '#5b4636', '#0284c7', '#a16207', '#9f1239', '#1a1a1a', '#c026d3', '#0d9488', '#854d0e'];
+let ordenRubrosBase = null; // orden de los rubros de la obra (manifest), tomado al cargar: no cambia aunque se borren
+let coloresRubro = null;
+function colorRubro(id) {
+  if (!coloresRubro || !coloresRubro.has(id)) {
+    // los rubros de la obra en su orden; los agregados después, por id. Así los colores no se corren al borrar uno.
+    const base = ordenRubrosBase || [];
+    const todos = [...new Set([...M.rubros, ...rubrosBorrados].map((r) => r.id))];
+    const orden = [...base.filter((x) => todos.includes(x)), ...todos.filter((x) => !base.includes(x)).sort()];
+    coloresRubro = new Map(orden.map((rid, i) => [rid, (rubro(rid) || {}).color || COLORES_RUBRO[i % COLORES_RUBRO.length]]));
+  }
+  return coloresRubro.get(id) || '#475569';
+}
 const nivel = (id) => M.niveles.find((n) => n.id === id);
 const recorte = (id) => M.recortes[id];
 const nombrePlano = (rec) => { const p = M.planos[rec.plano]; return p ? p.nombre : rec.plano; };
@@ -464,7 +479,7 @@ function vEspacio(main, params) {
     </nav>
     ${grupos.length ? grupos.map(({ rb, ps }) => `
       <div class="grupo-rubro">
-        <div class="grupo-cab"><b>${esc(rb.nombre)}</b><span class="nota">${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')} · ${ps.length}</span></div>
+        <div class="grupo-cab"><b><i class="punto-rubro" style="background:${colorRubro(rb.id)}"></i>${esc(rb.nombre)}</b><span class="nota">${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')} · ${ps.length}</span></div>
         <div class="lista">${ps.map(filaPin).join('')}</div>
       </div>`).join('') : `<p class="vacio-txt">${todos.length ? 'No quedan pendientes en ' + esc(titulo) + '.' : 'Todavía no hay marcadores en ' + esc(titulo) + '. Abrí el plano y mantené apretado donde va el primero.'}</p>`}
   </div>`;
@@ -483,7 +498,7 @@ function vEspacio(main, params) {
 
 function filaPin(p) {
   return `<button class="fila" data-pin="${p.id}">
-    <span class="fila-t">#${p.n} · ${esc(p.texto || 'Sin descripción')}</span>
+    <span class="fila-t"><i class="punto-rubro" style="background:${colorRubro(p.rubro)}"></i>#${p.n} · ${esc(p.texto || 'Sin descripción')}</span>
     <span class="fila-der"><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></span>
     <span class="fila-s">${p.ambiente ? `<span>${esc(p.ambiente)}</span>` : ''}${p.codigo ? `<span class="cod">${esc(p.codigo)}</span>` : ''}
       <span>Resp.: ${esc(p.responsable || 'sin asignar')}</span><span>Relevó: ${esc(p.autor)}</span>
@@ -609,10 +624,25 @@ function montarMapa(nv, rec, params) {
     on ? capaCod.addTo(mapa) : capaCod.remove();
   };
 
+  // leyenda de colores por contratista; tocar uno deja solo ese en primer plano
+  const soloRubro = params.soloRubro && pinesNivel.some((p) => p.rubro === params.soloRubro) ? params.soloRubro : '';
+  const rubrosNivel = M.rubros.filter((r) => pinesNivel.some((p) => p.rubro === r.id))
+    .concat(rubrosBorrados.filter((r) => pinesNivel.some((p) => p.rubro === r.id)));
+  if (rubrosNivel.length) {
+    const ley = document.createElement('div');
+    ley.className = 'leyenda-pines';
+    ley.innerHTML = rubrosNivel.map((r) => `<button data-sr="${r.id}" aria-pressed="${soloRubro === r.id}" class="${soloRubro && soloRubro !== r.id ? 'apagado' : ''}"><i style="background:${colorRubro(r.id)}"></i>${esc(r.nombre)}<small>${esc(responsablesRubro(r).join(', '))}</small></button>`).join('')
+      + `<div class="ley-est"><span><i class="e-abierto"></i>Pendiente</span><span><i class="e-corregido"></i>Realizado</span><span><i class="e-aprobado">✓</i>Verificado</span></div>`;
+    L.DomEvent.disableClickPropagation(ley); L.DomEvent.disableScrollPropagation(ley);
+    $('.mapa-caja').appendChild(ley);
+    ley.querySelectorAll('[data-sr]').forEach((b) => (b.onclick = () => ir('visor', { ...params, abrirPin: null, soloRubro: soloRubro === b.dataset.sr ? '' : b.dataset.sr }, true)));
+  }
   for (const p of pinesNivel) {
     const desact = p.huella && p.huella !== rec.huella;
     const atenuado = params.unidad && espacioDe(p) !== params.unidad;
-    const ico = L.divIcon({ className: `pin-ico e-${p.estado}${desact ? ' alerta' : ''}${atenuado ? ' tenue' : ''}`, html: `<div><span>${p.n}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 36] });
+    const otroRubro = soloRubro && p.rubro !== soloRubro;
+    const ico = L.divIcon({ className: `pin-ico e-${p.estado}${desact ? ' alerta' : ''}${atenuado || otroRubro ? ' tenue' : ''}`,
+      html: `<div style="--c:${colorRubro(p.rubro)}"><span>${p.n}</span></div><i class="pin-est" title="${estadoNombre(p.estado)}">${p.estado === 'aprobado' ? '✓' : ''}</i>`, iconSize: [30, 30], iconAnchor: [15, 36] });
     L.marker(pt(p.x, p.y), { icon: ico, keyboard: true, title: `#${p.n} ${p.texto}` }).on('click', () => abrirPin(p)).addTo(mapa);
   }
 
@@ -1422,7 +1452,7 @@ async function dibujarRecorte(cv, p) {
     }
   }
   await Promise.all(cargas);
-  const color = getComputedStyle(document.documentElement).getPropertyValue('--' + p.estado).trim() || '#d0402f';
+  const color = colorRubro(p.rubro);
   const px = cx - x0, py = cy - y0;
   ctx.lineWidth = 4; ctx.strokeStyle = color; ctx.beginPath(); ctx.arc(px, py, 22, 0, Math.PI * 2); ctx.stroke();
   ctx.fillStyle = color; ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
@@ -1579,6 +1609,7 @@ function migrar(p) {
     return;
   }
   for (const n of M.niveles) n.unidades = n.unidades || [];
+  ordenRubrosBase = M.rubros.map((r) => r.id);
   sumarRubros(rubrosPropios());
   await almacen.abrir();
   if (CFG.supabaseUrl && CFG.supabaseKey) {
