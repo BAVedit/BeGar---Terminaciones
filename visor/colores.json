@@ -1,0 +1,12 @@
+{
+  "_nota": "Color del marcador de cada contratista (nombre como figura en el marcador). Los que no están acá toman un color automático.",
+  "Industria Barrios": "#f5b800",
+  "VM Instalaciones": "#1d4ed8",
+  "Juan Carlos": "#7b3fb5",
+  "MENA CC": "#d63384",
+  "Ecoenergía": "#d9480f",
+  "Javier Denis": "#0f8b8d",
+  "Tecnoservice": "#4d7c0f",
+  "Altha Ingeniería": "#9f1239",
+  "OTIS": "#5b4636"
+}
