@@ -469,9 +469,6 @@ function vEdificio(main) {
     <div class="seccion-t">Edificio · ${nUnid} dptos + áreas comunes</div>
     <div class="edificio">${filas}</div>
     <p class="nota">Tocá un dpto para ver sus pendientes de todos los rubros y marcar nuevos sobre el plano. Los pisos en gris todavía no tienen plano cargado.</p>
-    <div class="seccion-t">Pedido de materiales</div>
-    <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
-      <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
     <div class="seccion-t">Informes por contratista (PDF y Word)</div>
     <p class="nota">Tocá un rubro para armar su informe: elegís qué incluir y lo guardás o compartís en PDF o Word.</p>
     <div class="lista">${M.rubros.map((rb) => ({ rb, r: resumen(pines.filter((p) => p.rubro === rb.id)) })).filter((x) => x.r.total || x.rb.id === rubroActivo().id).map(({ rb, r }) => `
@@ -482,6 +479,10 @@ function vEdificio(main) {
       </button>`).join('')}</div>
     <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="inf-dpto">Informe por dpto</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
     ${nube ? '' : '<p class="nota">Los marcadores de ejemplo son de prueba y se pueden quitar desde el ícono de usuario.</p>'}
+    <hr class="sep">
+    <div class="seccion-t">Pedido de materiales</div>
+    <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
+      <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
   </div>`;
   enlazarChipRubro(main);
   main.querySelectorAll('.unidad').forEach((b) => (b.onclick = () => ir('espacio', { nivel: b.dataset.nv, unidad: b.dataset.u })));
