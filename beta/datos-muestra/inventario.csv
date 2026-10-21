@@ -1,0 +1,23 @@
+﻿tipo;ruta;carpeta;archivo;disciplina;nombre;estado;formato;modificado;kb;excluida;tiene_pdf;faltante_pdf;grupo_version;estado_version
+plano;01. Arquitectura/BeGar-AR- Arquitectónico_C.dwg;01. Arquitectura;BeGar-AR- Arquitectónico_C.dwg;AR;Arquitectónico;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;01. Arquitectura/BeGar-AR- Cielorraso_C.dwg;01. Arquitectura;BeGar-AR- Cielorraso_C.dwg;AR;Cielorraso;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;01. Arquitectura/BeGar-AR- Nomenclados_C.dwg;01. Arquitectura;BeGar-AR- Nomenclados_C.dwg;AR;Nomenclados;construcción;dwg;2026-10-15 05:24;0;False;si;;ar-nomenclados;confirmado
+plano;01. Arquitectura/BeGar-AR- Nomenclados_C.pdf;01. Arquitectura;BeGar-AR- Nomenclados_C.pdf;AR;Nomenclados;construcción;pdf;2026-10-15 05:24;58;False;si;;ar-nomenclados;confirmado
+plano;01. Arquitectura/BeGar-ARD- Carpintería de Aluminio y Vidrio_C.pdf;01. Arquitectura;BeGar-ARD- Carpintería de Aluminio y Vidrio_C.pdf;ARD;Carpintería de Aluminio y Vidrio;construcción;pdf;2026-10-15 05:24;22;False;si;;;
+plano;01. Arquitectura/BeGar-ARD- Muros Cortina_C.dwg;01. Arquitectura;BeGar-ARD- Muros Cortina_C.dwg;ARD;Muros Cortina;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;01. Arquitectura/BeGar-ARD- Puertas de Madera_C.dwg;01. Arquitectura;BeGar-ARD- Puertas de Madera_C.dwg;ARD;Puertas de Madera;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;02. Estructuras/BeGar-EH- Pasantes_C.dwg;02. Estructuras;BeGar-EH- Pasantes_C.dwg;EH;Pasantes;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;03. Instalaciones/BeGar-IE- Instalación Eléctrica_C.dwg;03. Instalaciones;BeGar-IE- Instalación Eléctrica_C.dwg;IE;Instalación Eléctrica;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;ie-instalacion-electrica;pendiente
+plano;03. Instalaciones/BeGar-TM- Termomecánica_C.dwg;03. Instalaciones;BeGar-TM- Termomecánica_C.dwg;TM;Termomecánica;construcción;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;tm-termomecanica;pendiente
+plano;04. Municipal/BeGar-MUN- Plano Municipal.dwg;04. Municipal;BeGar-MUN- Plano Municipal.dwg;MUN;Plano Municipal;;dwg;2026-10-15 05:24;0;True;;;;
+plano;05. Otros/10. Planos Complementarios/Minuta Modificación Carp. Aluminio.pdf;05. Otros/10. Planos Complementarios;Minuta Modificación Carp. Aluminio.pdf;;Minuta Modificación Carp. Aluminio;;pdf;2026-10-15 05:24;2;False;si;;;
+plano;05. Otros/10. Planos Complementarios/Modelo de Dinteles.dwg;05. Otros/10. Planos Complementarios;Modelo de Dinteles.dwg;;Modelo de Dinteles;;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;;
+plano;05. Otros/14. Modif. Extracción Baños y Cocinas/BeGar-TM- Termomecánica_M.dwg;05. Otros/14. Modif. Extracción Baños y Cocinas;BeGar-TM- Termomecánica_M.dwg;TM;Termomecánica;modificación;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;tm-termomecanica;pendiente
+plano;05. Otros/19. Modificación Eléctrica/BeGar-IE- Instalación Eléctrica_M.dwg;05. Otros/19. Modificación Eléctrica;BeGar-IE- Instalación Eléctrica_M.dwg;IE;Instalación Eléctrica;modificación;dwg;2026-10-15 05:24;0;False;no;FALTA PDF;ie-instalacion-electrica;pendiente
+plano;05. Otros/20. Modificación Puertas Madera/RE- Nomeclados_C.pdf;05. Otros/20. Modificación Puertas Madera;RE- Nomeclados_C.pdf;RE;Nomeclados;construcción;pdf;2026-10-15 05:24;58;False;si;;ar-nomenclados;confirmado
+contrato;19. Constructora - MENA CC/Adenda 01.pdf;19. Constructora - MENA CC;Adenda 01.pdf;;Adenda 01;;pdf;2026-10-15 05:24;1;False;;;;
+contrato;19. Constructora - MENA CC/Contrato MENA CC.pdf;19. Constructora - MENA CC;Contrato MENA CC.pdf;;Contrato MENA CC;;pdf;2026-10-15 05:24;1;False;;;;
+contrato;19. Constructora - MENA CC/OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf;19. Constructora - MENA CC;OT-BeGar-019-01 Carp Aluminio y Vidrio.pdf;;OT-BeGar-019-01 Carp Aluminio y Vidrio;;pdf;2026-10-15 05:24;1;False;;;;
+contrato;23. Inst Eléctricas - Ecoenergía/Contrato Ecoenergía.pdf;23. Inst Eléctricas - Ecoenergía;Contrato Ecoenergía.pdf;;Contrato Ecoenergía;;pdf;2026-10-15 05:24;1;False;;;;
+contrato;23. Inst Eléctricas - Ecoenergía/OT-BeGar-023-01.pdf;23. Inst Eléctricas - Ecoenergía;OT-BeGar-023-01.pdf;;OT-BeGar-023-01;;pdf;2026-10-15 05:24;1;False;;;;
+contrato;28. Juan Carlos pintura/OT-BeGar-028-01.pdf;28. Juan Carlos pintura;OT-BeGar-028-01.pdf;;OT-BeGar-028-01;;pdf;2026-10-15 05:25;1;False;;;;

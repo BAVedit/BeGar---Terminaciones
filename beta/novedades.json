@@ -1,0 +1,41 @@
+[
+  {
+    "id": "2026-10-19d",
+    "fecha": "2026-10-19",
+    "titulo": "Números por rubro",
+    "items": [
+      "Cada marcador lleva el código de su rubro y su propio número: IH1, IH2 (hidrosanitarias), AA1 (aire acondicionado), IE1 (eléctricas), PI1 (pintura), CA1 (carpintería de aluminio), etc.",
+      "Los marcadores que ya estaban se numeraron por orden de carga dentro de cada rubro. El código sale en el plano, en las listas y en los informes."
+    ]
+  },
+  {
+    "id": "2026-10-19c",
+    "fecha": "2026-10-19",
+    "titulo": "Un color por contratista",
+    "items": [
+      "Cada contratista tiene su color de marcador en el plano (por ejemplo Industria Barrios amarillo y VM azul). El estado se ve en el puntito del marcador: rojo pendiente, azul realizado, verde con ✓ verificado.",
+      "Abajo a la izquierda del plano está la referencia de colores. Tocá un contratista para dejar solo sus marcadores en primer plano; tocalo de nuevo para ver todos.",
+      "En las listas de cada dpto y en el recorte del plano de los informes también aparece el color del contratista."
+    ]
+  },
+  {
+    "id": "2026-10-19",
+    "fecha": "2026-10-19",
+    "titulo": "Novedades y actualizaciones",
+    "items": [
+      "Cada vez que la app se actualiza, aparece esta pantalla con lo que cambió. Podés volver a verla desde el ícono de usuario → Novedades.",
+      "En la app de Android, cuando hay un APK nuevo, la app avisa y lo actualiza desde ahí, sin perder la sesión ni los marcadores."
+    ]
+  },
+  {
+    "id": "2026-10-16",
+    "fecha": "2026-10-16",
+    "titulo": "Informes por dpto y logo nuevo",
+    "items": [
+      "Informe por dpto: entrá a un dpto y tocá \"Informe de…\". Los marcadores salen agrupados por contratista.",
+      "Al guardar un PDF o Word, la app pregunta si va solo con pendientes, solo con resueltos o con los dos (cierre de terminaciones, con el avance del dpto).",
+      "Las fotos se pueden marcar con círculos y flechas: tocá \"✎ Marcar\" en la foto.",
+      "Pantalla de inicio con el logo BAV y nombre nuevo de la app: BAV BeGar."
+    ]
+  }
+]
