@@ -470,7 +470,7 @@ function vEdificio(main) {
     <div class="edificio">${filas}</div>
     <p class="nota">Tocá un dpto para ver sus pendientes de todos los rubros y marcar nuevos sobre el plano. Los pisos en gris todavía no tienen plano cargado.</p>
     <div class="seccion-t">Pedido de materiales</div>
-    <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">beta</span></span>
+    <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
       <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
     <div class="seccion-t">Informes por contratista (PDF y Word)</div>
     <p class="nota">Tocá un rubro para armar su informe: elegís qué incluir y lo guardás o compartís en PDF o Word.</p>
