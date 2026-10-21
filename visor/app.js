@@ -338,7 +338,7 @@ function render() {
   }
   const main = $('#vista');
   main.scrollTop = 0;
-  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido }[vista])(main, params);
+  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido, pruebas: vPruebas }[vista])(main, params);
 }
 
 function chipRubro() {
@@ -483,6 +483,10 @@ function vEdificio(main) {
     <div class="seccion-t">Pedido de materiales</div>
     <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
       <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
+    <hr class="sep">
+    <div class="seccion-t">Pruebas de dptos</div>
+    <div class="lista"><button class="fila" id="ir-pruebas"><span class="fila-t">Checklist de pruebas por nivel</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
+      <span class="fila-s"><span>Tablero, luces, AA, cocina, termocalefón, baños y desagües: aprueba o no aprueba, con hilo de seguimiento</span></span></button></div>
   </div>`;
   enlazarChipRubro(main);
   main.querySelectorAll('.unidad').forEach((b) => (b.onclick = () => ir('espacio', { nivel: b.dataset.nv, unidad: b.dataset.u })));
@@ -491,6 +495,7 @@ function vEdificio(main) {
   $('#inf-dpto').onclick = elegirDptoInforme;
   $('#ver-pend').onclick = abrirPendientes;
   $('#ir-pedidos').onclick = () => ir('pedidos');
+  $('#ir-pruebas').onclick = () => ir('pruebas');
 }
 
 /** Elegir el dpto para su informe (pendientes y resueltos, para el cierre). */
@@ -666,6 +671,8 @@ function montarMapa(nv, rec, params) {
   let modoPin = false;
   const btnPin = $('#t-pin');
   function setModo(v) { modoPin = v; btnPin.setAttribute('aria-pressed', v); btnPin.textContent = v ? 'Cancelar' : '+ Marcador'; $('#modo-aviso').hidden = !v; }
+  // desde Pruebas de dptos: el primer marcador lleva los datos del hilo
+  const crearPin = (pos, ap) => { const pr = params.prueba; params.prueba = null; $('#modo-aviso').textContent = 'Tocá el plano donde va el marcador'; nuevoPin(nv, rec, pos, ap, pr || undefined); };
 
   // códigos de los planos (apagados por defecto: el relevamiento es por marcador)
   const capaCod = L.layerGroup();
@@ -679,7 +686,7 @@ function montarMapa(nv, rec, params) {
       className: `hs ${relevante ? 'hs-rel' : 'hs-otro'} ${est ? 'e-' + est : ''}`, weight: relevante ? 2 : 1,
     }).on('click', (ev) => {
       L.DomEvent.stopPropagation(ev);
-      if (modoPin) { setModo(false); return nuevoPin(nv, rec, { x: c.x + c.w / 2, y: c.y - c.h * 0.2 }, i); }
+      if (modoPin) { setModo(false); return crearPin({ x: c.x + c.w / 2, y: c.y - c.h * 0.2 }, i); }
       abrirFicha(c.codigo, { nv, rec });
     }).addTo(capaCod);
   });
@@ -713,7 +720,8 @@ function montarMapa(nv, rec, params) {
   }
 
   btnPin.onclick = () => setModo(!modoPin);
-  mapa.on('click', (e) => { if (!modoPin) return; setModo(false); nuevoPin(nv, rec, aNorm(e.latlng)); });
+  mapa.on('click', (e) => { if (!modoPin) return; setModo(false); crearPin(aNorm(e.latlng)); });
+  if (params.prueba) { setModo(true); $('#modo-aviso').textContent = 'Tocá el plano donde está el problema'; }
 
   // mantener apretado = nuevo marcador
   const cont = mapa.getContainer();
@@ -727,7 +735,7 @@ function montarMapa(nv, rec, params) {
       timer = null;
       const r = cont.getBoundingClientRect();
       if (navigator.vibrate) try { navigator.vibrate(30); } catch (er) { /* sin vibración */ }
-      nuevoPin(nv, rec, aNorm(mapa.containerPointToLatLng([inicio.x - r.left, inicio.y - r.top])));
+      crearPin(aNorm(mapa.containerPointToLatLng([inicio.x - r.left, inicio.y - r.top])));
     }, 550);
   });
   cont.addEventListener('pointermove', (e) => { if (timer && inicio && Math.hypot(e.clientX - inicio.x, e.clientY - inicio.y) > 8) cancelar(); });
@@ -849,9 +857,9 @@ function abrirFicha(cod, ctx) {
 const opcionesRubro = (actual) => M.rubros.map((r) => `<option value="${r.id}" ${actual === r.id ? 'selected' : ''}>${esc(r.nombre)}</option>`).join('')
   + (puedeEditar() ? '<option value="__nuevo">+ Agregar rubro…</option>' : '');
 
-function nuevoPin(nv, rec, { x, y }, aparicion) {
+function nuevoPin(nv, rec, { x, y }, aparicion, prueba) {
   if (!puedeEditar()) { aviso('Tu usuario es de solo lectura'); return; }
-  const rb = rubroActivo();
+  const rb = (prueba && rubro(prueba.rubro)) || rubroActivo();
   const ub = inferirUbicacion(rec, nv.id, x, y);
   const c = aparicion !== undefined ? rec.codigos[aparicion] : null;
   const p = {
@@ -861,6 +869,8 @@ function nuevoPin(nv, rec, { x, y }, aparicion) {
     estado: 'abierto', prioridad: 'Media', responsable: responsablesRubro(rb)[0] || '', limite: '', texto: '',
     fotos: [], comentarios: [], autor: autor(), creado: hoyISO(), actualizado: hoyISO(),
   };
+  // marcador de un problema encontrado en Pruebas de dptos: queda vinculado a su hilo
+  if (prueba) Object.assign(p, { texto: prueba.texto, prueba: prueba.hilo, responsable: prueba.responsable || p.responsable });
   formPin(p, true, { nv, rec });
 }
 
