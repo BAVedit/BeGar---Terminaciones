@@ -424,3 +424,37 @@ body:has(.acceso) .barra-logo { display: none; }
 .pin-ico span.l4 { font-size: 10px; letter-spacing: -.3px; }
 .pin-ico span.l5 { font-size: 8.5px; letter-spacing: -.3px; }
 .pin-ico div { width: 32px; height: 32px; }
+
+/* pedido de materiales */
+.dia-pedido { display: grid; gap: 2px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--linea); background: var(--bg); font-size: 14px; color: var(--tenue); }
+.dia-pedido b { font: 700 18px/1.2 var(--f-titulo); color: var(--tinta); }
+.dia-pedido.si { border-color: var(--acento); background: color-mix(in srgb, var(--acento) 16%, transparent); }
+.ped-cab { display: grid; gap: 6px; }
+.ped-cab > div { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ped-texto { margin: 0; font-size: 15px; white-space: pre-line; overflow-wrap: anywhere; }
+.ped-texto a { color: var(--corregido); }
+.fila.renglon { cursor: default; }
+.cantidades { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; color: var(--tenue); }
+.cantidades b { color: var(--tinta); font-weight: 700; }
+.cantidades .falta b { color: var(--abierto); }
+.btn-txt { border: 0; background: none; padding: 4px 0; color: var(--acento-fuerte); font: 600 14px/1.2 var(--f-titulo); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.remision { display: grid; gap: 8px; padding: 14px 16px; border: 1px solid var(--linea); border-radius: 12px; background: var(--sup); }
+.remision-cab { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.remision-cab b { font: 700 18px/1.2 var(--f-titulo); }
+.remision-cab span { color: var(--tenue); font-size: 14px; }
+.remision-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.remision-items li { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--linea); padding-top: 4px; }
+.lbl-mini { font: 600 12px/1.2 var(--f-titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+.foto-ver { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.foto-falta { aspect-ratio: 1; border-radius: 10px; border: 1px dashed var(--linea); display: grid; place-items: center; font-size: 11px; color: var(--tenue); text-align: center; }
+.foto-grande { position: fixed; inset: 0; z-index: 3000; background: rgba(0, 0, 0, .9); display: grid; place-items: center; padding: 16px; }
+.foto-grande img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.foto-grande .cerrar { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: 12px; }
+.renglones { display: grid; gap: 10px; }
+.renglon-form { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--linea); border-radius: 12px; background: var(--sup); }
+.renglon-cab { display: flex; align-items: center; gap: 8px; }
+.renglon-cab b { font: 700 16px/1 var(--f-titulo); }
+.renglon-cab .btn-txt { margin-left: auto; color: var(--abierto); }
+.fila.recibe { cursor: default; grid-template-columns: 1fr auto; }
+.recibe-cant { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--tenue); }
+.recibe-cant input { width: 120px; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); font: 600 18px/1 var(--f-texto); text-align: right; }

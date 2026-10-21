@@ -338,7 +338,7 @@ function render() {
   }
   const main = $('#vista');
   main.scrollTop = 0;
-  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme }[vista])(main, params);
+  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido }[vista])(main, params);
 }
 
 function chipRubro() {
@@ -469,6 +469,9 @@ function vEdificio(main) {
     <div class="seccion-t">Edificio · ${nUnid} dptos + áreas comunes</div>
     <div class="edificio">${filas}</div>
     <p class="nota">Tocá un dpto para ver sus pendientes de todos los rubros y marcar nuevos sobre el plano. Los pisos en gris todavía no tienen plano cargado.</p>
+    <div class="seccion-t">Pedido de materiales</div>
+    <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">beta</span></span>
+      <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
     <div class="seccion-t">Informes por contratista (PDF y Word)</div>
     <p class="nota">Tocá un rubro para armar su informe: elegís qué incluir y lo guardás o compartís en PDF o Word.</p>
     <div class="lista">${M.rubros.map((rb) => ({ rb, r: resumen(pines.filter((p) => p.rubro === rb.id)) })).filter((x) => x.r.total || x.rb.id === rubroActivo().id).map(({ rb, r }) => `
@@ -486,6 +489,7 @@ function vEdificio(main) {
   $('#inf-todos').onclick = () => ir('informe', { filtro: { rubro: '' } });
   $('#inf-dpto').onclick = elegirDptoInforme;
   $('#ver-pend').onclick = abrirPendientes;
+  $('#ir-pedidos').onclick = () => ir('pedidos');
 }
 
 /** Elegir el dpto para su informe (pendientes y resueltos, para el cierre). */
@@ -749,6 +753,7 @@ if (NATIVO) {
   // botón atrás de Android: cierra la hoja, sale de pantalla completa o vuelve una pantalla; en el inicio minimiza la app
   nativo('App').addListener('backButton', () => {
     const mf = $('.marcador-foto'); if (mf) return mf.cerrar();
+    const fg = $('.foto-grande'); if (fg) return fg.cerrar();
     if (!$('#hoja').hidden) return cerrarHoja();
     if ($('#app').classList.contains('completa') && $('#t-completa')) return $('#t-completa').click();
     if (!$('#volver').hidden) return $('#volver').click();

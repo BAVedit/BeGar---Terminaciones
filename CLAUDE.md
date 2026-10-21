@@ -32,6 +32,8 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
 - Pines en coordenadas normalizadas 0–1 del recorte, guardados en IndexedDB (`obra-terminaciones/pines`).
 - `index.html` es un documento completo; lo que sigue al comentario `INICIO` es lo que se publica como demo.
 - Cada publicación con cambios visibles suma una entrada arriba en `visor/novedades.json` (la app se la muestra a cada persona una vez).
+- Pedido de materiales: `pedidos.js` (pedidos PM, remisiones, resumen PDF), tabla `pedidos` de `supabase/4-pedidos.sql`; solo el admin carga, el resto ve y comenta.
+- Beta: para probar antes de publicar, copiar `visor/` a la carpeta `beta/` de gh-pages (https://bavedit.github.io/BeGar---Terminaciones/beta/). Al publicar en gh-pages, conservar `beta/`.
 - APK nuevo (cambios en `android-app/`): Actions lo compila; copiarlo a `visor/descargas/BAV-BeGar.apk` y poner el número de corrida en `visor/descargas/version.json` → la app avisa a los teléfonos con un APK anterior.
 
 ## Fases
