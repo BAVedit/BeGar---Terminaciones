@@ -93,7 +93,7 @@ create policy "editores modifican" on public.marcadores for update to authentica
 
 drop policy if exists "cada uno ve su fila" on public.miembros;
 create policy "cada uno ve su fila" on public.miembros for select to authenticated
-  using (public.mi_rol() is not null);
+  using (lower(email) = lower(auth.jwt() ->> 'email'));
 
 -- Cambios en vivo: los demás teléfonos ven los marcadores nuevos sin recargar.
 do $$ begin
