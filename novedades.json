@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-10-21a",
+    "fecha": "2026-10-21",
+    "titulo": "Pedido de materiales",
+    "items": [
+      "Nuevo apartado en la pantalla de inicio: los pedidos de los martes y jueves (BEGAR-PM-15 en adelante), con material, rubro, unidad, cantidad y prioridad.",
+      "Cada remisión que llega se carga con foto, proveedor y cuánto entró: la app muestra lo pedido, lo recibido y lo que falta de cada material.",
+      "Los pedidos los carga el administrador; el resto del equipo los ve y puede dejar comentarios."
+    ]
+  },
+  {
     "id": "2026-10-19d",
     "fecha": "2026-10-19",
     "titulo": "Números por rubro",
