@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-10-21b",
+    "fecha": "2026-10-21",
+    "titulo": "Pruebas de dptos",
+    "items": [
+      "Nuevo apartado al final de la pantalla de inicio: elegís el nivel y aparece la checklist de pruebas de cada dpto (tablero y medidor, luces y tomas, AA, cocina, termocalefón, baños, lavadero, balcón, aberturas y llave general de agua).",
+      "Cada ítem se marca Aprueba o No aprueba. Si no aprueba, se abre un hilo con dónde, qué pasa, fotos y con quién verlo; cada revisión se suma al hilo con su fecha, sin borrar lo anterior.",
+      "Si querés, el problema se marca en el plano con los datos ya cargados. También están el quincho, su baño y el generador en Áreas comunes."
+    ]
+  },
+  {
     "id": "2026-10-21a",
     "fecha": "2026-10-21",
     "titulo": "Pedido de materiales",
