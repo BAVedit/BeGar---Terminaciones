@@ -50,6 +50,13 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
 - Beta: para probar antes de publicar, copiar `visor/` a la carpeta `beta/` de gh-pages (https://bavedit.github.io/BeGar---Terminaciones/beta/). Al publicar en gh-pages, conservar `beta/`.
 - APK nuevo (cambios en `android-app/`): Actions lo compila; copiarlo a `visor/descargas/BAV-BeGar.apk` y poner el número de corrida en `visor/descargas/version.json` → la app avisa a los teléfonos con un APK anterior.
 
+## Decisiones del usuario (no volver a preguntar)
+- Se responde en español rioplatense, corto. Probar en la beta antes; pasar a la versión del equipo (raíz de gh-pages) solo con su ok.
+- Tipologías: Planta Tipo 1 (N1, N2): A, B = 2 dorm / 2 baños; C, E = 1 dorm / 1 baño; D = 1 dorm / 2 baños (personal y social). Planta Tipo 2 (N3–N5): A–D = 2 dorm / 2 baños.
+- Pruebas: misma checklist para todos; cualquier miembro carga; sin mediciones (tensión, tierra); anafes eléctricos (solo que enciendan); sin timbre, citofonía, horno en dpto ni válvula de seguridad del TC; balcón = pendiente a la rejilla sin manchar abajo; agua = solo llave general; opciones ✓ / ✕ / N/A (íconos, sin palabras); el plano se marca solo si hay problema y el usuario quiere. Comunes: baño del quincho, quincho (luces, parrilla, anafe, horno empotrable, extractor, AA cassette), generador (solo comunes).
+- Aberturas: madera (acceso, dormitorios, baños) y aluminio (sala-balcón, dorm-balcón, ventana dorm-área técnica, cocina-área técnica, lavadero), un check por carpintería con su código del plano.
+- Marcadores: estados Pendiente / En proceso / Verificado; cada etapa con sus fotos y su texto, separados también en el informe.
+
 ## Fases
 1. ✅ Ingesta + inventario (probada con muestra sintética; falta correr con los planos reales).
 2. Calibración web: arrastrar bbox, asignar planos, elegir vigentes, definir prefijos → escribe `decisiones.json`/`codigos.json`.
