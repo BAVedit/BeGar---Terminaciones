@@ -12,11 +12,14 @@ create table if not exists public.pruebas (
   unidad      text not null,               -- 3B, o el espacio común (quincho, generador…)
   item        text not null,               -- id del ítem en visor/pruebas.json
   hilo        text,                        -- hilo de un No aprueba; vacío si aprobó de entrada
-  estado      text not null check (estado in ('aprueba', 'no_aprueba', 'pendiente')),
+  estado      text not null,                -- aprueba, no_aprueba, no_aplica (N/A) o pendiente
   datos       jsonb not null,              -- locales, descripción, fotos, rubro, responsable, marcador, fecha del teléfono
   creado_por  text,                        -- mail de quien la cargó (lo pone la base)
   creado      timestamptz not null default now()
 );
+-- estados válidos (se rehace por si la tabla ya existía con la lista vieja, sin N/A)
+alter table public.pruebas drop constraint if exists pruebas_estado_check;
+alter table public.pruebas add constraint pruebas_estado_check check (estado in ('aprueba', 'no_aprueba', 'no_aplica', 'pendiente'));
 create index if not exists pruebas_proyecto on public.pruebas (proyecto, creado);
 
 -- Quién y cuándo los sella la base; el nombre del autor sale de la tabla de miembros.
