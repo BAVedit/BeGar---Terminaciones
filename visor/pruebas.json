@@ -350,7 +350,7 @@
    },
    {
     "id": "agua",
-    "nombre": "Agua y muebles",
+    "nombre": "Llave general de agua",
     "rubro": "hidro",
     "items": [
      {
@@ -358,13 +358,6 @@
       "nombre": "Llave general de agua",
       "como": "Corta todo el dpto y está identificada",
       "n": 40
-     },
-     {
-      "id": "mue-puertas",
-      "nombre": "Muebles",
-      "como": "Puertas y cajones abren sin golpear, los frenos funcionan",
-      "rubro": "muebles",
-      "n": 41
      }
     ]
    }
