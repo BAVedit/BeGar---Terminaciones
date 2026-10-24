@@ -42,6 +42,22 @@
    "Balcón"
   ]
  ],
+ "banos_por_dpto": {
+  "_comentario": "Cantidad de baños de cada dpto según la planta tipo (letra del dpto). Con 2 baños aparecen Baño 1 y Baño 2; los ítems del Baño 2 llevan el sufijo -2.",
+  "Planta Tipo 1": {
+   "A": 2,
+   "B": 2,
+   "C": 1,
+   "D": 2,
+   "E": 1
+  },
+  "Planta Tipo 2": {
+   "A": 2,
+   "B": 2,
+   "C": 2,
+   "D": 2
+  }
+ },
  "checklists": {
   "dpto": [
    {
@@ -223,7 +239,7 @@
    },
    {
     "id": "banos",
-    "nombre": "Baños (por baño)",
+    "nombre": "Baño",
     "rubro": "hidro",
     "items": [
      {

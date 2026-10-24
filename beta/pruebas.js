@@ -34,7 +34,29 @@ const nivelesPr = () => [
 const nivelPr = (id) => nivelesPr().find((n) => n.id === id);
 const comunPr = (u) => PR.comunes.find((c) => c.id === u);
 const nombreUnidadPr = (u) => (comunPr(u) ? comunPr(u).nombre : u);
-const sistemasDe = (u) => PR.checklists[comunPr(u) ? comunPr(u).checklist : 'dpto'] || [];
+// Baños del dpto según su planta tipo: con 2 baños el sistema "banos" se duplica (Baño 1 conserva los ids,
+// Baño 2 les suma -2) y los números de ítem se corren.
+function banosDe(u) {
+  const nv = M.niveles.find((n) => (n.unidades || []).includes(u));
+  const tabla = (PR.banos_por_dpto || {})[nv && nv.tipo] || {};
+  return tabla[u.replace(/^\d+/, '')] || 1;
+}
+const cacheSistemasPr = new Map();
+function sistemasDe(u) {
+  if (comunPr(u)) return PR.checklists[comunPr(u).checklist] || [];
+  if (cacheSistemasPr.has(u)) return cacheSistemasPr.get(u);
+  const nb = banosDe(u);
+  let n = 0;
+  const lista = (PR.checklists.dpto || []).flatMap((s) => {
+    if (s.id !== 'banos' || nb < 2) return [s];
+    return Array.from({ length: nb }, (_, i) => ({ ...s, id: i ? `${s.id}-${i + 1}` : s.id, nombre: `${s.nombre} ${i + 1}`,
+      items: s.items.map((it) => ({ ...it, id: i ? `${it.id}-${i + 1}` : it.id, lugar: `${s.nombre} ${i + 1}` })) }));
+  }).map((s) => ({ ...s, items: s.items.map((it) => ({ ...it, n: ++n })) }));
+  cacheSistemasPr.set(u, lista);
+  return lista;
+}
+// nombre del ítem fuera de la lista (hilos, marcadores): dice de qué baño es
+const nombrePr = (it) => (it.lugar ? `${it.lugar} · ${it.nombre}` : it.nombre);
 const itemsDe = (u) => sistemasDe(u).flatMap((s) => s.items.map((it) => ({ ...it, sistema: s, rubro: it.rubro || s.rubro })));
 const itemPr = (u, id) => itemsDe(u).find((it) => it.id === id);
 const nombreLocal = (id) => ((PR.locales || []).find((l) => l[0] === id) || [id, id])[1];
@@ -275,7 +297,7 @@ function tocarResuelto(nv, u, itemId, estado) {
   if (hilo) return abrirHiloPr(nv, u, itemId, hilo, estado);
   const ult = ultimaPr(u, itemId);
   if (ult && ult.estado === estado) {
-    abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2><p>${esc(nombreUnidadPr(u))} · ${estado === 'aprueba' ? 'aprobó' : 'marcó N/A'} ${esc(ult.autor)} el ${fechaHora(ult.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2><p>${esc(nombreUnidadPr(u))} · ${estado === 'aprueba' ? 'aprobó' : 'marcó N/A'} ${esc(ult.autor)} el ${fechaHora(ult.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
       <p class="nota">Si lo marcaste por error, volvé a dejarlo pendiente. Queda anotado en el historial.</p>
       <div class="acciones"><button class="btn ancho" id="pr-desmarcar">Volver a pendiente</button></div></div>`, (h) => {
       $('[data-cerrar]', h).onclick = cerrarHoja;
@@ -304,7 +326,7 @@ function formNoAprueba(nv, u, itemId) {
   e.hilo = e.id;
   const esComun = nv === NIVEL_COMUNES;
   abrirHoja(`<div class="pr-hoja">
-    <div class="ficha-cab"><div><h2 class="h-hoja">No aprueba</h2><p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ${it.n}. ${esc(it.nombre)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="ficha-cab"><div><h2 class="h-hoja">No aprueba</h2><p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ${it.n}. ${esc(nombrePr(it))}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     ${esComun ? '' : `<div class="campo todo"><span class="lbl">Dónde</span><div class="incluir" id="pr-locales">${PR.locales.map(([id, n]) => `<button type="button" data-loc="${id}" aria-pressed="false" title="${esc(n)}">${id}</button>`).join('')}</div>
       <p class="nota" id="pr-locales-nom"></p></div>`}
     <div class="campo todo"><label for="pr-lugar">${esComun ? 'Dónde' : 'Detalle del lugar (opcional)'}</label><input id="pr-lugar" placeholder="${esComun ? 'Ej.: mesada de la parrilla, equipo 2' : 'Ej.: canilla de la ducha, ventana del balcón'}"></div>
@@ -325,7 +347,7 @@ function formNoAprueba(nv, u, itemId) {
     const llenarResp = () => { $('#pr-resp-l', h).innerHTML = responsablesPr($('#pr-rubro', h).value).map((x) => `<option value="${esc(x)}">`).join(''); };
     llenarResp();
     $('#pr-rubro', h).onchange = () => { llenarResp(); const r = responsablesRubro(rubro($('#pr-rubro', h).value))[0]; $('#pr-resp', h).value = r || ''; };
-    fotosEditables($('#pr-fotos', h), e.fotos, () => `${nombreUnidadPr(u)} · ${it.nombre}`);
+    fotosEditables($('#pr-fotos', h), e.fotos, () => `${nombreUnidadPr(u)} · ${nombrePr(it)}`);
     const guardar = (plano) => () => {
       Object.assign(e, {
         locales: [...h.querySelectorAll('[data-loc][aria-pressed="true"]')].map((x) => x.dataset.loc),
@@ -353,7 +375,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
   const pinesHilo = pines.filter((p) => p.prueba === hilo && !p.borrado);
   const fotos = [];
   const pintar = () => abrirHoja(`<div class="pr-hoja">
-    <div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2>
+    <div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2>
       <p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ítem ${it.n} · ${abierto ? 'hilo abierto' : 'hilo cerrado'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="pr-datos">
       ${[...(primera.locales || []).map(nombreLocal), primera.lugar].filter(Boolean).length ? `<span>Dónde: <b>${esc([...(primera.locales || []).map(nombreLocal), primera.lugar].filter(Boolean).join(', '))}</b></span>` : ''}
@@ -366,7 +388,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
         <small>${fechaHora(x.fecha)} · ${esc(x.autor)}${x._pendiente ? ' · sin subir' : ''}</small></div>
       ${x.texto ? `<p>${esc(x.texto)}</p>` : ''}
       ${i > 0 && x.responsable && x.responsable !== lista[i - 1].responsable ? `<p class="nota">Responsable: ${esc(x.responsable)}</p>` : ''}
-      ${(x.fotos || []).length ? `<div class="fotos">${x.fotos.map((f) => fotoMini(f, it.nombre)).join('')}</div>` : ''}
+      ${(x.fotos || []).length ? `<div class="fotos">${x.fotos.map((f) => fotoMini(f, nombrePr(it))).join('')}</div>` : ''}
     </li>`).join('')}</ol>
     ${abierto ? `<div class="seccion-t">Nueva revisión</div>
       <div class="estados alcance pr-elige" id="pr-est">
@@ -388,7 +410,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
     if (!abierto) return;
     let est = preset;
     h.querySelectorAll('[data-est]').forEach((b) => (b.onclick = () => { est = b.dataset.est; h.querySelectorAll('[data-est]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
-    fotosEditables($('#pr-fotos', h), fotos, () => `${nombreUnidadPr(u)} · ${it.nombre}`);
+    fotosEditables($('#pr-fotos', h), fotos, () => `${nombreUnidadPr(u)} · ${nombrePr(it)}`);
     $('#pr-ok', h).onclick = () => {
       const texto = $('#pr-txt', h).value.trim();
       if (est === 'no_aprueba' && !texto && !fotos.length) { aviso('Contá qué se vio o sacale una foto'); return; }
@@ -412,7 +434,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
 function verHistorialPr(nv, u, itemId) {
   const it = itemPr(u, itemId);
   const hilos = hilosItem(u, itemId).map((h) => ({ h, es: entradasHilo(h) })).reverse();
-  abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2><p>${esc(nombreUnidadPr(u))} · ${hilos.length} ${hilos.length === 1 ? 'hilo' : 'hilos'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+  abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2><p>${esc(nombreUnidadPr(u))} · ${hilos.length} ${hilos.length === 1 ? 'hilo' : 'hilos'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="lista">${hilos.map(({ h, es }) => `<button class="fila" data-h="${h}"><span class="fila-t">${fechaCorta(es[0].fecha)}: ${esc((es[0].texto || 'Sin descripción').slice(0, 80))}</span>
       <span class="fila-der"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[es.at(-1).estado].c}">${es.at(-1).estado === 'no_aprueba' ? 'Abierto' : 'Cerrado'}</span></span>
       <span class="fila-s"><span>${es.length} ${es.length === 1 ? 'entrada' : 'entradas'}</span><span>${esc(es[0].responsable || '')}</span></span></button>`).join('')}</div></div>`, (h) => {
@@ -425,7 +447,7 @@ function verHistorialPr(nv, u, itemId) {
 function marcarEnPlanoPr(nv, u, it, e) {
   const conPlano = nivelesConPlano();
   const seguir = (nivelId) => ir('visor', { nivel: nivelId, unidad: nv === NIVEL_COMUNES ? COMUN : u,
-    prueba: { hilo: e.hilo, rubro: e.rubro, responsable: e.responsable, texto: `Prueba ${it.n}. ${it.nombre}: ${e.texto || 'no aprueba'}` } });
+    prueba: { hilo: e.hilo, rubro: e.rubro, responsable: e.responsable, texto: `Prueba ${it.n}. ${nombrePr(it)}: ${e.texto || 'no aprueba'}` } });
   if (nv !== NIVEL_COMUNES && conPlano.some((n) => n.id === nv)) return seguir(nv);
   abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">¿En qué plano?</h2><p>${esc(nombreUnidadPr(u))}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="lista">${conPlano.map((n) => `<button class="fila" data-nvp="${n.id}"><span class="fila-t">${n.id} · ${esc(n.nombre)}</span></button>`).join('')}</div></div>`, (h) => {
