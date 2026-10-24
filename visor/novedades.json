@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-10-24",
+    "fecha": "2026-10-24",
+    "titulo": "Marcadores: antes y después",
+    "items": [
+      "El estado Realizado ahora se llama En proceso.",
+      "Al pasar un marcador a En proceso o Verificado aparece un espacio nuevo para sus fotos y un comentario (por ejemplo \"2 de 3 detalles solucionados\" o \"terminado\"). Las fotos de cada etapa quedan separadas.",
+      "En el informe (pantalla, PDF y Word) se ven por separado las fotos y el texto de Pendiente, En proceso y Verificado."
+    ]
+  },
+  {
     "id": "2026-10-21b",
     "fecha": "2026-10-21",
     "titulo": "Pruebas de dptos",
