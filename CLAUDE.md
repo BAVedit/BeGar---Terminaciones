@@ -29,6 +29,19 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
 
 ## Visor (piloto, `visor/`)
 - HTML + JS sin build, Leaflet 1.9.4 (copiado en `vendor/` para que funcione offline).
+- Mapa del código (scripts comunes, comparten variables globales; el orden de `<script>` en `index.html` importa y `app/arranque.js` va última de `app/`). Al agregar un archivo, sumarlo también a `BASE` de `sw.js`:
+  - `app/base.js`: constantes (ESTADOS, ETAPAS del marcador), utilidades (`$`, `esc`, fechas, `pref`), permisos (`puedeEditar`, `esAdmin`), `almacen` (IndexedDB).
+  - `app/consultas.js`: rubros, colores por contratista, códigos de marcador (`codigoPin`), recortes del nivel, dpto/ambiente de un punto.
+  - `app/navegacion.js`: `ir`, `volver`, `render` (mapa de vistas), cabecera, editar rubros.
+  - `app/vistas.js`: pantalla de inicio (`vEdificio`, botones a Pedidos y Pruebas) y dpto (`vEspacio`).
+  - `app/visor.js`: plano Leaflet (`vVisor`, `montarMapa`), pines en el plano, modo agregar.
+  - `app/hoja.js`: hoja inferior (`abrirHoja`/`cerrarHoja`), novedades, aviso de APK, ficha de código.
+  - `app/marcadores.js`: `nuevoPin`, `formPin` (fotos y texto por etapa Pendiente / En proceso / Verificado: `foto.etapa`, `texto`, `textoProceso`, `textoCierre`), editor de fotos, `comprimir`.
+  - `app/informe.js`: `vInforme` (filtros, alcance, qué incluir, WhatsApp).
+  - `app/informe-archivos.js`: PDF (`informePDF`), Word (`informeWord`), `armarContenido`, recorte del plano.
+  - `app/ajustes.js`: cuenta/ajustes, lista de marcadores del admin, ejemplos, `migrar`.
+  - `app/arranque.js`: `iniciar` (manifest → nube → marcadores → inicio).
+  - `nube.js` (Supabase), `pedidos.js`, `pruebas.js` (+ `pruebas.json`), `sw.js` (offline; subir `VERSION` si cambia `BASE`).
 - Pines en coordenadas normalizadas 0–1 del recorte, guardados en IndexedDB (`obra-terminaciones/pines`).
 - `index.html` es un documento completo; lo que sigue al comentario `INICIO` es lo que se publica como demo.
 - Cada publicación con cambios visibles suma una entrada arriba en `visor/novedades.json` (la app se la muestra a cada persona una vez).
