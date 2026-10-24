@@ -1,6 +1,7 @@
 // Service worker: la app abre sin señal y los planos ya vistos quedan guardados.
-const VERSION = 'v2';
-const BASE = ['./', 'index.html', 'app.js', 'estilos.css', 'vendor/leaflet.js', 'vendor/leaflet.css',
+const VERSION = 'v3';
+const BASE = ['./', 'index.html', 'app/base.js', 'app/consultas.js', 'app/navegacion.js', 'app/vistas.js', 'app/visor.js', 'app/hoja.js', 'app/marcadores.js', 'app/informe.js', 'app/informe-archivos.js', 'app/ajustes.js', 'app/arranque.js',
+  'estilos.css', 'vendor/leaflet.js', 'vendor/leaflet.css',
   'datos/manifest.json', 'manifest.webmanifest', 'iconos/icono-192.png'];
 
 self.addEventListener('install', e => {
