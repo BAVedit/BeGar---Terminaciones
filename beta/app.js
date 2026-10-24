@@ -6,10 +6,21 @@
 const DATOS = 'datos/';
 const ESTADOS = [
   { id: 'abierto', nombre: 'Pendiente' },
-  { id: 'corregido', nombre: 'Realizado' },
+  { id: 'corregido', nombre: 'En proceso' },
   { id: 'aprobado', nombre: 'Verificado' },
 ];
 const GRAVEDAD = { abierto: 2, corregido: 1, aprobado: 0 };
+/* Cada etapa del marcador tiene sus fotos y su texto, así queda el antes y el después.
+   Las fotos guardan su etapa (las viejas, sin etapa, son de Pendiente). */
+const ETAPAS = [
+  { id: 'abierto', nombre: 'Pendiente', campo: 'texto', lbl: 'Descripción', ph: 'Ej.: falta segunda mano en muro del living, mancha de humedad en cielorraso' },
+  { id: 'corregido', nombre: 'En proceso', campo: 'textoProceso', lbl: 'Comentario en proceso', ph: 'Ej.: 2 de 3 detalles solucionados' },
+  { id: 'aprobado', nombre: 'Verificado', campo: 'textoCierre', lbl: 'Comentario de cierre', ph: 'Ej.: terminado, se cambió la placa' },
+];
+const etapaFoto = (f) => f.etapa || 'abierto';
+const fotosEtapa = (p, e) => p.fotos.filter((f) => etapaFoto(f) === e);
+/** Etapas posteriores a Pendiente que tienen algo para mostrar en el informe. */
+const etapasPosteriores = (p) => ETAPAS.slice(1).filter((e) => p[e.campo] || fotosEtapa(p, e.id).length);
 const PRIORIDADES = ['Alta', 'Media', 'Baja'];
 const COMUN = 'Áreas comunes';
 const VERSION_EJEMPLOS = '4';
@@ -462,7 +473,7 @@ function vEdificio(main) {
   <div class="pagina">
     <div class="kpis">
       <div class="kpi alerta"><b>${r.pend}</b><span>pendientes</span></div>
-      <div class="kpi"><b>${r.real}</b><span>realizados</span></div>
+      <div class="kpi"><b>${r.real}</b><span>en proceso</span></div>
       <div class="kpi ok"><b>${r.verif}</b><span>verificados</span></div>
     </div>
     ${chipRubro()}
@@ -535,7 +546,7 @@ function vEspacio(main, params) {
     </div>` : ''}
     <div class="kpis">
       <div class="kpi alerta"><b>${r.pend}</b><span>pendientes</span></div>
-      <div class="kpi"><b>${r.real}</b><span>realizados</span></div>
+      <div class="kpi"><b>${r.real}</b><span>en proceso</span></div>
       <div class="kpi ok"><b>${r.verif}</b><span>verificados</span></div>
     </div>
     <div class="acciones">
@@ -704,7 +715,7 @@ function montarMapa(nv, rec, params) {
     ley.className = 'leyenda-pines';
     const rubrosDe = (c) => [...new Set(pinesNivel.filter((p) => contratistaDe(p) === c).map((p) => (rubro(p.rubro) || {}).nombre || p.rubro))].join(', ');
     ley.innerHTML = contratistas.map((c) => `<button data-sr="${esc(c)}" aria-pressed="${soloRubro === c}" class="${soloRubro && soloRubro !== c ? 'apagado' : ''}"><i style="background:${colorContratista(c)}"></i>${esc(c)}<small>${esc(rubrosDe(c))}</small></button>`).join('')
-      + `<div class="ley-est"><span><i class="e-abierto"></i>Pendiente</span><span><i class="e-corregido"></i>Realizado</span><span><i class="e-aprobado">✓</i>Verificado</span></div>`;
+      + `<div class="ley-est"><span><i class="e-abierto"></i>Pendiente</span><span><i class="e-corregido"></i>En proceso</span><span><i class="e-aprobado">✓</i>Verificado</span></div>`;
     L.DomEvent.disableClickPropagation(ley); L.DomEvent.disableScrollPropagation(ley);
     $('.mapa-caja').appendChild(ley);
     ley.querySelectorAll('[data-sr]').forEach((b) => (b.onclick = () => ir('visor', { ...params, abrirPin: null, soloRubro: soloRubro === b.dataset.sr ? '' : b.dataset.sr }, true)));
@@ -891,9 +902,12 @@ function formPin(p, esNuevo, { nv, rec }) {
       <button class="cerrar" data-cerrar aria-label="Cerrar">✕</button>
     </div>
     ${desact ? '<div class="alerta-plano"><b>Plano actualizado.</b> Verificá que el marcador siga en el lugar correcto.</div>' : ''}
-    <div class="campo todo"><span class="lbl">Fotos (evidencia)</span>
-      <div class="fotos" id="f-fotos"></div></div>
-    <div class="campo todo"><label for="f-txt">Descripción</label><textarea id="f-txt" placeholder="Ej.: falta segunda mano en muro del living, mancha de humedad en cielorraso">${esc(p.texto)}</textarea></div>
+    ${ETAPAS.map((e, i) => `<div class="etapa" data-etapa="${e.id}">
+      ${i ? `<h3 class="etapa-t"><i class="e-${e.id}"></i>${e.nombre}</h3>` : ''}
+      <div class="campo todo"><span class="lbl">Fotos${i ? ' · ' + e.nombre.toLowerCase() : ' (evidencia)'}</span>
+        <div class="fotos" data-fotos="${e.id}"></div></div>
+      <div class="campo todo"><label for="f-txt-${e.id}">${e.lbl}</label><textarea id="f-txt-${e.id}" placeholder="${e.ph}">${esc(p[e.campo] || '')}</textarea></div>
+    </div>`).join('')}
     <div class="campos">
       <div class="campo"><label for="f-rubro">Rubro</label><select id="f-rubro">${opcionesRubro(p.rubro)}</select></div>
       <div class="campo todo nuevo-rubro" id="f-rubro-nuevo" hidden></div>
@@ -905,7 +919,7 @@ function formPin(p, esNuevo, { nv, rec }) {
       <div class="campo"><label for="f-cod">Código del plano</label><select id="f-cod"><option value="">Ninguno</option>
         ${cerca.map((c) => `<option value="${c.codigo}@${c.i}" ${p.aparicion === `${c.codigo}@${c.i}` ? 'selected' : ''}>${esc(c.codigo)}</option>`).join('')}</select></div>
       <div class="campo"><span class="lbl">Relevó</span><div class="nota" style="padding-top:10px">${esc(p.autor)} · ${fechaHora(p.creado)}</div></div>
-      ${p.realizadoPor ? `<div class="campo"><span class="lbl">Marcó realizado</span><div class="nota" style="padding-top:10px">${esc(p.realizadoPor)} · ${fechaHora(p.realizadoEn)}</div></div>` : ''}
+      ${p.realizadoPor ? `<div class="campo"><span class="lbl">Pasó a en proceso</span><div class="nota" style="padding-top:10px">${esc(p.realizadoPor)} · ${fechaHora(p.realizadoEn)}</div></div>` : ''}
       ${p.verificadoPor ? `<div class="campo"><span class="lbl">Verificó</span><div class="nota" style="padding-top:10px">${esc(p.verificadoPor)} · ${fechaHora(p.verificadoEn)}</div></div>` : ''}
     </div>
     <div class="campo todo"><span class="lbl">Estado</span>
@@ -939,28 +953,37 @@ function formPin(p, esNuevo, { nv, rec }) {
       if (r) $('#f-resp', h).value = r;
     };
     let estado = p.estado;
+    // se ven las etapas hasta el estado elegido, y las que ya tienen fotos o texto
+    const verEtapas = () => {
+      const hasta = ETAPAS.findIndex((e) => e.id === estado);
+      ETAPAS.forEach((e, i) => { $(`[data-etapa="${e.id}"]`, h).hidden = i > hasta && !p[e.campo] && !fotosEtapa(p, e.id).length; });
+    };
     h.querySelectorAll('[data-e]').forEach((b) => (b.onclick = () => {
       estado = b.dataset.e;
       h.querySelectorAll('[data-e]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+      verEtapas();
     }));
-    const pintarFotos = () => {
-      $('#f-fotos', h).innerHTML = p.fotos.map((f, i) => `<figure><img src="${f.src}" alt="Foto ${i + 1}"><figcaption>${fechaHora(f.fecha)}</figcaption>
-          <button type="button" class="foto-quitar" data-q="${i}" aria-label="Quitar foto ${i + 1}">✕</button>
-          <button type="button" class="foto-marcar" data-m="${i}" aria-label="Marcar foto ${i + 1} con círculos o flechas">✎ Marcar</button></figure>`).join('')
-        + `<label class="foto-add camara">📷<br>Sacar foto<input type="file" accept="image/*" capture="environment" id="f-cam"></label>
-           <label class="foto-add">＋<br>De galería<input type="file" accept="image/*" multiple id="f-gal"></label>`;
+    const pintarFotos = (et) => {
+      const caja = $(`[data-fotos="${et}"]`, h);
+      const idx = p.fotos.map((f, i) => i).filter((i) => etapaFoto(p.fotos[i]) === et);
+      caja.innerHTML = idx.map((i, k) => { const f = p.fotos[i]; return `<figure><img src="${f.src}" alt="Foto ${k + 1}"><figcaption>${fechaHora(f.fecha)}</figcaption>
+          <button type="button" class="foto-quitar" data-q="${i}" aria-label="Quitar foto ${k + 1}">✕</button>
+          <button type="button" class="foto-marcar" data-m="${i}" aria-label="Marcar foto ${k + 1} con círculos o flechas">✎ Marcar</button></figure>`; }).join('')
+        + `<label class="foto-add camara">📷<br>Sacar foto<input type="file" accept="image/*" capture="environment" data-cam></label>
+           <label class="foto-add">＋<br>De galería<input type="file" accept="image/*" multiple data-gal></label>`;
       const agregar = async (e) => {
         for (const file of e.target.files) {
-          try { p.fotos.push({ src: await comprimir(file, `${nv.id} ${$('#f-unidad', h).value === COMUN ? COMUN : $('#f-unidad', h).value} · ${autor()}`), fecha: hoyISO(), autor: autor() }); }
+          try { p.fotos.push({ src: await comprimir(file, `${nv.id} ${$('#f-unidad', h).value === COMUN ? COMUN : $('#f-unidad', h).value} · ${autor()}`), fecha: hoyISO(), autor: autor(), etapa: et }); }
           catch (er) { aviso('No se pudo leer la imagen'); }
         }
-        pintarFotos();
+        pintarFotos(et);
       };
-      $('#f-cam', h).onchange = agregar; $('#f-gal', h).onchange = agregar;
-      h.querySelectorAll('[data-q]').forEach((b) => (b.onclick = () => { p.fotos.splice(+b.dataset.q, 1); pintarFotos(); }));
-      h.querySelectorAll('[data-m]').forEach((b) => (b.onclick = () => marcarFoto(p.fotos[+b.dataset.m], pintarFotos)));
+      $('[data-cam]', caja).onchange = agregar; $('[data-gal]', caja).onchange = agregar;
+      caja.querySelectorAll('[data-q]').forEach((b) => (b.onclick = () => { p.fotos.splice(+b.dataset.q, 1); ETAPAS.forEach((e) => pintarFotos(e.id)); }));
+      caja.querySelectorAll('[data-m]').forEach((b) => (b.onclick = () => marcarFoto(p.fotos[+b.dataset.m], () => pintarFotos(et))));
     };
-    pintarFotos();
+    ETAPAS.forEach((e) => pintarFotos(e.id));
+    verEtapas();
     const leer = () => {
       const sel = $('#f-cod', h).value;
       if (estado !== p.estado && !esNuevo) p.comentarios.push({ texto: `Estado: ${estadoNombre(p.estado)} → ${estadoNombre(estado)}`, autor: autor(), fecha: hoyISO(), sistema: true });
@@ -972,7 +995,7 @@ function formPin(p, esNuevo, { nv, rec }) {
         estado, rubro: $('#f-rubro', h).value, unidad: $('#f-unidad', h).value, ambiente: $('#f-amb', h).value.trim(),
         aparicion: sel || null, codigo: sel ? sel.split('@')[0] : null,
         prioridad: $('#f-prio', h).value, responsable: $('#f-resp', h).value.trim(), limite: $('#f-lim', h).value,
-        texto: $('#f-txt', h).value.trim(), actualizado: hoyISO(),
+        ...Object.fromEntries(ETAPAS.map((e) => [e.campo, $(`#f-txt-${e.id}`, h).value.trim()])), actualizado: hoyISO(),
       });
       if (!codValido(p)) p.cod = proximoCod(p.rubro, p.id); // cambió de rubro: toma el código siguiente del rubro nuevo
     };
@@ -1175,7 +1198,9 @@ function vInforme(main, params) {
           <article class="rep-item">
             <div class="rep-cab"><h4>${codigoPin(p)} · ${esc(p.texto || 'Sin descripción')}</h4><span class="estado-pill e-${p.estado}">${estadoNombre(p.estado)}</span></div>
             <p class="nota">${esc(lineaUbicacion(p))}${inc.datos ? `<br>${esc(lineaDatos(p))}` : ''}</p>
-            ${inc.plano || (inc.fotos && p.fotos.length) ? `<div class="rep-fotos">${inc.plano ? `<canvas data-snip="${p.id}" width="${RECORTE_W}" height="${RECORTE_H}" aria-label="Ubicación en el plano"></canvas>` : ''}${inc.fotos ? p.fotos.map((x) => `<img src="${x.src}" alt="">`).join('') : ''}</div>` : ''}
+            ${inc.plano || (inc.fotos && fotosEtapa(p, 'abierto').length) ? `<div class="rep-fotos">${inc.plano ? `<canvas data-snip="${p.id}" width="${RECORTE_W}" height="${RECORTE_H}" aria-label="Ubicación en el plano"></canvas>` : ''}${inc.fotos ? fotosEtapa(p, 'abierto').map((x) => `<img src="${x.src}" alt="">`).join('') : ''}</div>` : ''}
+            ${etapasPosteriores(p).map((e) => `<div class="rep-etapa"><h5><i class="e-${e.id}"></i>${e.nombre}</h5>${p[e.campo] ? `<p>${esc(p[e.campo])}</p>` : ''}
+              ${inc.fotos && fotosEtapa(p, e.id).length ? `<div class="rep-fotos">${fotosEtapa(p, e.id).map((x) => `<img src="${x.src}" alt="">`).join('')}</div>` : ''}</div>`).join('')}
             ${inc.historial && (p.comentarios || []).length ? `<div class="hilo">${p.comentarios.map((c) => `<div class="msj${c.sistema ? ' sistema' : ''}">${esc(c.texto)}<small>${esc(c.autor)} · ${fechaHora(c.fecha)}</small></div>`).join('')}</div>` : ''}
           </article>`).join('')}</div>`).join('')}
       </section>`).join('') || '<p class="vacio-txt">No hay marcadores con esos filtros.</p>'}
@@ -1245,7 +1270,7 @@ const INCLUIR = [
 ];
 const ALCANCES = {
   pend: { nombre: 'Solo pendientes', estados: ['abierto'], eyebrow: 'Informe de pendientes', ayuda: 'Lo que falta hacer' },
-  res: { nombre: 'Solo resueltos', estados: ['corregido', 'aprobado'], eyebrow: 'Informe de resueltos', ayuda: 'Realizados y verificados' },
+  res: { nombre: 'Solo resueltos', estados: ['corregido', 'aprobado'], eyebrow: 'Informe de resueltos', ayuda: 'En proceso y verificados' },
   ambos: { nombre: 'Pendientes y resueltos', estados: ['abierto', 'corregido', 'aprobado'], eyebrow: 'Cierre de terminaciones', ayuda: 'Los dos en el mismo archivo, separados' },
 };
 const tituloInforme = (rb, f) => {
@@ -1261,7 +1286,7 @@ const cabContratista = (p, ant, f) => {
 const resumenGrupo = (g) => `${g.pend} pendientes · ${g.res} resueltos · avance ${Math.round(100 * g.res / g.ps.length)}%`;
 const lineaUbicacion = (p) => [(rubro(p.rubro) || {}).nombre || p.rubro, p.ambiente, p.codigo, 'Prioridad ' + p.prioridad].filter(Boolean).join(' · ');
 const lineaDatos = (p) => `Responsable: ${p.responsable || 'sin asignar'} · Relevó: ${p.autor} el ${fechaCorta(p.creado)}${p.limite ? ' · Límite ' + fechaCorta(p.limite + 'T12:00') : ''}`
-  + `${p.realizadoPor ? ` · Realizado (marcó ${p.realizadoPor}) el ${fechaCorta(p.realizadoEn)}` : ''}${p.verificadoPor ? ` · Verificó ${p.verificadoPor} el ${fechaCorta(p.verificadoEn)}` : ''}`;
+  + `${p.realizadoPor ? ` · En proceso (marcó ${p.realizadoPor}) el ${fechaCorta(p.realizadoEn)}` : ''}${p.verificadoPor ? ` · Verificó ${p.verificadoPor} el ${fechaCorta(p.verificadoEn)}` : ''}`;
 const nombreArchivo = (d, ext) => `${d.titulo.replace(/[\\/:*?"<>|·]+/g, ' ').replace(/\s+/g, ' ').trim()} ${new Date().toISOString().slice(0, 10)}.${ext}`;
 const resumenFiltro = (d) => `${d.f.resp ? 'Responsable: ' + d.f.resp + ' · ' : ''}${d.lista.length} marcadores en ${d.grupos.length} ${d.grupos.length === 1 ? 'espacio' : 'espacios'} · ${ALCANCES[d.f.alcance].nombre.toLowerCase()}`
   + `${d.f.alcance === 'ambos' ? ` (${d.lista.filter((p) => p.estado === 'abierto').length} pendientes, ${d.lista.filter((p) => p.estado !== 'abierto').length} resueltos)` : ''} · emitido ${fechaCorta(hoyISO())} por ${autor()}`;
@@ -1298,6 +1323,7 @@ const logoJPEG = () => aJPEG('iconos/codesarrollos-logo.svg', 1424, 0.92).catch(
 const bytes = (dataUrl) => Uint8Array.from(atob(dataUrl.split(',')[1]), (c) => c.charCodeAt(0));
 
 /** Junta todo lo que va en el documento (imágenes ya convertidas), igual para PDF y Word. */
+const jpegs = (fotos) => Promise.all(fotos.map((x) => aJPEG(x.src, 900).catch(() => null))).then((a) => a.filter(Boolean));
 async function armarContenido(d) {
   const items = [];
   for (const g of d.grupos) {
@@ -1308,7 +1334,8 @@ async function armarContenido(d) {
         ps.push({
           p,
           plano: d.inc.plano ? await snipJPEG(p).catch(() => null) : null,
-          fotos: d.inc.fotos ? await Promise.all(p.fotos.map((x) => aJPEG(x.src, 900).catch(() => null))).then((a) => a.filter(Boolean)) : [],
+          fotos: d.inc.fotos ? await jpegs(fotosEtapa(p, 'abierto')) : [],
+          etapas: await Promise.all(etapasPosteriores(p).map(async (e) => ({ nombre: e.nombre, id: e.id, texto: p[e.campo] || '', fotos: d.inc.fotos ? await jpegs(fotosEtapa(p, e.id)) : [] }))),
         });
       }
       secciones.push({ t: sc.t, ps });
@@ -1337,6 +1364,20 @@ async function informePDF(d) {
     if (grupoActual) {
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(...GRIS);
       doc.text(latin1(`${grupoActual} (continuación)`), m, y + 3.5); y += 7;
+    }
+  };
+  const grilla = (celdas) => {
+    const gap = 3, wf = (ancho - 2 * gap) / 3;
+    for (let i = 0; i < celdas.length; i += 3) {
+      const fila = celdas.slice(i, i + 3);
+      const hf = Math.max(...fila.map((x) => wf * x.h / x.w));
+      salto(hf + 2);
+      fila.forEach((x, j) => {
+        const xx = m + j * (wf + gap), hh = wf * x.h / x.w;
+        doc.addImage(x.url, 'JPEG', xx, y, wf, hh);
+        if (x.plano) { doc.setDrawColor(200, 200, 200); doc.rect(xx, y, wf, hh); }
+      });
+      y += hf + gap;
     }
   };
   const texto = (t, tam, color = NEGRO, estilo = 'normal', sep = 1.5) => {
@@ -1381,20 +1422,14 @@ async function informePDF(d) {
       texto(lineaUbicacion(p), 9.5, GRIS, 'normal', 0.5);
       if (d.inc.datos) texto(lineaDatos(p), 9.5, GRIS, 'normal', 1);
       // recorte del plano (el ambiente) primero y después las fotos, en una grilla de 3
-      const celdas = [...(it.plano ? [{ ...it.plano, plano: true }] : []), ...it.fotos];
-      if (celdas.length) {
-        const gap = 3, wf = (ancho - 2 * gap) / 3;
-        for (let i = 0; i < celdas.length; i += 3) {
-          const fila = celdas.slice(i, i + 3);
-          const hf = Math.max(...fila.map((x) => wf * x.h / x.w));
-          salto(hf + 2);
-          fila.forEach((x, j) => {
-            const xx = m + j * (wf + gap), hh = wf * x.h / x.w;
-            doc.addImage(x.url, 'JPEG', xx, y, wf, hh);
-            if (x.plano) { doc.setDrawColor(200, 200, 200); doc.rect(xx, y, wf, hh); }
-          });
-          y += hf + gap;
-        }
+      grilla([...(it.plano ? [{ ...it.plano, plano: true }] : []), ...it.fotos]);
+      // en proceso y verificado: cada uno con su texto y sus fotos (el antes y el después)
+      for (const e of it.etapas) {
+        salto(12); y += 1;
+        doc.setFillColor(...COL[e.id]); doc.circle(m + 1.5, y + 2.3, 1.4, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...NEGRO); doc.text(latin1(e.nombre), m + 5, y + 3.5); y += 6;
+        if (e.texto) texto(e.texto, 10, NEGRO, 'normal', 1);
+        grilla(e.fotos);
       }
       if (d.inc.historial) for (const h of p.comentarios || []) texto(`${fechaHora(h.fecha)} · ${h.autor}: ${h.texto}`, 9, GRIS, 'normal', 0.3);
       y += 2; doc.setDrawColor(226, 226, 226); salto(4); doc.line(m, y, W - m, y); y += 5;
@@ -1420,6 +1455,17 @@ async function informeWord(d) {
   const par = (txt, o = {}) => new X.Paragraph({ spacing: { after: o.after ?? 80 }, children: [new X.TextRun({ text: txt, size: (o.tam || 11) * 2, bold: o.bold, color: o.color || '1A1A1A', font: 'Calibri' })] });
   const linea = () => ({ bottom: { style: X.BorderStyle.SINGLE, size: 12, color: ORO, space: 4 } });
   const hijos = [];
+  const grilla = (celdas) => {
+    if (!celdas.length) return;
+    const w = Math.floor((ancho - 16) / 3);
+    for (let i = 0; i < celdas.length; i += 3) {
+      hijos.push(new X.Table({ width: { size: 100, type: X.WidthType.PERCENTAGE }, borders: X.TableBorders.NONE, rows: [new X.TableRow({
+        children: [0, 1, 2].map((j) => new X.TableCell({ width: { size: 33, type: X.WidthType.PERCENTAGE },
+          children: [new X.Paragraph({ children: celdas[i + j] ? [img(celdas[i + j], w)] : [] })] })),
+      })] }));
+    }
+    hijos.push(par('', { after: 60 }));
+  };
   if (c.logo) hijos.push(new X.Paragraph({ spacing: { after: 120 }, children: [img(c.logo, 230)] }));
   hijos.push(par(d.eyebrow.toUpperCase(), { tam: 9, color: GRIS, bold: true, after: 40 }));
   hijos.push(new X.Paragraph({ border: linea(), spacing: { after: 160 }, children: [new X.TextRun({ text: d.titulo, bold: true, size: 36, font: 'Calibri' })] }));
@@ -1446,16 +1492,11 @@ async function informeWord(d) {
       ] }));
       hijos.push(par(lineaUbicacion(p), { tam: 9.5, color: GRIS, after: 40 }));
       if (d.inc.datos) hijos.push(par(lineaDatos(p), { tam: 9.5, color: GRIS, after: 80 }));
-      const celdas = [...(it.plano ? [it.plano] : []), ...it.fotos]; // el ambiente en el plano, después las fotos
-      if (celdas.length) {
-        const w = Math.floor((ancho - 16) / 3);
-        for (let i = 0; i < celdas.length; i += 3) {
-          hijos.push(new X.Table({ width: { size: 100, type: X.WidthType.PERCENTAGE }, borders: X.TableBorders.NONE, rows: [new X.TableRow({
-            children: [0, 1, 2].map((j) => new X.TableCell({ width: { size: 33, type: X.WidthType.PERCENTAGE },
-              children: [new X.Paragraph({ children: celdas[i + j] ? [img(celdas[i + j], w)] : [] })] })),
-          })] }));
-        }
-        hijos.push(par('', { after: 60 }));
+      grilla([...(it.plano ? [it.plano] : []), ...it.fotos]); // el ambiente en el plano, después las fotos
+      for (const e of it.etapas) {
+        hijos.push(new X.Paragraph({ spacing: { before: 80, after: 40 }, keepNext: true, children: [new X.TextRun({ text: `● ${e.nombre}`, bold: true, size: 20, color: COL[e.id], font: 'Calibri' })] }));
+        if (e.texto) hijos.push(par(e.texto, { tam: 10, after: 60 }));
+        grilla(e.fotos);
       }
       if (d.inc.historial) for (const h of p.comentarios || []) hijos.push(par(`${fechaHora(h.fecha)} · ${h.autor}: ${h.texto}`, { tam: 9, color: GRIS, after: 20 }));
     }
