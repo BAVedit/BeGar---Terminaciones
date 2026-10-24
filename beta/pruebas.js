@@ -1,6 +1,6 @@
 /* Pruebas de dptos: checklist de puesta en marcha por nivel (tablero, luces, AA, cocina, termocalefón, baños…).
    - La lista sale de pruebas.json: la misma para todos los dptos; las áreas comunes (quincho, baños, generador) tienen la suya.
-   - Cada ítem se marca Aprueba o No aprueba. Un No aprueba abre un hilo (dónde, qué pasa, fotos, rubro y responsable)
+   - Cada ítem se marca ✓ (aprueba), ✕ (no aprueba) o N/A (no aplica). Un No aprueba abre un hilo (dónde, qué pasa, fotos, rubro y responsable)
      que se actualiza con fecha en cada revisión sin borrar lo anterior. Si se quiere, el problema se marca en el plano.
    - Cada toque es una entrada nueva: en la versión compartida, tabla "pruebas" (supabase/5-pruebas.sql), donde las filas
      solo se agregan; sin nube, en el teléfono. El estado de cada ítem es su última entrada.
@@ -12,6 +12,7 @@ const ESTADOS_ITEM_PR = {
   pendiente: { nombre: 'Pendiente', c: 'var(--linea)' },
   aprueba: { nombre: 'Aprueba', c: 'var(--aprobado)' },
   no_aprueba: { nombre: 'No aprueba', c: 'var(--abierto)' },
+  no_aplica: { nombre: 'No aplica', c: 'var(--tenue)' },
 };
 const ESTADOS_UNIDAD_PR = {
   sin: { nombre: 'Sin revisar', c: 'var(--linea)' },
@@ -58,12 +59,13 @@ const hilosItem = (u, it) => [...new Set(entradasItem(u, it).map((e) => e.hilo).
 
 function resumenUnidadPr(u) {
   const its = itemsDe(u);
-  const r = { total: its.length, ap: 0, no: 0, pend: 0 };
+  const r = { total: its.length, ap: 0, no: 0, na: 0, pend: 0 };
   for (const it of its) {
     const e = estadoItemPr(u, it.id);
-    if (e === 'aprueba') r.ap++; else if (e === 'no_aprueba') r.no++; else r.pend++;
+    if (e === 'aprueba') r.ap++; else if (e === 'no_aprueba') r.no++; else if (e === 'no_aplica') r.na++; else r.pend++;
   }
-  r.estado = r.total && r.ap === r.total ? 'aprobado' : r.no ? 'obs' : r.ap ? 'revision' : 'sin';
+  r.listos = r.ap + r.na; // N/A cuenta como resuelto
+  r.estado = r.total && r.listos === r.total ? 'aprobado' : r.no ? 'obs' : r.listos ? 'revision' : 'sin';
   return r;
 }
 
@@ -202,7 +204,7 @@ async function vPruebas(main, params) {
   const aprobadas = nv.unidades.filter((x) => resumenUnidadPr(x).estado === 'aprobado').length;
   const pasa = (it) => { const e = estadoItemPr(u, it.id); return filtro === 'todos' || (filtro === 'pend' ? e === 'pendiente' : e === 'no_aprueba'); };
   const grupos = sistemasDe(u).map((s) => ({ s, its: s.items.map((it) => ({ ...it, rubro: it.rubro || s.rubro })) }))
-    .map((g) => ({ ...g, ap: g.its.filter((it) => estadoItemPr(u, it.id) === 'aprueba').length, ver: g.its.filter(pasa) })).filter((g) => g.ver.length);
+    .map((g) => ({ ...g, ap: g.its.filter((it) => ['aprueba', 'no_aplica'].includes(estadoItemPr(u, it.id))).length, ver: g.its.filter(pasa) })).filter((g) => g.ver.length);
   main.innerHTML = `
   <div class="pagina pr">
     <div class="selector-nivel"><div class="niveles-scroll">${niveles.map((n) => `<button class="nivel-btn" data-nv="${n.id}" aria-current="${n.id === nv.id}">${n.id === NIVEL_COMUNES ? 'Comunes' : n.id}</button>`).join('')}</div></div>
@@ -210,11 +212,11 @@ async function vPruebas(main, params) {
     <div class="pr-unidades" role="tablist">${nv.unidades.map((x) => {
       const ru = resumenUnidadPr(x);
       return `<button role="tab" data-u="${esc(x)}" aria-selected="${x === u}" style="--c:${ESTADOS_UNIDAD_PR[ru.estado].c}" title="${ESTADOS_UNIDAD_PR[ru.estado].nombre}">
-        <b>${esc(nombreUnidadPr(x))}</b><small class="num">${ru.ap}/${ru.total}${ru.no ? ` · <span class="pr-no-txt">${ru.no} ✕</span>` : ''}</small></button>`;
+        <b>${esc(nombreUnidadPr(x))}</b><small class="num">${ru.listos}/${ru.total}${ru.no ? ` · <span class="pr-no-txt">${ru.no} ✕</span>` : ''}</small></button>`;
     }).join('')}</div>
     <div class="pr-estado-u" style="--c:${ESTADOS_UNIDAD_PR[r.estado].c}">${esc(nombreUnidadPr(u))}: <b>${ESTADOS_UNIDAD_PR[r.estado].nombre}</b></div>
     <div class="kpis">
-      <div class="kpi ok"><b>${r.ap}</b><span>aprueban</span></div>
+      <div class="kpi ok"><b>${r.ap}</b><span>aprueban${r.na ? ` · ${r.na} N/A` : ''}</span></div>
       <div class="kpi alerta"><b>${r.no}</b><span>no aprueban</span></div>
       <div class="kpi"><b>${r.pend}</b><span>pendientes</span></div>
     </div>
@@ -225,7 +227,7 @@ async function vPruebas(main, params) {
       <div class="grupo-cab"><b>${esc(g.s.nombre)}</b><span class="nota num">${g.ap}/${g.its.length}</span></div>
       <div class="lista">${g.ver.map((it) => filaItemPr(nv.id, u, it)).join('')}</div>
     </div>`).join('') || `<p class="vacio-txt">${filtro === 'no' ? 'Nada observado en ' : 'No quedan pendientes en '}${esc(nombreUnidadPr(u))}.</p>`}
-    <p class="nota">Aprueba es un toque. No aprueba abre un hilo con dónde, qué pasa, fotos y responsable; cada revisión nueva se suma al hilo con su fecha.</p>
+    <p class="nota">✓ y N/A son un toque. ✕ abre un hilo con dónde, qué pasa, fotos y responsable; cada revisión nueva se suma al hilo con su fecha.</p>
   </div>`;
   const scroll = main.querySelector('.niveles-scroll'), act = scroll.querySelector('[aria-current="true"]');
   if (act) scroll.scrollLeft = act.offsetLeft - scroll.offsetLeft - (scroll.clientWidth - act.offsetWidth) / 2;
@@ -234,7 +236,8 @@ async function vPruebas(main, params) {
   main.querySelectorAll('[data-nv]').forEach((b) => (b.onclick = () => ir('pruebas', { nivel: b.dataset.nv, filtro }, true)));
   main.querySelectorAll('[data-u]').forEach((b) => (b.onclick = () => ir('pruebas', { nivel: nv.id, unidad: b.dataset.u, filtro }, true)));
   main.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => ir('pruebas', { ...params, filtro: b.dataset.f }, true)));
-  main.querySelectorAll('[data-si]').forEach((b) => (b.onclick = () => tocarAprueba(nv.id, u, b.dataset.si)));
+  main.querySelectorAll('[data-si]').forEach((b) => (b.onclick = () => tocarResuelto(nv.id, u, b.dataset.si, 'aprueba')));
+  main.querySelectorAll('[data-na]').forEach((b) => (b.onclick = () => tocarResuelto(nv.id, u, b.dataset.na, 'no_aplica')));
   main.querySelectorAll('[data-no]').forEach((b) => (b.onclick = () => tocarNoAprueba(nv.id, u, b.dataset.no)));
   main.querySelectorAll('[data-hist]').forEach((b) => (b.onclick = () => verHistorialPr(nv.id, u, b.dataset.hist)));
 }
@@ -251,26 +254,28 @@ function filaItemPr(nv, u, it) {
     <span class="fila-t"><span class="pr-n num">${it.n}</span>${esc(it.nombre)}</span>
     <span class="fila-s"><span>${esc(it.como || '')}</span></span>
     <span class="pr-botones">
-      <button type="button" class="pr-si" data-si="${it.id}" aria-pressed="${e === 'aprueba'}">✓ Aprueba</button>
-      <button type="button" class="pr-no" data-no="${it.id}" aria-pressed="${e === 'no_aprueba'}">✕ No aprueba</button>
+      <button type="button" class="pr-si" data-si="${it.id}" aria-pressed="${e === 'aprueba'}" aria-label="Aprueba" title="Aprueba">✓</button>
+      <button type="button" class="pr-no" data-no="${it.id}" aria-pressed="${e === 'no_aprueba'}" aria-label="No aprueba" title="No aprueba">✕</button>
+      <button type="button" class="pr-na" data-na="${it.id}" aria-pressed="${e === 'no_aplica'}" aria-label="No aplica" title="No aplica">N/A</button>
     </span>
     ${hilo ? `<button type="button" class="pr-hilo" data-no="${it.id}">
         <b>Hilo abierto${lugar ? ' · ' + esc(lugar) : ''}</b>
         <span>${esc((ult.texto || primera.texto || 'Sin descripción').slice(0, 110))}</span>
         <small>${enHilo.length} ${enHilo.length === 1 ? 'entrada' : 'entradas'} · última ${fechaHora(ult.fecha)} · ${esc(ult.autor)}${(primera.responsable || ult.responsable) ? ' · ' + esc(ult.responsable || primera.responsable) : ''}${enHilo.some((x) => x._pendiente) ? ' · sin subir' : ''}</small>
-      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? 'Aprobó' : 'Marcó'} ${esc(ult.autor)} · ${fechaHora(ult.fecha)}${ult._pendiente ? ' · sin subir' : ''}</span>
+      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? 'Aprobó' : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(ult.autor)} · ${fechaHora(ult.fecha)}${ult._pendiente ? ' · sin subir' : ''}</span>
         ${nHilos ? `<button type="button" class="btn-txt" data-hist="${it.id}">Historial (${nHilos} ${nHilos === 1 ? 'hilo' : 'hilos'})</button>` : ''}</span>` : ''}
   </div>`;
 }
 
 /* ---------- acciones ---------- */
-function tocarAprueba(nv, u, itemId) {
+/** ✓ o N/A: un toque. Con un hilo abierto, se cierra desde el hilo; tocar de nuevo ofrece volver a pendiente. */
+function tocarResuelto(nv, u, itemId, estado) {
   const it = itemPr(u, itemId);
   const hilo = hiloAbierto(u, itemId);
-  if (hilo) return abrirHiloPr(nv, u, itemId, hilo, 'aprueba');
+  if (hilo) return abrirHiloPr(nv, u, itemId, hilo, estado);
   const ult = ultimaPr(u, itemId);
-  if (ult && ult.estado === 'aprueba') {
-    abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2><p>${esc(nombreUnidadPr(u))} · aprobó ${esc(ult.autor)} el ${fechaHora(ult.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+  if (ult && ult.estado === estado) {
+    abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2><p>${esc(nombreUnidadPr(u))} · ${estado === 'aprueba' ? 'aprobó' : 'marcó N/A'} ${esc(ult.autor)} el ${fechaHora(ult.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
       <p class="nota">Si lo marcaste por error, volvé a dejarlo pendiente. Queda anotado en el historial.</p>
       <div class="acciones"><button class="btn ancho" id="pr-desmarcar">Volver a pendiente</button></div></div>`, (h) => {
       $('[data-cerrar]', h).onclick = cerrarHoja;
@@ -278,7 +283,7 @@ function tocarAprueba(nv, u, itemId) {
     });
     return;
   }
-  almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: 'aprueba' }));
+  almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado }));
   render();
 }
 
@@ -357,16 +362,17 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
     ${pinesHilo.length ? `<div class="acciones">${pinesHilo.map((p) => `<button class="btn" data-pin="${p.id}">Ver en el plano · ${esc(codigoPin(p))}</button>`).join('')}</div>` : ''}
     <div class="seccion-t">Historial (${lista.length})</div>
     <ol class="pr-linea">${lista.map((x, i) => `<li class="pr-${x.estado}">
-      <div class="pr-linea-cab"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[x.estado].c}">${i === 0 ? 'No aprueba' : x.estado === 'aprueba' ? 'Aprueba' : x.estado === 'pendiente' ? 'Pendiente' : 'Sigue sin aprobar'}</span>
+      <div class="pr-linea-cab"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[x.estado].c}">${i === 0 ? 'No aprueba' : x.estado === 'aprueba' ? 'Aprueba' : x.estado === 'no_aplica' ? 'No aplica' : x.estado === 'pendiente' ? 'Pendiente' : 'Sigue sin aprobar'}</span>
         <small>${fechaHora(x.fecha)} · ${esc(x.autor)}${x._pendiente ? ' · sin subir' : ''}</small></div>
       ${x.texto ? `<p>${esc(x.texto)}</p>` : ''}
       ${i > 0 && x.responsable && x.responsable !== lista[i - 1].responsable ? `<p class="nota">Responsable: ${esc(x.responsable)}</p>` : ''}
       ${(x.fotos || []).length ? `<div class="fotos">${x.fotos.map((f) => fotoMini(f, it.nombre)).join('')}</div>` : ''}
     </li>`).join('')}</ol>
     ${abierto ? `<div class="seccion-t">Nueva revisión</div>
-      <div class="estados alcance pr-elige" id="pr-est" style="grid-template-columns:1fr 1fr">
-        <button type="button" data-est="no_aprueba" aria-pressed="${preset !== 'aprueba'}">✕ Sigue sin aprobar</button>
-        <button type="button" data-est="aprueba" aria-pressed="${preset === 'aprueba'}">✓ Aprueba</button></div>
+      <div class="estados alcance pr-elige" id="pr-est">
+        <button type="button" data-est="no_aprueba" aria-pressed="${preset === 'no_aprueba'}">✕ Sigue sin aprobar</button>
+        <button type="button" data-est="aprueba" aria-pressed="${preset === 'aprueba'}">✓ Aprueba</button>
+        <button type="button" data-est="no_aplica" aria-pressed="${preset === 'no_aplica'}">N/A</button></div>
       <div class="campo todo"><label for="pr-txt">Qué se vio</label><textarea id="pr-txt" placeholder="Ej.: cambiaron el flotante, sigue corriendo de a ratos"></textarea></div>
       <div class="campo todo"><span class="lbl">Fotos</span><div class="fotos" id="pr-fotos"></div></div>
       <div class="campo todo"><label for="pr-resp">Responsable</label><input id="pr-resp" list="pr-resp-l" value="${esc(ult.responsable || primera.responsable || '')}"><datalist id="pr-resp-l">${responsablesPr(ult.rubro || primera.rubro).map((x) => `<option value="${esc(x)}">`).join('')}</datalist></div>
@@ -380,7 +386,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
       cerrarHoja(); ir('visor', { nivel: p.nivel, unidad: p.unidad, capa: p.recorte, abrirPin: p.id });
     }));
     if (!abierto) return;
-    let est = preset === 'aprueba' ? 'aprueba' : 'no_aprueba';
+    let est = preset;
     h.querySelectorAll('[data-est]').forEach((b) => (b.onclick = () => { est = b.dataset.est; h.querySelectorAll('[data-est]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
     fotosEditables($('#pr-fotos', h), fotos, () => `${nombreUnidadPr(u)} · ${it.nombre}`);
     $('#pr-ok', h).onclick = () => {
@@ -390,7 +396,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
         rubro: ult.rubro || primera.rubro || '', responsable: $('#pr-resp', h).value.trim() });
       almacenPr.agregar(e);
       cerrarHoja();
-      aviso(est === 'aprueba' ? 'Aprobado: el hilo queda cerrado' : 'Revisión guardada en el hilo');
+      aviso(est === 'aprueba' ? 'Aprobado: el hilo queda cerrado' : est === 'no_aplica' ? 'No aplica: el hilo queda cerrado' : 'Revisión guardada en el hilo');
       render();
     };
     const bp = $('#pr-plano', h); if (bp) bp.onclick = () => { cerrarHoja(); marcarEnPlanoPr(nv, u, it, ult.texto ? ult : primera); };
@@ -408,7 +414,7 @@ function verHistorialPr(nv, u, itemId) {
   const hilos = hilosItem(u, itemId).map((h) => ({ h, es: entradasHilo(h) })).reverse();
   abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(it.nombre)}</h2><p>${esc(nombreUnidadPr(u))} · ${hilos.length} ${hilos.length === 1 ? 'hilo' : 'hilos'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="lista">${hilos.map(({ h, es }) => `<button class="fila" data-h="${h}"><span class="fila-t">${fechaCorta(es[0].fecha)}: ${esc((es[0].texto || 'Sin descripción').slice(0, 80))}</span>
-      <span class="fila-der"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[es.at(-1).estado].c}">${es.at(-1).estado === 'aprueba' ? 'Cerrado' : 'Abierto'}</span></span>
+      <span class="fila-der"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[es.at(-1).estado].c}">${es.at(-1).estado === 'no_aprueba' ? 'Abierto' : 'Cerrado'}</span></span>
       <span class="fila-s"><span>${es.length} ${es.length === 1 ? 'entrada' : 'entradas'}</span><span>${esc(es[0].responsable || '')}</span></span></button>`).join('')}</div></div>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     h.querySelectorAll('[data-h]').forEach((b) => (b.onclick = () => abrirHiloPr(nv, u, itemId, b.dataset.h)));

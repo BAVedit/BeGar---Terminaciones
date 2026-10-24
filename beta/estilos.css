@@ -476,8 +476,12 @@ body:has(.acceso) .barra-logo { display: none; }
 .pr-item.pr-aprueba { border-left-color: var(--aprobado); }
 .pr-item.pr-no_aprueba { border-left-color: var(--abierto); }
 .pr-n { display: inline-block; min-width: 26px; color: var(--tenue); font-weight: 600; }
-.pr-botones { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.pr-botones button { min-height: 44px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); color: var(--tinta); font: 600 16px/1 var(--f-titulo); }
+.pr-botones { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.pr-botones button { min-height: 44px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); color: var(--tinta); font: 700 20px/1 var(--f-titulo); }
+.pr-botones .pr-na { font-size: 16px; }
+.pr-botones .pr-na[aria-pressed="true"] { background: var(--tenue); border-color: var(--tenue); color: #fff; }
+.pr-item.pr-no_aplica { border-left-color: var(--tenue); }
+.pr-item.pr-no_aplica .fila-t { color: var(--tenue); }
 .pr-botones .pr-si[aria-pressed="true"] { background: var(--aprobado); border-color: var(--aprobado); color: #fff; }
 .pr-botones .pr-no[aria-pressed="true"] { background: var(--abierto); border-color: var(--abierto); color: #fff; }
 .pr-meta { align-items: center; }
@@ -492,11 +496,12 @@ body:has(.acceso) .barra-logo { display: none; }
 .pr-linea li { position: relative; display: grid; gap: 6px; }
 .pr-linea li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--abierto); border: 2px solid var(--sup); }
 .pr-linea li.pr-aprueba::before { background: var(--aprobado); }
-.pr-linea li.pr-pendiente::before { background: var(--tenue); }
+.pr-linea li.pr-pendiente::before, .pr-linea li.pr-no_aplica::before { background: var(--tenue); }
 .pr-linea p { margin: 0; font-size: 15px; white-space: pre-line; overflow-wrap: anywhere; }
 .pr-linea-cab { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 .pr-linea-cab small { color: var(--tenue); font-size: 12px; }
 .pr-elige button[data-est="aprueba"][aria-pressed="true"] { background: var(--aprobado); border-color: var(--aprobado); color: #fff; }
+.pr-elige button[data-est="no_aplica"][aria-pressed="true"] { background: var(--tenue); border-color: var(--tenue); color: #fff; }
 .pr-elige button[data-est="no_aprueba"][aria-pressed="true"] { background: var(--abierto); border-color: var(--abierto); color: #fff; }
 /* cualquier miembro (también los lectores) carga pruebas */
 .solo-lectura .pr-hoja .acciones { display: flex !important; }
