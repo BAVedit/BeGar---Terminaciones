@@ -42,20 +42,36 @@
    "Balcón"
   ]
  ],
- "banos_por_dpto": {
-  "_comentario": "Cantidad de baños de cada dpto según la planta tipo (letra del dpto). Con 2 baños aparecen Baño 1 y Baño 2; los ítems del Baño 2 llevan el sufijo -2.",
-  "Planta Tipo 1": {
-   "A": 2,
-   "B": 2,
-   "C": 1,
-   "D": 2,
-   "E": 1
+ "tipologias": {
+  "_comentario": "Tipología de cada dpto (por planta tipo y letra) y cuántos baños tiene. Con 2 baños aparecen Baño 1 y Baño 2 (los ítems del Baño 2 llevan el sufijo -2). Un ítem con 'tipos' aparece solo en esas tipologías; 'por_tipo' cambia su nombre o su texto en una tipología.",
+  "por_dpto": {
+   "Planta Tipo 1": {
+    "A": "2dorm",
+    "B": "2dorm",
+    "C": "1dorm",
+    "D": "1dorm-2banos",
+    "E": "1dorm"
+   },
+   "Planta Tipo 2": {
+    "A": "2dorm",
+    "B": "2dorm",
+    "C": "2dorm",
+    "D": "2dorm"
+   }
   },
-  "Planta Tipo 2": {
-   "A": 2,
-   "B": 2,
-   "C": 2,
-   "D": 2
+  "tipos": {
+   "2dorm": {
+    "nombre": "2 dormitorios",
+    "banos": 2
+   },
+   "1dorm": {
+    "nombre": "1 dormitorio",
+    "banos": 1
+   },
+   "1dorm-2banos": {
+    "nombre": "1 dormitorio con 2 baños",
+    "banos": 2
+   }
   }
  },
  "checklists": {
@@ -332,35 +348,134 @@
     ]
    },
    {
-    "id": "aberturas",
-    "nombre": "Aberturas",
+    "id": "carp-madera",
+    "nombre": "Carpintería de madera",
+    "rubro": "carp-madera",
+    "items": [
+     {
+      "id": "mad-acceso",
+      "nombre": "Puerta de acceso principal",
+      "como": "A-01 · abre y cierra sin rozar, no vibra, tiene tope; llavea con todas las llaves entregadas"
+     },
+     {
+      "id": "mad-dorm1",
+      "nombre": "Puerta del dormitorio suite",
+      "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope",
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Puerta del dormitorio"
+       },
+       "1dorm-2banos": {
+        "nombre": "Puerta del dormitorio (vestidor)"
+       }
+      }
+     },
+     {
+      "id": "mad-dorm2",
+      "nombre": "Puerta del dormitorio 2",
+      "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope",
+      "tipos": [
+       "2dorm"
+      ]
+     },
+     {
+      "id": "mad-bano1",
+      "nombre": "Puerta del baño 1 (suite)",
+      "como": "A-03 · abre y cierra sin rozar, no vibra, tiene tope",
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Puerta del baño",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       },
+       "1dorm-2banos": {
+        "nombre": "Puerta del baño 1 (personal)",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       }
+      }
+     },
+     {
+      "id": "mad-bano2",
+      "nombre": "Puerta del baño 2",
+      "como": "A-05 · abre y cierra sin rozar, no vibra, tiene tope",
+      "tipos": [
+       "2dorm",
+       "1dorm-2banos"
+      ],
+      "por_tipo": {
+       "1dorm-2banos": {
+        "nombre": "Puerta del baño 2 (social)",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "id": "carp-aluminio",
+    "nombre": "Carpintería de aluminio",
     "rubro": "carp-aluminio",
     "items": [
      {
-      "id": "abe-puertas",
-      "nombre": "Puertas",
-      "como": "Abren y cierran sin rozar, cierran sin llavear, no vibran, tienen tope",
-      "rubro": "carp-madera",
-      "n": 36
+      "id": "alu-sala-balcon",
+      "nombre": "Abertura sala - balcón",
+      "como": "PV04-A · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "por_tipo": {
+       "1dorm": {
+        "como": "PV-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       },
+       "1dorm-2banos": {
+        "como": "PV-04.B · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
      },
      {
-      "id": "abe-cerraduras",
-      "nombre": "Cerraduras",
-      "como": "Llavean con todas las llaves entregadas",
-      "rubro": "carp-madera",
-      "n": 37
+      "id": "alu-dorm1-balcon",
+      "nombre": "Abertura dormitorio suite - balcón",
+      "como": "PV-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm-2banos"
+      ],
+      "por_tipo": {
+       "1dorm-2banos": {
+        "nombre": "Abertura dormitorio - balcón",
+        "como": "PV-04.B · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
      },
      {
-      "id": "abe-ventanas",
-      "nombre": "Ventanas",
-      "como": "Corren, traban, sin vibrar ni hacer ruido",
-      "n": 38
+      "id": "alu-dorm-ventana",
+      "nombre": "Ventana dormitorio 2 - área técnica",
+      "como": "VA-01 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm"
+      ],
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Ventana dormitorio - área técnica",
+        "como": "VA-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
      },
      {
-      "id": "abe-agua",
-      "nombre": "Prueba de agua en ventanas",
-      "como": "Manguera desde afuera: no entra agua y desagotan los marcos",
-      "n": 39
+      "id": "alu-cocina-tecnica",
+      "nombre": "Abertura cocina - área técnica",
+      "como": "PV-05 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm"
+      ]
+     },
+     {
+      "id": "alu-lavadero",
+      "nombre": "Abertura de lavadero",
+      "como": "PV-06 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "por_tipo": {
+       "1dorm-2banos": {
+        "como": "PV-10 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
      }
     ]
    },

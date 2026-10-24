@@ -34,24 +34,29 @@ const nivelesPr = () => [
 const nivelPr = (id) => nivelesPr().find((n) => n.id === id);
 const comunPr = (u) => PR.comunes.find((c) => c.id === u);
 const nombreUnidadPr = (u) => (comunPr(u) ? comunPr(u).nombre : u);
-// Baños del dpto según su planta tipo: con 2 baños el sistema "banos" se duplica (Baño 1 conserva los ids,
-// Baño 2 les suma -2) y los números de ítem se corren.
-function banosDe(u) {
+// Tipología del dpto según su planta tipo y su letra (pruebas.json → tipologias). Con 2 baños el sistema "banos"
+// se duplica (Baño 1 conserva los ids, Baño 2 les suma -2); los ítems con "tipos" salen solo en esas tipologías
+// y "por_tipo" les cambia nombre o texto. Los números de ítem se corren.
+function tipologiaDe(u) {
   const nv = M.niveles.find((n) => (n.unidades || []).includes(u));
-  const tabla = (PR.banos_por_dpto || {})[nv && nv.tipo] || {};
-  return tabla[u.replace(/^\d+/, '')] || 1;
+  const tl = PR.tipologias || {};
+  const t = ((tl.por_dpto || {})[nv && nv.tipo] || {})[u.replace(/^\d+/, '')];
+  return { id: t, ...((tl.tipos || {})[t] || {}) };
 }
 const cacheSistemasPr = new Map();
 function sistemasDe(u) {
   if (comunPr(u)) return PR.checklists[comunPr(u).checklist] || [];
   if (cacheSistemasPr.has(u)) return cacheSistemasPr.get(u);
-  const nb = banosDe(u);
+  const tp = tipologiaDe(u);
+  const nb = tp.banos || 1;
   let n = 0;
   const lista = (PR.checklists.dpto || []).flatMap((s) => {
-    if (s.id !== 'banos' || nb < 2) return [s];
+    const items = s.items.filter((it) => !it.tipos || it.tipos.includes(tp.id))
+      .map((it) => ({ ...it, ...((it.por_tipo || {})[tp.id] || {}) }));
+    if (s.id !== 'banos' || nb < 2) return [{ ...s, items }];
     return Array.from({ length: nb }, (_, i) => ({ ...s, id: i ? `${s.id}-${i + 1}` : s.id, nombre: `${s.nombre} ${i + 1}`,
-      items: s.items.map((it) => ({ ...it, id: i ? `${it.id}-${i + 1}` : it.id, lugar: `${s.nombre} ${i + 1}` })) }));
-  }).map((s) => ({ ...s, items: s.items.map((it) => ({ ...it, n: ++n })) }));
+      items: items.map((it) => ({ ...it, id: i ? `${it.id}-${i + 1}` : it.id, lugar: `${s.nombre} ${i + 1}` })) }));
+  }).filter((s) => s.items.length).map((s) => ({ ...s, items: s.items.map((it) => ({ ...it, n: ++n })) }));
   cacheSistemasPr.set(u, lista);
   return lista;
 }
