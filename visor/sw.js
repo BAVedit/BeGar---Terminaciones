@@ -1,5 +1,5 @@
 // Service worker: la app abre sin señal y los planos ya vistos quedan guardados.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const BASE = ['./', 'index.html', 'app.js', 'estilos.css', 'vendor/leaflet.js', 'vendor/leaflet.css',
   'datos/manifest.json', 'manifest.webmanifest', 'iconos/icono-192.png'];
 
@@ -29,9 +29,10 @@ self.addEventListener('fetch', e => {
     }));
     return;
   }
-  // Código y datos: primero red (así llegan las mejoras), caché si no hay señal.
+  // Código y datos: primero red (así llegan las mejoras), caché si no hay señal. no-cache: el navegador pregunta
+  // siempre si cambió (GitHub Pages deja guardar 10 min y una publicación tardaba en verse).
   if (url.origin === location.origin) {
-    e.respondWith(fetch(req).then(res => {
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(res => {
       if (res.ok) caches.open('base-' + VERSION).then(c => c.put(req, res.clone()));
       return res;
     }).catch(() => caches.match(req).then(r => r || caches.match('index.html'))));
