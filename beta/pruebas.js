@@ -90,6 +90,11 @@ const estadoItemPr = (u, it) => (ultimaPr(u, it) || { estado: 'pendiente' }).est
 const hiloAbierto = (u, it) => { const e = ultimaPr(u, it); return e && e.estado === 'no_aprueba' ? e.hilo : null; };
 const entradasHilo = (hilo) => entradasPr.filter((e) => e.hilo === hilo).sort(porFecha);
 const hilosItem = (u, it) => [...new Set(entradasItem(u, it).map((e) => e.hilo).filter(Boolean))];
+/** Revisiones de un hilo: cada prueba (✓, ✕ o N/A) cuenta; las observaciones y los "volver a pendiente" no. */
+const esRevisionPr = (e) => ['aprueba', 'no_aprueba', 'no_aplica'].includes(e.estado) && !e.obs;
+const revisionesHilo = (hilo) => entradasHilo(hilo).filter(esRevisionPr);
+const rechazosHilo = (hilo) => revisionesHilo(hilo).filter((e) => e.estado === 'no_aprueba').length;
+const vecesTxt = (n) => `${n} ${n === 1 ? 'vez' : 'veces'}`;
 
 function resumenUnidadPr(u) {
   const its = itemsDe(u);
@@ -295,10 +300,10 @@ function filaItemPr(nv, u, it) {
       <button type="button" class="pr-na" data-na="${it.id}" aria-pressed="${e === 'no_aplica'}" aria-label="No aplica" title="No aplica">N/A</button>
     </span>
     ${hilo ? `<button type="button" class="pr-hilo" data-no="${it.id}">
-        <b>Hilo abierto${lugar ? ' · ' + esc(lugar) : ''}</b>
+        <b>Hilo abierto${lugar ? ' · ' + esc(lugar) : ''} · rechazado ${vecesTxt(rechazosHilo(hilo))}</b>
         <span>${esc((ult.texto || primera.texto || 'Sin descripción').slice(0, 110))}</span>
         <small>${enHilo.length} ${enHilo.length === 1 ? 'entrada' : 'entradas'} · última ${fechaHora(ult.fecha)} · ${esc(ult.autor)}${(primera.responsable || ult.responsable) ? ' · ' + esc(ult.responsable || primera.responsable) : ''}${enHilo.some((x) => x._pendiente) ? ' · sin subir' : ''}</small>
-      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? (ult.hilo ? 'Cerró' : 'Aprobó') : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(desdePr(u, it.id).autor)} el ${fechaHora(desdePr(u, it.id).fecha)}${ult._pendiente ? ' · sin subir' : ''}</span>
+      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? (ult.hilo ? 'Cerró' : 'Aprobó') : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(desdePr(u, it.id).autor)} el ${fechaHora(desdePr(u, it.id).fecha)}${ult.hilo ? ` · ${e === 'aprueba' ? 'aprobó' : 'cerró'} en la ${revisionesHilo(ult.hilo).length}ª revisión (rechazado ${vecesTxt(rechazosHilo(ult.hilo))})` : ''}${ult._pendiente ? ' · sin subir' : ''}</span>
         <button type="button" class="btn-txt" data-obs="${it.id}">${ult.texto ? 'Editar observación' : '＋ Observación'}</button>
         ${nHilos ? `<button type="button" class="btn-txt" data-hist="${it.id}">Historial (${nHilos} ${nHilos === 1 ? 'hilo' : 'hilos'})</button>` : ''}</span>
         ${ult.texto ? `<span class="fila-s pr-obs"><span>${esc(ult.texto)}${ult.texto && ult !== desdePr(u, it.id) ? ` <small>· ${esc(ult.autor)}, ${fechaHora(ult.fecha)}</small>` : ''}</span></span>` : ''}` : ''}
@@ -331,7 +336,7 @@ function hojaResueltoPr(nv, u, itemId) {
     $('#pr-obs-ok', h).onclick = () => {
       const texto = $('#pr-obs', h).value.trim();
       if (texto === (ult.texto || '')) { cerrarHoja(); return; }
-      almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: ult.estado, hilo: ult.hilo || null, texto }));
+      almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: ult.estado, hilo: ult.hilo || null, texto, obs: true }));
       cerrarHoja(); render();
     };
     $('#pr-desmarcar', h).onclick = () => { almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: 'pendiente' })); cerrarHoja(); render(); };
@@ -405,7 +410,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
   const fotos = [];
   const pintar = () => abrirHoja(`<div class="pr-hoja">
     <div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2>
-      <p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ítem ${it.n} · ${abierto ? 'hilo abierto' : 'hilo cerrado'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+      <p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ítem ${it.n} · ${abierto ? 'hilo abierto' : `cerrado el ${fechaHora((revisionesHilo(hilo).at(-1) || ult).fecha)}, en la ${revisionesHilo(hilo).length}ª revisión`}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="pr-datos">
       ${[...(primera.locales || []).map(nombreLocal), primera.lugar].filter(Boolean).length ? `<span>Dónde: <b>${esc([...(primera.locales || []).map(nombreLocal), primera.lugar].filter(Boolean).join(', '))}</b></span>` : ''}
       <span>Con quién verlo: <b>${esc((rubro(ult.rubro || primera.rubro) || {}).nombre || 'sin rubro')}${(ult.responsable || primera.responsable) ? ' · ' + esc(ult.responsable || primera.responsable) : ''}</b></span>
@@ -413,13 +418,13 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
     ${pinesHilo.length ? `<div class="acciones">${pinesHilo.map((p) => `<button class="btn" data-pin="${p.id}">Ver en el plano · ${esc(codigoPin(p))}</button>`).join('')}</div>` : ''}
     <div class="seccion-t">Historial (${lista.length})</div>
     <ol class="pr-linea">${lista.map((x, i) => `<li class="pr-${x.estado}">
-      <div class="pr-linea-cab"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[x.estado].c}">${i === 0 ? 'No aprueba' : x.estado === 'aprueba' ? 'Aprueba' : x.estado === 'no_aplica' ? 'No aplica' : x.estado === 'pendiente' ? 'Pendiente' : 'Sigue sin aprobar'}</span>
+      <div class="pr-linea-cab"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[x.estado].c}">${x.obs ? 'Observación' : x.estado === 'pendiente' ? 'Pendiente' : `${lista.slice(0, i + 1).filter(esRevisionPr).length}ª revisión · ${x.estado === 'aprueba' ? 'Aprueba' : x.estado === 'no_aplica' ? 'No aplica' : 'No aprueba'}`}</span>
         <small>${fechaHora(x.fecha)} · ${esc(x.autor)}${x._pendiente ? ' · sin subir' : ''}</small></div>
       ${x.texto ? `<p>${esc(x.texto)}</p>` : ''}
       ${i > 0 && x.responsable && x.responsable !== lista[i - 1].responsable ? `<p class="nota">Responsable: ${esc(x.responsable)}</p>` : ''}
       ${(x.fotos || []).length ? `<div class="fotos">${x.fotos.map((f) => fotoMini(f, nombrePr(it))).join('')}</div>` : ''}
     </li>`).join('')}</ol>
-    ${abierto ? `<div class="seccion-t">Nueva revisión</div>
+    ${abierto ? `<div class="seccion-t">Nueva revisión (${revisionesHilo(hilo).length + 1}ª) · rechazado ${vecesTxt(rechazosHilo(hilo))} hasta ahora</div>
       <div class="estados alcance pr-elige" id="pr-est">
         <button type="button" data-est="no_aprueba" aria-pressed="${preset === 'no_aprueba'}">✕ Sigue sin aprobar</button>
         <button type="button" data-est="aprueba" aria-pressed="${preset === 'aprueba'}">✓ Aprueba</button>
@@ -466,7 +471,7 @@ function verHistorialPr(nv, u, itemId) {
   abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2><p>${esc(nombreUnidadPr(u))} · ${hilos.length} ${hilos.length === 1 ? 'hilo' : 'hilos'}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
     <div class="lista">${hilos.map(({ h, es }) => `<button class="fila" data-h="${h}"><span class="fila-t">${fechaCorta(es[0].fecha)}: ${esc((es[0].texto || 'Sin descripción').slice(0, 80))}</span>
       <span class="fila-der"><span class="estado-pill" style="--c:${ESTADOS_ITEM_PR[es.at(-1).estado].c}">${es.at(-1).estado === 'no_aprueba' ? 'Abierto' : 'Cerrado'}</span></span>
-      <span class="fila-s"><span>${es.length} ${es.length === 1 ? 'entrada' : 'entradas'}</span><span>${esc(es[0].responsable || '')}</span></span></button>`).join('')}</div></div>`, (h) => {
+      <span class="fila-s"><span>${revisionesHilo(h).length} revisiones · rechazado ${vecesTxt(rechazosHilo(h))}${es.at(-1).estado === 'no_aprueba' ? '' : ` · cerrado ${fechaCorta((revisionesHilo(h).at(-1) || es.at(-1)).fecha)}`}</span><span>${esc(es[0].responsable || '')}</span></span></button>`).join('')}</div></div>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     h.querySelectorAll('[data-h]').forEach((b) => (b.onclick = () => abrirHiloPr(nv, u, itemId, b.dataset.h)));
   });
