@@ -515,3 +515,5 @@ body:has(.acceso) .barra-logo { display: none; }
 .rep-etapa { margin-top: 10px; }
 .rep-etapa h5 { font-size: 14px; margin-bottom: 4px; }
 .rep-etapa p { margin: 0 0 6px; }
+.pr-obs { display: block; margin-top: 4px; padding: 6px 10px; border-left: 3px solid var(--linea); color: var(--tinta); }
+.pr-obs small { color: var(--tenue); }
