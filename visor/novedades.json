@@ -5,7 +5,8 @@
     "titulo": "Pruebas: observaciones",
     "items": [
       "Cada ítem aprobado o con N/A muestra quién y cuándo lo marcó, y tiene \"＋ Observación\" para dejar un comentario. Queda guardado con su fecha.",
-      "Arriba de la checklist se ve la tipología del dpto (por ejemplo 2 dormitorios) y la versión de la lista."
+      "Arriba de la checklist se ve la tipología del dpto (por ejemplo 2 dormitorios) y la versión de la lista.",
+      "Re-prueba: cada revisión de un ✕ se numera (1ª, 2ª, 3ª…). Al aprobar, el ítem dice en qué revisión aprobó, cuántas veces fue rechazado y la fecha de cierre."
     ]
   },
   {
