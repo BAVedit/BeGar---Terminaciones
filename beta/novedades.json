@@ -1,5 +1,14 @@
 [
   {
+    "id": "2026-10-26",
+    "fecha": "2026-10-26",
+    "titulo": "Pruebas: observaciones",
+    "items": [
+      "Cada ítem aprobado o con N/A muestra quién y cuándo lo marcó, y tiene \"＋ Observación\" para dejar un comentario. Queda guardado con su fecha.",
+      "Arriba de la checklist se ve la tipología del dpto (por ejemplo 2 dormitorios) y la versión de la lista."
+    ]
+  },
+  {
     "id": "2026-10-24",
     "fecha": "2026-10-24",
     "titulo": "Marcadores: antes y después",

@@ -78,6 +78,13 @@ function indexarPr() {
 }
 const entradasItem = (u, it) => indicePr.get(`${u}|${it}`) || [];
 const ultimaPr = (u, it) => entradasItem(u, it).at(-1) || null;
+/** Primera entrada de la racha actual con el mismo estado: la fecha en que aprobó (o marcó N/A), aunque después se sumen observaciones. */
+function desdePr(u, it) {
+  const l = entradasItem(u, it);
+  let i = l.length - 1;
+  while (i > 0 && l[i - 1].estado === l[i].estado && !l[i - 1].hilo === !l[i].hilo) i--;
+  return l[i] || null;
+}
 const estadoItemPr = (u, it) => (ultimaPr(u, it) || { estado: 'pendiente' }).estado;
 /** El hilo sigue abierto mientras la última entrada del ítem sea un No aprueba. */
 const hiloAbierto = (u, it) => { const e = ultimaPr(u, it); return e && e.estado === 'no_aprueba' ? e.hilo : null; };
@@ -268,6 +275,7 @@ async function vPruebas(main, params) {
   main.querySelectorAll('[data-na]').forEach((b) => (b.onclick = () => tocarResuelto(nv.id, u, b.dataset.na, 'no_aplica')));
   main.querySelectorAll('[data-no]').forEach((b) => (b.onclick = () => tocarNoAprueba(nv.id, u, b.dataset.no)));
   main.querySelectorAll('[data-hist]').forEach((b) => (b.onclick = () => verHistorialPr(nv.id, u, b.dataset.hist)));
+  main.querySelectorAll('[data-obs]').forEach((b) => (b.onclick = () => hojaResueltoPr(nv.id, u, b.dataset.obs)));
 }
 
 function filaItemPr(nv, u, it) {
@@ -290,8 +298,10 @@ function filaItemPr(nv, u, it) {
         <b>Hilo abierto${lugar ? ' · ' + esc(lugar) : ''}</b>
         <span>${esc((ult.texto || primera.texto || 'Sin descripción').slice(0, 110))}</span>
         <small>${enHilo.length} ${enHilo.length === 1 ? 'entrada' : 'entradas'} · última ${fechaHora(ult.fecha)} · ${esc(ult.autor)}${(primera.responsable || ult.responsable) ? ' · ' + esc(ult.responsable || primera.responsable) : ''}${enHilo.some((x) => x._pendiente) ? ' · sin subir' : ''}</small>
-      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? 'Aprobó' : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(ult.autor)} · ${fechaHora(ult.fecha)}${ult._pendiente ? ' · sin subir' : ''}</span>
-        ${nHilos ? `<button type="button" class="btn-txt" data-hist="${it.id}">Historial (${nHilos} ${nHilos === 1 ? 'hilo' : 'hilos'})</button>` : ''}</span>` : ''}
+      </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? (ult.hilo ? 'Cerró' : 'Aprobó') : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(desdePr(u, it.id).autor)} el ${fechaHora(desdePr(u, it.id).fecha)}${ult._pendiente ? ' · sin subir' : ''}</span>
+        <button type="button" class="btn-txt" data-obs="${it.id}">${ult.texto ? 'Editar observación' : '＋ Observación'}</button>
+        ${nHilos ? `<button type="button" class="btn-txt" data-hist="${it.id}">Historial (${nHilos} ${nHilos === 1 ? 'hilo' : 'hilos'})</button>` : ''}</span>
+        ${ult.texto ? `<span class="fila-s pr-obs"><span>${esc(ult.texto)}${ult.texto && ult !== desdePr(u, it.id) ? ` <small>· ${esc(ult.autor)}, ${fechaHora(ult.fecha)}</small>` : ''}</span></span>` : ''}` : ''}
   </div>`;
 }
 
@@ -302,17 +312,30 @@ function tocarResuelto(nv, u, itemId, estado) {
   const hilo = hiloAbierto(u, itemId);
   if (hilo) return abrirHiloPr(nv, u, itemId, hilo, estado);
   const ult = ultimaPr(u, itemId);
-  if (ult && ult.estado === estado) {
-    abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2><p>${esc(nombreUnidadPr(u))} · ${estado === 'aprueba' ? 'aprobó' : 'marcó N/A'} ${esc(ult.autor)} el ${fechaHora(ult.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
-      <p class="nota">Si lo marcaste por error, volvé a dejarlo pendiente. Queda anotado en el historial.</p>
-      <div class="acciones"><button class="btn ancho" id="pr-desmarcar">Volver a pendiente</button></div></div>`, (h) => {
-      $('[data-cerrar]', h).onclick = cerrarHoja;
-      $('#pr-desmarcar', h).onclick = () => { almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: 'pendiente' })); cerrarHoja(); render(); };
-    });
-    return;
-  }
+  if (ult && ult.estado === estado) return hojaResueltoPr(nv, u, itemId);
   almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado }));
   render();
+}
+
+/** Ítem aprobado o N/A: observación (queda como entrada nueva, con su fecha) o volver a pendiente. */
+function hojaResueltoPr(nv, u, itemId) {
+  const it = itemPr(u, itemId);
+  const ult = ultimaPr(u, itemId), desde = desdePr(u, itemId);
+  const quien = ult.estado === 'aprueba' ? (ult.hilo ? 'cerró' : 'aprobó') : 'marcó N/A';
+  abrirHoja(`<div class="pr-hoja"><div class="ficha-cab"><div><h2 class="h-hoja">${esc(nombrePr(it))}</h2><p>${esc(nombreUnidadPr(u))} · ${quien} ${esc(desde.autor)} el ${fechaHora(desde.fecha)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="campo todo"><label for="pr-obs">Comentario / observación</label><textarea id="pr-obs" placeholder="Ej.: aprueba, pero el tomacorriente del dorm. 2 quedó flojo">${esc(ult.texto || '')}</textarea></div>
+    <div class="acciones"><button class="btn primario ancho" id="pr-obs-ok">Guardar observación</button></div>
+    <p class="nota">Si lo marcaste por error, volvé a dejarlo pendiente. Queda anotado en el historial.</p>
+    <div class="acciones"><button class="btn ancho" id="pr-desmarcar">Volver a pendiente</button></div></div>`, (h) => {
+    $('[data-cerrar]', h).onclick = cerrarHoja;
+    $('#pr-obs-ok', h).onclick = () => {
+      const texto = $('#pr-obs', h).value.trim();
+      if (texto === (ult.texto || '')) { cerrarHoja(); return; }
+      almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: ult.estado, hilo: ult.hilo || null, texto }));
+      cerrarHoja(); render();
+    };
+    $('#pr-desmarcar', h).onclick = () => { almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: 'pendiente' })); cerrarHoja(); render(); };
+  });
 }
 
 function tocarNoAprueba(nv, u, itemId) {
