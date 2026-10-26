@@ -105,7 +105,7 @@ const almacenPr = {
     try { pref('pruebas', JSON.stringify(liviano)); } catch (e) { console.warn('pruebas sin guardar en el teléfono', e); }
   },
   async cargar() {
-    if (!PR) PR = await fetch('pruebas.json').then((r) => r.json());
+    if (!PR) PR = await fetch('pruebas.json', { cache: 'no-store' }).then((r) => r.json());
     entradasPr = this.local();
     if (nube) {
       try {
@@ -241,7 +241,8 @@ async function vPruebas(main, params) {
       return `<button role="tab" data-u="${esc(x)}" aria-selected="${x === u}" style="--c:${ESTADOS_UNIDAD_PR[ru.estado].c}" title="${ESTADOS_UNIDAD_PR[ru.estado].nombre}">
         <b>${esc(nombreUnidadPr(x))}</b><small class="num">${ru.listos}/${ru.total}${ru.no ? ` · <span class="pr-no-txt">${ru.no} ✕</span>` : ''}</small></button>`;
     }).join('')}</div>
-    <div class="pr-estado-u" style="--c:${ESTADOS_UNIDAD_PR[r.estado].c}">${esc(nombreUnidadPr(u))}: <b>${ESTADOS_UNIDAD_PR[r.estado].nombre}</b></div>
+    <div class="pr-estado-u" style="--c:${ESTADOS_UNIDAD_PR[r.estado].c}">${esc(nombreUnidadPr(u))}: <b>${ESTADOS_UNIDAD_PR[r.estado].nombre}</b>${tipologiaDe(u).nombre ? ` · ${esc(tipologiaDe(u).nombre)}` : ''}</div>
+    <p class="nota">Lista ${esc(PR.version || 'sin versión')}</p>
     <div class="kpis">
       <div class="kpi ok"><b>${r.ap}</b><span>aprueban${r.na ? ` · ${r.na} N/A` : ''}</span></div>
       <div class="kpi alerta"><b>${r.no}</b><span>no aprueban</span></div>
