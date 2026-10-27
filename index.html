@@ -88,8 +88,20 @@ if ('serviceWorker' in navigator && window.top === window) {
 <div class="aviso" id="aviso" hidden></div>
 
 <script src="config.js"></script>
-<script src="app.js"></script>
+<!-- la app, en partes (ver CLAUDE.md); el orden importa: arranque va última -->
+<script src="app/base.js"></script>
+<script src="app/consultas.js"></script>
+<script src="app/navegacion.js"></script>
+<script src="app/vistas.js"></script>
+<script src="app/visor.js"></script>
+<script src="app/hoja.js"></script>
+<script src="app/marcadores.js"></script>
+<script src="app/informe.js"></script>
+<script src="app/informe-archivos.js"></script>
+<script src="app/ajustes.js"></script>
+<script src="app/arranque.js"></script>
 <script src="nube.js"></script>
 <script src="pedidos.js"></script>
+<script src="pruebas.js"></script>
 </body>
 </html>

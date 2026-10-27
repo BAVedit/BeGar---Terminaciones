@@ -1,0 +1,743 @@
+{
+ "_comentario": "Checklist de Pruebas de dptos. La misma lista para todos los dptos ('dpto'); las áreas comunes usan la suya. Cada ítem tiene un id fijo: se puede cambiar el texto sin perder lo cargado, pero no cambiar ni reutilizar el id. 'rubro' (del sistema o del ítem) es el que se propone al marcar No aprueba. \"cargan\": roles que pueden marcar pruebas (admin, editor, lector); el resto solo ve.",
+ "version": "del 26/10/26",
+ "cargan": [
+  "admin"
+ ],
+ "locales": [
+  [
+   "D1",
+   "Dorm. 1"
+  ],
+  [
+   "D2",
+   "Dorm. 2"
+  ],
+  [
+   "D3",
+   "Dorm. 3"
+  ],
+  [
+   "S1",
+   "Baño suite"
+  ],
+  [
+   "S2",
+   "Baño 2"
+  ],
+  [
+   "SC",
+   "Sala/comedor"
+  ],
+  [
+   "C",
+   "Cocina"
+  ],
+  [
+   "L",
+   "Lavadero"
+  ],
+  [
+   "H",
+   "Hall"
+  ],
+  [
+   "B",
+   "Balcón"
+  ]
+ ],
+ "tipologias": {
+  "_comentario": "Tipología de cada dpto (por planta tipo y letra) y cuántos baños tiene. Con 2 baños aparecen Baño 1 y Baño 2 (los ítems del Baño 2 llevan el sufijo -2). Un ítem con 'tipos' aparece solo en esas tipologías; 'por_tipo' cambia su nombre o su texto en una tipología.",
+  "por_dpto": {
+   "Planta Tipo 1": {
+    "A": "2dorm",
+    "B": "2dorm",
+    "C": "1dorm",
+    "D": "1dorm-2banos",
+    "E": "1dorm"
+   },
+   "Planta Tipo 2": {
+    "A": "2dorm",
+    "B": "2dorm",
+    "C": "2dorm",
+    "D": "2dorm"
+   }
+  },
+  "tipos": {
+   "2dorm": {
+    "nombre": "2 dormitorios",
+    "banos": 2
+   },
+   "1dorm": {
+    "nombre": "1 dormitorio",
+    "banos": 1
+   },
+   "1dorm-2banos": {
+    "nombre": "1 dormitorio con 2 baños",
+    "banos": 2
+   }
+  }
+ },
+ "checklists": {
+  "dpto": [
+   {
+    "id": "tablero",
+    "nombre": "Medidor ANDE y tablero",
+    "rubro": "electricas",
+    "items": [
+     {
+      "id": "tab-medidor",
+      "nombre": "El medidor corresponde al tablero",
+      "como": "Al cortar en el medidor se apaga el tablero de este dpto y no otro",
+      "n": 1
+     },
+     {
+      "id": "tab-fijo",
+      "nombre": "Tablero seccional ajustado y fijo",
+      "como": "Firme a la pared, tapa y contratapa puestas, bornes ajustados",
+      "n": 2
+     },
+     {
+      "id": "tab-rotulado",
+      "nombre": "Rotulado de circuitos",
+      "como": "Al bajar cada térmica se apaga lo que dice su rótulo",
+      "n": 3
+     },
+     {
+      "id": "tab-diferencial",
+      "nombre": "Disyuntor diferencial",
+      "como": "El botón de test lo dispara y vuelve a armar",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "id": "iluminacion",
+    "nombre": "Iluminación y tomas",
+    "rubro": "electricas",
+    "items": [
+     {
+      "id": "ilu-bocas",
+      "nombre": "Bocas de luz",
+      "como": "Cada boca enciende desde su llave",
+      "n": 5
+     },
+     {
+      "id": "ilu-combinadas",
+      "nombre": "Llaves combinadas",
+      "como": "Enciende y apaga desde los dos puntos",
+      "n": 6
+     },
+     {
+      "id": "ilu-tomas",
+      "nombre": "Tomas",
+      "como": "Cada toma da corriente (un cargador o probador)",
+      "n": 7
+     },
+     {
+      "id": "ilu-especificos",
+      "nombre": "Tomas de uso específico",
+      "como": "Heladera, lavarropas, microondas, termocalefón y AA con su circuito",
+      "n": 8
+     },
+     {
+      "id": "ilu-acceso",
+      "nombre": "Luz de acceso y balcón",
+      "como": "Encienden",
+      "n": 9
+     }
+    ]
+   },
+   {
+    "id": "aa",
+    "nombre": "Aire acondicionado (por equipo)",
+    "rubro": "termo",
+    "items": [
+     {
+      "id": "aa-enciende",
+      "nombre": "Enciende y opera",
+      "como": "Frío y calor, el control responde",
+      "n": 10
+     },
+     {
+      "id": "aa-desague",
+      "nombre": "Desagüe del evaporador y del compresor",
+      "como": "Agua en la bandeja: desagota sin gotear en la pared ni el balcón",
+      "n": 11
+     },
+     {
+      "id": "aa-exterior",
+      "nombre": "Unidad exterior",
+      "como": "Fija, sin vibración ni ruido, cañerías aisladas",
+      "n": 12
+     },
+     {
+      "id": "aa-circuito",
+      "nombre": "Circuito propio",
+      "como": "Al bajar su térmica se apaga ese equipo",
+      "rubro": "electricas",
+      "n": 13
+     },
+     {
+      "id": "aa-identificacion",
+      "nombre": "Identificación",
+      "como": "El equipo tiene su número o local marcado",
+      "n": 14
+     }
+    ]
+   },
+   {
+    "id": "cocina",
+    "nombre": "Cocina",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "coc-anafe",
+      "nombre": "Anafe",
+      "como": "Todas las hornallas encienden",
+      "rubro": "electricas",
+      "n": 15
+     },
+     {
+      "id": "coc-extractor",
+      "nombre": "Extractor o campana",
+      "como": "Enciende en todas las velocidades y prende la luz",
+      "rubro": "electricas",
+      "n": 16
+     },
+     {
+      "id": "coc-canilla",
+      "nombre": "Canilla de mesada",
+      "como": "Fría y caliente, sin goteo",
+      "n": 17
+     },
+     {
+      "id": "coc-bacha",
+      "nombre": "Bacha y sifón",
+      "como": "Llenar y soltar: desagota sin pérdida abajo",
+      "n": 18
+     },
+     {
+      "id": "coc-flexibles",
+      "nombre": "Flexibles y llaves de paso",
+      "como": "Papel seco abajo después de un rato; las llaves cierran",
+      "n": 19
+     }
+    ]
+   },
+   {
+    "id": "tc",
+    "nombre": "Termocalefón",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "tc-enciende",
+      "nombre": "Llena y enciende",
+      "como": "Se llena antes de encender, prende la luz piloto",
+      "rubro": "electricas",
+      "n": 20
+     },
+     {
+      "id": "tc-calienta",
+      "nombre": "Calienta",
+      "como": "Sale agua caliente en ducha, lavatorio y cocina",
+      "n": 21
+     },
+     {
+      "id": "tc-conexiones",
+      "nombre": "Conexiones",
+      "como": "Flexibles sin pérdida, fijo a la pared",
+      "n": 22
+     },
+     {
+      "id": "tc-llave",
+      "nombre": "Llave de paso del TC",
+      "como": "Cierra y está identificada",
+      "n": 23
+     }
+    ]
+   },
+   {
+    "id": "banos",
+    "nombre": "Baño",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "ban-canillas",
+      "nombre": "Canillas",
+      "como": "Lavatorio, ducha higiénica y ducha: fría y caliente del lado correcto, ducha y lavapiés cambian",
+      "n": 24
+     },
+     {
+      "id": "ban-sopapa",
+      "nombre": "Lavatorio: sopapa y sifón",
+      "como": "El tapón cierra; llenar y soltar sin pérdida abajo",
+      "n": 25
+     },
+     {
+      "id": "ban-flexibles",
+      "nombre": "Flexibles y llaves de paso",
+      "como": "Papel seco abajo; las llaves cierran y están identificadas",
+      "n": 26
+     },
+     {
+      "id": "ban-inodoro",
+      "nombre": "Inodoro: descarga",
+      "como": "Descarga completa, la mochila llena y corta, no queda corriendo",
+      "n": 27
+     },
+     {
+      "id": "ban-inodoro-fijo",
+      "nombre": "Inodoro: fijación",
+      "como": "Firme al piso, tapa bien sujeta",
+      "n": 28
+     },
+     {
+      "id": "ban-ducha",
+      "nombre": "Ducha: desagüe y pendiente",
+      "como": "Ducha abierta un rato: no empoza, sin contrapendiente, el duchero no se obstruye",
+      "n": 29
+     },
+     {
+      "id": "ban-rejilla",
+      "nombre": "Rejilla de piso",
+      "como": "Balde de agua: desagota, tapa de sifón puesta, sin olor",
+      "n": 30
+     },
+     {
+      "id": "ban-extractor",
+      "nombre": "Extractor de baño",
+      "como": "Enciende y tira (una hoja de papel se pega)",
+      "rubro": "termo",
+      "n": 31
+     }
+    ]
+   },
+   {
+    "id": "lavadero",
+    "nombre": "Lavadero",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "lav-canilla",
+      "nombre": "Canilla de lavarropas",
+      "como": "Sale agua, sin pérdida",
+      "n": 32
+     },
+     {
+      "id": "lav-desague",
+      "nombre": "Desagüe de lavarropas",
+      "como": "Un balde por la boca: no rebalsa",
+      "n": 33
+     },
+     {
+      "id": "lav-pileta",
+      "nombre": "Pileta y rejilla",
+      "como": "Llenar y soltar, sin pérdida",
+      "n": 34
+     }
+    ]
+   },
+   {
+    "id": "balcon",
+    "nombre": "Balcón",
+    "rubro": "aislaciones",
+    "items": [
+     {
+      "id": "bal-pendiente",
+      "nombre": "Pendiente",
+      "como": "Baldes de agua: escurre a la rejilla y no mancha el nivel de abajo",
+      "n": 35
+     }
+    ]
+   },
+   {
+    "id": "carp-madera",
+    "nombre": "Carpintería de madera",
+    "rubro": "carp-madera",
+    "items": [
+     {
+      "id": "mad-acceso",
+      "nombre": "Puerta de acceso principal",
+      "como": "A-01 · abre y cierra sin rozar, no vibra, tiene tope; llavea con todas las llaves entregadas"
+     },
+     {
+      "id": "mad-dorm1",
+      "nombre": "Puerta del dormitorio suite",
+      "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope",
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Puerta del dormitorio"
+       },
+       "1dorm-2banos": {
+        "nombre": "Puerta del dormitorio (vestidor)"
+       }
+      }
+     },
+     {
+      "id": "mad-dorm2",
+      "nombre": "Puerta del dormitorio 2",
+      "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope",
+      "tipos": [
+       "2dorm"
+      ]
+     },
+     {
+      "id": "mad-bano1",
+      "nombre": "Puerta del baño 1 (suite)",
+      "como": "A-03 · abre y cierra sin rozar, no vibra, tiene tope",
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Puerta del baño",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       },
+       "1dorm-2banos": {
+        "nombre": "Puerta del baño 1 (personal)",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       }
+      }
+     },
+     {
+      "id": "mad-bano2",
+      "nombre": "Puerta del baño 2",
+      "como": "A-05 · abre y cierra sin rozar, no vibra, tiene tope",
+      "tipos": [
+       "2dorm",
+       "1dorm-2banos"
+      ],
+      "por_tipo": {
+       "1dorm-2banos": {
+        "nombre": "Puerta del baño 2 (social)",
+        "como": "A-02 · abre y cierra sin rozar, no vibra, tiene tope"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "id": "carp-aluminio",
+    "nombre": "Carpintería de aluminio",
+    "rubro": "carp-aluminio",
+    "items": [
+     {
+      "id": "alu-sala-balcon",
+      "nombre": "Abertura sala - balcón",
+      "como": "PV04-A · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "por_tipo": {
+       "1dorm": {
+        "como": "PV-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       },
+       "1dorm-2banos": {
+        "como": "PV-04.B · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
+     },
+     {
+      "id": "alu-dorm1-balcon",
+      "nombre": "Abertura dormitorio suite - balcón",
+      "como": "PV-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm-2banos"
+      ],
+      "por_tipo": {
+       "1dorm-2banos": {
+        "nombre": "Abertura dormitorio - balcón",
+        "como": "PV-04.B · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
+     },
+     {
+      "id": "alu-dorm-ventana",
+      "nombre": "Ventana dormitorio 2 - área técnica",
+      "como": "VA-01 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm"
+      ],
+      "por_tipo": {
+       "1dorm": {
+        "nombre": "Ventana dormitorio - área técnica",
+        "como": "VA-04 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
+     },
+     {
+      "id": "alu-cocina-tecnica",
+      "nombre": "Abertura cocina - área técnica",
+      "como": "PV-05 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "tipos": [
+       "2dorm",
+       "1dorm"
+      ]
+     },
+     {
+      "id": "alu-lavadero",
+      "nombre": "Abertura de lavadero",
+      "como": "PV-06 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco",
+      "por_tipo": {
+       "1dorm-2banos": {
+        "como": "PV-10 · corre y traba sin vibrar ni hacer ruido; manguera desde afuera: no entra agua y desagota el marco"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "id": "agua",
+    "nombre": "Llave general de agua",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "agua-llave",
+      "nombre": "Llave general de agua",
+      "como": "Corta todo el dpto y está identificada",
+      "n": 40
+     }
+    ]
+   }
+  ],
+  "quincho": [
+   {
+    "id": "q-electrico",
+    "nombre": "Luces y tomas",
+    "rubro": "electricas",
+    "items": [
+     {
+      "id": "q-luces",
+      "nombre": "Luces",
+      "como": "Cada boca enciende desde su llave",
+      "n": 1
+     },
+     {
+      "id": "q-tomas",
+      "nombre": "Tomas",
+      "como": "Cada toma da corriente",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": "q-cocina",
+    "nombre": "Parrilla y cocina",
+    "rubro": "amenities",
+    "items": [
+     {
+      "id": "q-parrilla",
+      "nombre": "Parrilla",
+      "como": "El humo sale por la chimenea y no queda dentro del quincho",
+      "n": 3
+     },
+     {
+      "id": "q-anafe",
+      "nombre": "Anafe",
+      "como": "Todas las hornallas encienden",
+      "rubro": "electricas",
+      "n": 4
+     },
+     {
+      "id": "q-horno",
+      "nombre": "Horno empotrable",
+      "como": "Enciende y calienta",
+      "rubro": "electricas",
+      "n": 5
+     },
+     {
+      "id": "q-extractor",
+      "nombre": "Extractor",
+      "como": "Enciende y tira",
+      "rubro": "electricas",
+      "n": 6
+     },
+     {
+      "id": "q-canilla",
+      "nombre": "Canilla de mesada",
+      "como": "Fría y caliente, sin goteo",
+      "rubro": "hidro",
+      "n": 7
+     },
+     {
+      "id": "q-bacha",
+      "nombre": "Bacha, sifón y flexibles",
+      "como": "Llenar y soltar: desagota sin pérdida abajo",
+      "rubro": "hidro",
+      "n": 8
+     }
+    ]
+   },
+   {
+    "id": "q-aa",
+    "nombre": "Aire acondicionado cassette (por equipo)",
+    "rubro": "termo",
+    "items": [
+     {
+      "id": "q-aa-enciende",
+      "nombre": "Enciende y opera",
+      "como": "Frío y calor, el control responde",
+      "n": 9
+     },
+     {
+      "id": "q-aa-desague",
+      "nombre": "Desagüe del condensado",
+      "como": "No gotea del cielorraso; desagota la bomba o el caño",
+      "n": 10
+     },
+     {
+      "id": "q-aa-exterior",
+      "nombre": "Unidad exterior",
+      "como": "Fija, sin vibración ni ruido, cañerías aisladas",
+      "n": 11
+     },
+     {
+      "id": "q-aa-circuito",
+      "nombre": "Circuito propio",
+      "como": "Al bajar su térmica se apaga ese equipo",
+      "rubro": "electricas",
+      "n": 12
+     },
+     {
+      "id": "q-aa-identificacion",
+      "nombre": "Identificación",
+      "como": "Cada equipo tiene su número marcado",
+      "n": 13
+     }
+    ]
+   },
+   {
+    "id": "q-pisos",
+    "nombre": "Desagües",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "q-rejilla",
+      "nombre": "Rejilla de piso",
+      "como": "Balde de agua: desagota, sin olor",
+      "n": 14
+     },
+     {
+      "id": "q-pendiente",
+      "nombre": "Pendiente del piso exterior",
+      "como": "Baldes de agua: escurre a la rejilla, sin charcos",
+      "rubro": "aislaciones",
+      "n": 15
+     }
+    ]
+   }
+  ],
+  "bano-comun": [
+   {
+    "id": "b-electrico",
+    "nombre": "Luces y tomas",
+    "rubro": "electricas",
+    "items": [
+     {
+      "id": "b-luces",
+      "nombre": "Luces",
+      "como": "Cada boca enciende desde su llave",
+      "n": 1
+     },
+     {
+      "id": "b-tomas",
+      "nombre": "Tomas",
+      "como": "Cada toma da corriente",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "id": "b-sanitario",
+    "nombre": "Sanitarios",
+    "rubro": "hidro",
+    "items": [
+     {
+      "id": "b-canillas",
+      "nombre": "Canillas",
+      "como": "Fría y caliente del lado correcto, sin goteo",
+      "n": 3
+     },
+     {
+      "id": "b-sopapa",
+      "nombre": "Lavatorio: sopapa y sifón",
+      "como": "El tapón cierra; llenar y soltar sin pérdida abajo",
+      "n": 4
+     },
+     {
+      "id": "b-flexibles",
+      "nombre": "Flexibles y llaves de paso",
+      "como": "Papel seco abajo; las llaves cierran",
+      "n": 5
+     },
+     {
+      "id": "b-inodoro",
+      "nombre": "Inodoro: descarga",
+      "como": "Descarga completa, la mochila llena y corta, no queda corriendo",
+      "n": 6
+     },
+     {
+      "id": "b-inodoro-fijo",
+      "nombre": "Inodoro: fijación",
+      "como": "Firme al piso, tapa bien sujeta",
+      "n": 7
+     },
+     {
+      "id": "b-ducha",
+      "nombre": "Ducha: desagüe y pendiente",
+      "como": "No empoza, sin contrapendiente (si tiene ducha)",
+      "n": 8
+     },
+     {
+      "id": "b-rejilla",
+      "nombre": "Rejilla de piso",
+      "como": "Balde de agua: desagota, sin olor",
+      "n": 9
+     },
+     {
+      "id": "b-extractor",
+      "nombre": "Extractor",
+      "como": "Enciende y tira",
+      "rubro": "termo",
+      "n": 10
+     }
+    ]
+   }
+  ],
+  "generador": [
+   {
+    "id": "g-generador",
+    "nombre": "Generador",
+    "rubro": "electricas",
+    "items": [
+     {
+      "id": "g-toma",
+      "nombre": "Toma las áreas comunes",
+      "como": "Se corta la red: el generador arranca y alimenta palieres, quincho y bombas",
+      "n": 1
+     },
+     {
+      "id": "g-vuelve",
+      "nombre": "Vuelve a la red",
+      "como": "Al volver la red, todo sigue funcionando sin cortes ni equipos trabados",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "comunes": [
+  {
+   "id": "quincho",
+   "nombre": "Quincho",
+   "checklist": "quincho"
+  },
+  {
+   "id": "bano-quincho",
+   "nombre": "Baño del quincho",
+   "checklist": "bano-comun"
+  },
+  {
+   "id": "generador",
+   "nombre": "Generador",
+   "checklist": "generador"
+  }
+ ]
+}

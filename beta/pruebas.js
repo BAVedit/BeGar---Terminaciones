@@ -64,6 +64,9 @@ function sistemasDe(u) {
 const nombrePr = (it) => (it.lugar ? `${it.lugar} · ${it.nombre}` : it.nombre);
 const itemsDe = (u) => sistemasDe(u).flatMap((s) => s.items.map((it) => ({ ...it, sistema: s, rubro: it.rubro || s.rubro })));
 const itemPr = (u, id) => itemsDe(u).find((it) => it.id === id);
+// quién carga pruebas: pruebas.json → "cargan" (roles). Sin la lista, cualquier miembro.
+const puedeCargarPr = () => (PR.cargan || ['admin', 'editor', 'lector']).includes(miRol());
+const avisoSoloVerPr = () => aviso('Por ahora las pruebas las cargan solo los administradores');
 const nombreLocal = (id) => ((PR.locales || []).find((l) => l[0] === id) || [id, id])[1];
 
 /* ---------- estado ---------- */
@@ -245,7 +248,7 @@ async function vPruebas(main, params) {
   const grupos = sistemasDe(u).map((s) => ({ s, its: s.items.map((it) => ({ ...it, rubro: it.rubro || s.rubro })) }))
     .map((g) => ({ ...g, ap: g.its.filter((it) => ['aprueba', 'no_aplica'].includes(estadoItemPr(u, it.id))).length, ver: g.its.filter(pasa) })).filter((g) => g.ver.length);
   main.innerHTML = `
-  <div class="pagina pr">
+  <div class="pagina pr${puedeCargarPr() ? '' : ' pr-solo-ver'}">
     <div class="selector-nivel"><div class="niveles-scroll">${niveles.map((n) => `<button class="nivel-btn" data-nv="${n.id}" aria-current="${n.id === nv.id}">${n.id === NIVEL_COMUNES ? 'Comunes' : n.id}</button>`).join('')}</div></div>
     <p class="nota">${nv.id === NIVEL_COMUNES ? 'Áreas comunes' : esc(nv.nombre)}: <b>${aprobadas} de ${nv.unidades.length}</b> ${nv.id === NIVEL_COMUNES ? 'espacios' : 'dptos'} aprobados</p>
     <div class="pr-unidades" role="tablist">${nv.unidades.map((x) => {
@@ -254,7 +257,7 @@ async function vPruebas(main, params) {
         <b>${esc(nombreUnidadPr(x))}</b><small class="num">${ru.listos}/${ru.total}${ru.no ? ` · <span class="pr-no-txt">${ru.no} ✕</span>` : ''}</small></button>`;
     }).join('')}</div>
     <div class="pr-estado-u" style="--c:${ESTADOS_UNIDAD_PR[r.estado].c}">${esc(nombreUnidadPr(u))}: <b>${ESTADOS_UNIDAD_PR[r.estado].nombre}</b>${tipologiaDe(u).nombre ? ` · ${esc(tipologiaDe(u).nombre)}` : ''}</div>
-    <p class="nota">Lista ${esc(PR.version || 'sin versión')}</p>
+    <p class="nota">Lista ${esc(PR.version || 'sin versión')}${puedeCargarPr() ? '' : ' · <b>Solo ver:</b> por ahora las pruebas las cargan los administradores'}</p>
     <div class="kpis">
       <div class="kpi ok"><b>${r.ap}</b><span>aprueban${r.na ? ` · ${r.na} N/A` : ''}</span></div>
       <div class="kpi alerta"><b>${r.no}</b><span>no aprueban</span></div>
@@ -316,6 +319,7 @@ function tocarResuelto(nv, u, itemId, estado) {
   const it = itemPr(u, itemId);
   const hilo = hiloAbierto(u, itemId);
   if (hilo) return abrirHiloPr(nv, u, itemId, hilo, estado);
+  if (!puedeCargarPr()) return avisoSoloVerPr();
   const ult = ultimaPr(u, itemId);
   if (ult && ult.estado === estado) return hojaResueltoPr(nv, u, itemId);
   almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado }));
@@ -324,6 +328,7 @@ function tocarResuelto(nv, u, itemId, estado) {
 
 /** Ítem aprobado o N/A: observación (queda como entrada nueva, con su fecha) o volver a pendiente. */
 function hojaResueltoPr(nv, u, itemId) {
+  if (!puedeCargarPr()) return avisoSoloVerPr();
   const it = itemPr(u, itemId);
   const ult = ultimaPr(u, itemId), desde = desdePr(u, itemId);
   const quien = ult.estado === 'aprueba' ? (ult.hilo ? 'cerró' : 'aprobó') : 'marcó N/A';
@@ -346,6 +351,7 @@ function hojaResueltoPr(nv, u, itemId) {
 function tocarNoAprueba(nv, u, itemId) {
   const hilo = hiloAbierto(u, itemId);
   if (hilo) return abrirHiloPr(nv, u, itemId, hilo, 'no_aprueba');
+  if (!puedeCargarPr()) return avisoSoloVerPr();
   formNoAprueba(nv, u, itemId);
 }
 
@@ -404,6 +410,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
   const it = itemPr(u, itemId) || { id: itemId, nombre: itemId, n: '' };
   const lista = entradasHilo(hilo);
   const abierto = hiloAbierto(u, itemId) === hilo;
+  const carga = abierto && puedeCargarPr(); // quien no carga ve el hilo sin poder sumar revisiones
   const primera = lista[0] || {};
   const ult = lista.at(-1) || primera;
   const pinesHilo = pines.filter((p) => p.prueba === hilo && !p.borrado);
@@ -424,7 +431,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
       ${i > 0 && x.responsable && x.responsable !== lista[i - 1].responsable ? `<p class="nota">Responsable: ${esc(x.responsable)}</p>` : ''}
       ${(x.fotos || []).length ? `<div class="fotos">${x.fotos.map((f) => fotoMini(f, nombrePr(it))).join('')}</div>` : ''}
     </li>`).join('')}</ol>
-    ${abierto ? `<div class="seccion-t">Nueva revisión (${revisionesHilo(hilo).length + 1}ª) · rechazado ${vecesTxt(rechazosHilo(hilo))} hasta ahora</div>
+    ${carga ? `<div class="seccion-t">Nueva revisión (${revisionesHilo(hilo).length + 1}ª) · rechazado ${vecesTxt(rechazosHilo(hilo))} hasta ahora</div>
       <div class="estados alcance pr-elige" id="pr-est">
         <button type="button" data-est="no_aprueba" aria-pressed="${preset === 'no_aprueba'}">✕ Sigue sin aprobar</button>
         <button type="button" data-est="aprueba" aria-pressed="${preset === 'aprueba'}">✓ Aprueba</button>
@@ -441,7 +448,7 @@ async function abrirHiloPr(nv, u, itemId, hilo, preset = 'no_aprueba') {
       const p = pines.find((x) => x.id === b.dataset.pin);
       cerrarHoja(); ir('visor', { nivel: p.nivel, unidad: p.unidad, capa: p.recorte, abrirPin: p.id });
     }));
-    if (!abierto) return;
+    if (!carga) return;
     let est = preset;
     h.querySelectorAll('[data-est]').forEach((b) => (b.onclick = () => { est = b.dataset.est; h.querySelectorAll('[data-est]').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
     fotosEditables($('#pr-fotos', h), fotos, () => `${nombreUnidadPr(u)} · ${nombrePr(it)}`);

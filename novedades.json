@@ -1,5 +1,44 @@
 [
   {
+    "id": "2026-10-27",
+    "fecha": "2026-10-27",
+    "titulo": "Plano y pruebas",
+    "items": [
+      "La lista de contratistas sobre el plano se pliega y despliega tocando \"Contratistas\". Arranca plegada y recuerda cómo la dejaste.",
+      "Pruebas de dptos: por ahora las marcan solo los administradores. El resto ve la checklist, los hilos y las fechas."
+    ]
+  },
+  {
+    "id": "2026-10-26",
+    "fecha": "2026-10-26",
+    "titulo": "Pruebas: observaciones",
+    "items": [
+      "Cada ítem aprobado o con N/A muestra quién y cuándo lo marcó, y tiene \"＋ Observación\" para dejar un comentario. Queda guardado con su fecha.",
+      "Arriba de la checklist se ve la tipología del dpto (por ejemplo 2 dormitorios) y la versión de la lista.",
+      "Re-prueba: cada revisión de un ✕ se numera (1ª, 2ª, 3ª…). Al aprobar, el ítem dice en qué revisión aprobó, cuántas veces fue rechazado y la fecha de cierre."
+    ]
+  },
+  {
+    "id": "2026-10-24",
+    "fecha": "2026-10-24",
+    "titulo": "Marcadores: antes y después",
+    "items": [
+      "El estado Realizado ahora se llama En proceso.",
+      "Al pasar un marcador a En proceso o Verificado aparece un espacio nuevo para sus fotos y un comentario (por ejemplo \"2 de 3 detalles solucionados\" o \"terminado\"). Las fotos de cada etapa quedan separadas.",
+      "En el informe (pantalla, PDF y Word) se ven por separado las fotos y el texto de Pendiente, En proceso y Verificado."
+    ]
+  },
+  {
+    "id": "2026-10-21b",
+    "fecha": "2026-10-21",
+    "titulo": "Pruebas de dptos",
+    "items": [
+      "Nuevo apartado al final de la pantalla de inicio: elegís el nivel y aparece la checklist de pruebas de cada dpto (tablero y medidor, luces y tomas, AA, cocina, termocalefón, baños, lavadero, balcón, aberturas y llave general de agua).",
+      "Cada ítem se marca Aprueba o No aprueba. Si no aprueba, se abre un hilo con dónde, qué pasa, fotos y con quién verlo; cada revisión se suma al hilo con su fecha, sin borrar lo anterior.",
+      "Si querés, el problema se marca en el plano con los datos ya cargados. También están el quincho, su baño y el generador en Áreas comunes."
+    ]
+  },
+  {
     "id": "2026-10-21a",
     "fecha": "2026-10-21",
     "titulo": "Pedido de materiales",

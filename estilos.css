@@ -458,3 +458,67 @@ body:has(.acceso) .barra-logo { display: none; }
 .fila.recibe { cursor: default; grid-template-columns: 1fr auto; }
 .recibe-cant { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--tenue); }
 .recibe-cant input { width: 120px; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); font: 600 18px/1 var(--f-texto); text-align: right; }
+
+/* pruebas de dptos */
+.pr-unidades { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.pr-unidades button { flex: none; min-width: 64px; display: grid; gap: 2px; justify-items: center; padding: 8px 10px; border-radius: 12px;
+  border: 1px solid var(--linea); border-bottom: 4px solid var(--c); background: var(--bg); color: var(--tinta); }
+.pr-unidades button b { font: 700 18px/1 var(--f-titulo); }
+.pr-unidades button small { font-size: 12px; color: var(--tenue); }
+.pr-unidades button[aria-selected="true"] { background: var(--tinta); border-color: var(--tinta); border-bottom-color: var(--c); color: var(--sup); }
+.pr-unidades button[aria-selected="true"] small { color: inherit; opacity: .8; }
+.pr-no-txt { color: var(--abierto); font-weight: 600; }
+.pr-unidades button[aria-selected="true"] .pr-no-txt { color: inherit; }
+.pr-estado-u { font: 600 15px/1.2 var(--f-titulo); color: var(--tenue); display: flex; align-items: center; gap: 8px; }
+.pr-estado-u::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.pr-estado-u b { color: var(--tinta); }
+.pr-item { border-left: 4px solid transparent; }
+.pr-item.pr-aprueba { border-left-color: var(--aprobado); }
+.pr-item.pr-no_aprueba { border-left-color: var(--abierto); }
+.pr-n { display: inline-block; min-width: 26px; color: var(--tenue); font-weight: 600; }
+.pr-botones { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.pr-botones button { min-height: 44px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); color: var(--tinta); font: 700 20px/1 var(--f-titulo); }
+.pr-botones .pr-na { font-size: 16px; }
+.pr-botones .pr-na[aria-pressed="true"] { background: var(--tenue); border-color: var(--tenue); color: #fff; }
+.pr-item.pr-no_aplica { border-left-color: var(--tenue); }
+.pr-item.pr-no_aplica .fila-t { color: var(--tenue); }
+.pr-botones .pr-si[aria-pressed="true"] { background: var(--aprobado); border-color: var(--aprobado); color: #fff; }
+.pr-botones .pr-no[aria-pressed="true"] { background: var(--abierto); border-color: var(--abierto); color: #fff; }
+.pr-meta { align-items: center; }
+.pr-hilo { grid-column: 1 / -1; display: grid; gap: 3px; text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--abierto) 40%, var(--linea));
+  background: color-mix(in srgb, var(--abierto) 8%, var(--sup)); color: var(--tinta); }
+.pr-hilo b { font: 600 15px/1.2 var(--f-titulo); color: var(--abierto); }
+.pr-hilo span { font-size: 15px; }
+.pr-hilo small { font-size: 12px; color: var(--tenue); }
+.pr-datos { display: grid; gap: 4px; font-size: 14px; color: var(--tenue); }
+.pr-datos b { color: var(--tinta); font-weight: 600; }
+.pr-linea { list-style: none; margin: 0; padding: 0 0 0 14px; display: grid; gap: 12px; border-left: 2px solid var(--linea); }
+.pr-linea li { position: relative; display: grid; gap: 6px; }
+.pr-linea li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--abierto); border: 2px solid var(--sup); }
+.pr-linea li.pr-aprueba::before { background: var(--aprobado); }
+.pr-linea li.pr-pendiente::before, .pr-linea li.pr-no_aplica::before { background: var(--tenue); }
+.pr-linea p { margin: 0; font-size: 15px; white-space: pre-line; overflow-wrap: anywhere; }
+.pr-linea-cab { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.pr-linea-cab small { color: var(--tenue); font-size: 12px; }
+.pr-elige button[data-est="aprueba"][aria-pressed="true"] { background: var(--aprobado); border-color: var(--aprobado); color: #fff; }
+.pr-elige button[data-est="no_aplica"][aria-pressed="true"] { background: var(--tenue); border-color: var(--tenue); color: #fff; }
+.pr-elige button[data-est="no_aprueba"][aria-pressed="true"] { background: var(--abierto); border-color: var(--abierto); color: #fff; }
+/* cualquier miembro (también los lectores) carga pruebas */
+.solo-lectura .pr-hoja .acciones { display: flex !important; }
+.solo-lectura .pr-hoja .foto-add { display: grid !important; }
+.solo-lectura .pr-hoja .foto-quitar { display: block !important; }
+
+/* etapas del marcador: fotos y texto de pendiente, en proceso y verificado */
+.etapa + .etapa { margin-top: 6px; padding-top: 12px; border-top: 1px dashed var(--linea); }
+.etapa-t, .rep-etapa h5 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 700 15px/1.3 var(--f-titulo); }
+.etapa-t i, .rep-etapa h5 i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.rep-etapa { margin-top: 10px; }
+.rep-etapa h5 { font-size: 14px; margin-bottom: 4px; }
+.rep-etapa p { margin: 0 0 6px; }
+.pr-obs { display: block; margin-top: 4px; padding: 6px 10px; border-left: 3px solid var(--linea); color: var(--tinta); }
+.pr-obs small { color: var(--tenue); }
+
+/* leyenda del plano plegable */
+.leyenda-pines .ley-cab { display: flex; justify-content: space-between; gap: 10px; grid-template-columns: none; font: 700 13px/1.2 var(--f-titulo); color: var(--tinta); }
+.leyenda-pines.plegada > :not(.ley-cab) { display: none; }
+.pr-solo-ver .pr-botones button:not([aria-pressed="true"]) { opacity: .45; }

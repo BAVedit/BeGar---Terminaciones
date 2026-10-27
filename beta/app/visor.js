@@ -125,12 +125,19 @@ function montarMapa(nv, rec, params) {
   const soloRubro = params.soloRubro && contratistas.includes(params.soloRubro) ? params.soloRubro : ''; // contratista elegido en la referencia
   if (contratistas.length) {
     const ley = document.createElement('div');
-    ley.className = 'leyenda-pines';
+    const plegada = pref('leyenda-plegada') !== '0'; // arranca plegada; se recuerda lo último que eligió
+    ley.className = 'leyenda-pines' + (plegada ? ' plegada' : '');
     const rubrosDe = (c) => [...new Set(pinesNivel.filter((p) => contratistaDe(p) === c).map((p) => (rubro(p.rubro) || {}).nombre || p.rubro))].join(', ');
-    ley.innerHTML = contratistas.map((c) => `<button data-sr="${esc(c)}" aria-pressed="${soloRubro === c}" class="${soloRubro && soloRubro !== c ? 'apagado' : ''}"><i style="background:${colorContratista(c)}"></i>${esc(c)}<small>${esc(rubrosDe(c))}</small></button>`).join('')
+    ley.innerHTML = `<button type="button" class="ley-cab" aria-expanded="${!plegada}">Contratistas (${contratistas.length})<b>${plegada ? '▴' : '▾'}</b></button>`
+      + contratistas.map((c) => `<button data-sr="${esc(c)}" aria-pressed="${soloRubro === c}" class="${soloRubro && soloRubro !== c ? 'apagado' : ''}"><i style="background:${colorContratista(c)}"></i>${esc(c)}<small>${esc(rubrosDe(c))}</small></button>`).join('')
       + `<div class="ley-est"><span><i class="e-abierto"></i>Pendiente</span><span><i class="e-corregido"></i>En proceso</span><span><i class="e-aprobado">✓</i>Verificado</span></div>`;
     L.DomEvent.disableClickPropagation(ley); L.DomEvent.disableScrollPropagation(ley);
     $('.mapa-caja').appendChild(ley);
+    $('.ley-cab', ley).onclick = () => {
+      const pl = ley.classList.toggle('plegada');
+      pref('leyenda-plegada', pl ? '1' : '0');
+      $('.ley-cab', ley).setAttribute('aria-expanded', !pl); $('.ley-cab b', ley).textContent = pl ? '▴' : '▾';
+    };
     ley.querySelectorAll('[data-sr]').forEach((b) => (b.onclick = () => ir('visor', { ...params, abrirPin: null, soloRubro: soloRubro === b.dataset.sr ? '' : b.dataset.sr }, true)));
   }
   for (const p of pinesNivel) {
