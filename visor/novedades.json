@@ -1,5 +1,14 @@
 [
   {
+    "id": "2026-10-27",
+    "fecha": "2026-10-27",
+    "titulo": "Plano y pruebas",
+    "items": [
+      "La lista de contratistas sobre el plano se pliega y despliega tocando \"Contratistas\". Arranca plegada y recuerda cómo la dejaste.",
+      "Pruebas de dptos: por ahora las marcan solo los administradores. El resto ve la checklist, los hilos y las fechas."
+    ]
+  },
+  {
     "id": "2026-10-26",
     "fecha": "2026-10-26",
     "titulo": "Pruebas: observaciones",

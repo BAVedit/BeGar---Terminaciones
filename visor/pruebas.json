@@ -1,6 +1,9 @@
 {
- "_comentario": "Checklist de Pruebas de dptos. La misma lista para todos los dptos ('dpto'); las áreas comunes usan la suya. Cada ítem tiene un id fijo: se puede cambiar el texto sin perder lo cargado, pero no cambiar ni reutilizar el id. 'rubro' (del sistema o del ítem) es el que se propone al marcar No aprueba.",
+ "_comentario": "Checklist de Pruebas de dptos. La misma lista para todos los dptos ('dpto'); las áreas comunes usan la suya. Cada ítem tiene un id fijo: se puede cambiar el texto sin perder lo cargado, pero no cambiar ni reutilizar el id. 'rubro' (del sistema o del ítem) es el que se propone al marcar No aprueba. \"cargan\": roles que pueden marcar pruebas (admin, editor, lector); el resto solo ve.",
  "version": "del 26/10/26",
+ "cargan": [
+  "admin"
+ ],
  "locales": [
   [
    "D1",

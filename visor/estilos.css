@@ -517,3 +517,8 @@ body:has(.acceso) .barra-logo { display: none; }
 .rep-etapa p { margin: 0 0 6px; }
 .pr-obs { display: block; margin-top: 4px; padding: 6px 10px; border-left: 3px solid var(--linea); color: var(--tinta); }
 .pr-obs small { color: var(--tenue); }
+
+/* leyenda del plano plegable */
+.leyenda-pines .ley-cab { display: flex; justify-content: space-between; gap: 10px; grid-template-columns: none; font: 700 13px/1.2 var(--f-titulo); color: var(--tinta); }
+.leyenda-pines.plegada > :not(.ley-cab) { display: none; }
+.pr-solo-ver .pr-botones button:not([aria-pressed="true"]) { opacity: .45; }
