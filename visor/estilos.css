@@ -522,3 +522,13 @@ body:has(.acceso) .barra-logo { display: none; }
 .leyenda-pines .ley-cab { display: flex; justify-content: space-between; gap: 10px; grid-template-columns: none; font: 700 13px/1.2 var(--f-titulo); color: var(--tinta); }
 .leyenda-pines.plegada > :not(.ley-cab) { display: none; }
 .pr-solo-ver .pr-botones button:not([aria-pressed="true"]) { opacity: .45; }
+
+/* pruebas: ítems listos siguen a la vista; confirmación antes de aprobar */
+.pr-listo { white-space: nowrap; display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; font: 700 11px/1.6 var(--f-texto); vertical-align: 2px;
+  background: color-mix(in srgb, var(--aprobado) 16%, transparent); color: var(--aprobado); }
+.pr-no_aplica .pr-listo { background: color-mix(in srgb, var(--tenue) 16%, transparent); color: var(--tenue); }
+.pr-item.pr-recien { opacity: .62; }
+.pr-confirma-bt { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tabla-caja.planilla td { vertical-align: top; }
+.tabla-caja.planilla td:nth-child(4) { min-width: 220px; }
+.tabla-caja.planilla td:last-child { min-width: 160px; }

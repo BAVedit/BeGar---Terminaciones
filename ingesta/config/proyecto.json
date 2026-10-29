@@ -2,6 +2,8 @@
   "id": "begar",
   "nombre": "Belive Garay",
   "codigo_archivo": "BeGar",
+  "direccion": "",
+  "cliente": "",
   "carpeta_planos": "1. Planos/Vigente",
   "carpeta_contratos": "5. Compras y Contrataciones/02 Contratos y OT",
   "carpetas_excluidas": [

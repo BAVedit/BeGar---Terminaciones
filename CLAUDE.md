@@ -39,6 +39,7 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
   - `app/marcadores.js`: `nuevoPin`, `formPin` (fotos y texto por etapa Pendiente / En proceso / Verificado: `foto.etapa`, `texto`, `textoProceso`, `textoCierre`), editor de fotos, `comprimir`.
   - `app/informe.js`: `vInforme` (filtros, alcance, qué incluir, WhatsApp).
   - `app/informe-archivos.js`: PDF (`informePDF`), Word (`informeWord`), `armarContenido`, recorte del plano.
+  - `app/informe-planilla.js`: informe tipo checklist (sin fotos ni planos): `planillaExcel` (ExcelJS, `vendor/exceljs.min.js`, pestaña por contratista), `planillaPDF` (tabla jsPDF), `vistaPlanilla`. Dirección y cliente salen de `proyecto.json` (`direccion`, `cliente`).
   - `app/ajustes.js`: cuenta/ajustes, lista de marcadores del admin, ejemplos, `migrar`.
   - `app/arranque.js`: `iniciar` (manifest → nube → marcadores → inicio).
   - `nube.js` (Supabase), `pedidos.js`, `pruebas.js` (+ `pruebas.json`), `sw.js` (offline; subir `VERSION` si cambia `BASE`).

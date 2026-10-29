@@ -663,7 +663,7 @@ def main():
     manifest = {
         "version": 1,
         "generado": datetime.now().isoformat(timespec="seconds"),
-        "proyecto": {k: proy.get(k) for k in ("id", "nombre", "codigo_archivo", "planos_base")},
+        "proyecto": {k: proy.get(k) for k in ("id", "nombre", "codigo_archivo", "planos_base", "direccion", "cliente") if k in proy},
         "niveles": proy["niveles"],
         "rubros": rubros_out,
         "planos": planos,

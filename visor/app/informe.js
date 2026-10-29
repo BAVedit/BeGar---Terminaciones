@@ -2,7 +2,8 @@
 'use strict';
 /* ---------- informe ---------- */
 function vInforme(main, params) {
-  const f = params.filtro = { rubro: '', resp: '', nivel: '', espacio: '', alcance: 'pend', ...params.filtro };
+  const f = params.filtro = { rubro: '', resp: '', nivel: '', espacio: '', amb: '', alcance: 'pend', tipo: pref('informe-tipo') || 'completo', pestanas: false, ...params.filtro };
+  const planilla = f.tipo === 'checklist'; // checklist simplificada: tabla sin fotos ni planos (Excel / PDF de tabla)
   if (!ALCANCES[f.alcance]) f.alcance = 'pend';
   f.estados = ALCANCES[f.alcance].estados;
   const inc = f.incluir = { fotos: true, plano: true, datos: true, historial: false, ...f.incluir };
@@ -12,8 +13,11 @@ function vInforme(main, params) {
   const base = pines.filter((p) => (!f.rubro || p.rubro === f.rubro) && (!f.espacio || (p.nivel === eNv && espacioDe(p) === eU)));
   const ordenRubro = (p) => M.rubros.findIndex((r) => r.id === p.rubro);
   const resuelto = (p) => p.estado !== 'abierto';
+  const ambientes = [...new Set(base.map((p) => p.ambiente).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  if (f.amb && !ambientes.includes(f.amb)) f.amb = '';
+  const pasaFiltro = (p) => (!f.nivel || f.espacio || p.nivel === f.nivel) && (!f.resp || p.responsable === f.resp) && (!f.amb || p.ambiente === f.amb);
   const lista = base
-    .filter((p) => (!f.nivel || f.espacio || p.nivel === f.nivel) && f.estados.includes(p.estado) && (!f.resp || p.responsable === f.resp))
+    .filter((p) => pasaFiltro(p) && f.estados.includes(p.estado))
     .sort((a, b) => M.niveles.findIndex((n) => n.id === a.nivel) - M.niveles.findIndex((n) => n.id === b.nivel)
       || espacioDe(a).localeCompare(espacioDe(b)) || resuelto(a) - resuelto(b) || ordenRubro(a) - ordenRubro(b) || a.n - b.n);
   const resps = [...new Set(base.map((p) => p.responsable).filter(Boolean))];
@@ -35,22 +39,27 @@ function vInforme(main, params) {
   const espacios = M.niveles.flatMap((n) => [...(n.unidades || []), COMUN].map((u) => ({ k: `${n.id}|${u}`, t: etiquetaEspacio(n.id, u) })));
   const nFotos = lista.reduce((a, p) => a + p.fotos.length, 0);
   main.innerHTML = `<div class="pagina">
+    <div class="campo no-imprimir"><span class="lbl">Tipo de informe</span>
+      <div class="estados alcance">${[['completo', 'Completo (planos y fotos)'], ['checklist', 'Checklist (planilla)']].map(([id, n]) => `<button type="button" data-tipo="${id}" aria-pressed="${f.tipo === id}">${n}</button>`).join('')}</div></div>
     <div class="campos no-imprimir">
       <div class="campo"><label for="r-rb">Rubro</label><select id="r-rb"><option value="">Todos</option>${M.rubros.map((r) => `<option value="${r.id}" ${f.rubro === r.id ? 'selected' : ''}>${esc(r.nombre)}</option>`).join('')}</select></div>
       <div class="campo"><label for="r-resp">Responsable</label><select id="r-resp"><option value="">Todos</option>${resps.map((x) => `<option ${f.resp === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>
       <div class="campo"><label for="r-nv">Nivel</label><select id="r-nv" ${f.espacio ? 'disabled' : ''}><option value="">Todos</option>${M.niveles.map((n) => `<option ${f.nivel === n.id ? 'selected' : ''}>${n.id}</option>`).join('')}</select></div>
+      <div class="campo"><label for="r-amb">Ambiente</label><select id="r-amb" ${ambientes.length ? '' : 'disabled'}><option value="">Todos</option>${ambientes.map((x) => `<option ${f.amb === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>
       <div class="campo"><label for="r-esp">Dpto / espacio</label><select id="r-esp"><option value="">Todos</option>${espacios.map((x) => `<option value="${esc(x.k)}" ${f.espacio === x.k ? 'selected' : ''}>${esc(x.t)}</option>`).join('')}</select></div>
       <div class="campo todo"><span class="lbl">Marcadores</span><div class="estados alcance">${Object.entries(ALCANCES).map(([id, a]) => `<button type="button" data-alc="${id}" aria-pressed="${f.alcance === id}">${a.nombre}</button>`).join('')}</div></div>
     </div>
-    <div class="campo no-imprimir"><span class="lbl">Qué incluir</span>
-      <div class="incluir">${INCLUIR.map((o) => `<button type="button" data-inc="${o.id}" aria-pressed="${!!inc[o.id]}">${o.nombre}</button>`).join('')}</div></div>
+    ${planilla ? `<div class="campo no-imprimir"><span class="lbl">Organización</span>
+      <div class="incluir"><button type="button" id="r-pest" aria-pressed="${!!f.pestanas}">Una pestaña por contratista</button></div></div>` : `<div class="campo no-imprimir"><span class="lbl">Qué incluir</span>
+      <div class="incluir">${INCLUIR.map((o) => `<button type="button" data-inc="${o.id}" aria-pressed="${!!inc[o.id]}">${o.nombre}</button>`).join('')}</div></div>`}
     <div class="campos no-imprimir">
       <div class="campo todo"><label for="r-tit">Título</label><input id="r-tit" value="${esc(f.titulo ?? tituloInforme(rb, f))}"></div>
       <div class="campo todo"><label for="r-nota">Nota para el contratista (opcional)</label><textarea id="r-nota" placeholder="Ej.: plazo para resolver, condiciones de acceso, contacto en obra">${esc(f.nota || '')}</textarea></div>
     </div>
     <div class="acciones no-imprimir">
-      <button class="btn primario" id="r-pdf" ${lista.length ? '' : 'disabled'}>Guardar PDF</button>
-      <button class="btn" id="r-word" ${lista.length ? '' : 'disabled'}>Guardar Word</button>
+      ${planilla ? `<button class="btn primario" id="r-xlsx" ${lista.length ? '' : 'disabled'}>Guardar Excel</button>
+      <button class="btn" id="r-pdf" ${lista.length ? '' : 'disabled'}>Guardar PDF (tabla)</button>` : `<button class="btn primario" id="r-pdf" ${lista.length ? '' : 'disabled'}>Guardar PDF</button>
+      <button class="btn" id="r-word" ${lista.length ? '' : 'disabled'}>Guardar Word</button>`}
       ${navigator.share ? `<button class="btn" id="r-compartir" ${lista.length ? '' : 'disabled'}>Compartir…</button>` : ''}
       <button class="btn" id="r-copiar">Copiar para WhatsApp</button>
     </div>
@@ -62,7 +71,7 @@ function vInforme(main, params) {
       ${grupos.length ? `<div class="tabla-caja"><table><thead><tr><th>Nivel</th><th>Dpto / espacio</th>${f.alcance === 'ambos' ? '<th class="num">Pendientes</th><th class="num">Resueltos</th><th class="num">Avance</th>' : '<th class="num">Marcadores</th>'}</tr></thead><tbody>
         ${grupos.map((g) => `<tr><td class="cod">${g.nv}</td><td>${esc(g.u)}</td>${f.alcance === 'ambos' ? `<td class="num">${g.pend}</td><td class="num">${g.res}</td><td class="num">${Math.round(100 * g.res / g.ps.length)}%</td>` : `<td class="num">${g.ps.length}</td>`}</tr>`).join('')}</tbody></table></div>` : ''}
     </header>
-    ${grupos.map((g) => `
+    ${planilla ? (lista.length ? vistaPlanilla({ f, lista }) : '<p class="vacio-txt">No hay marcadores con esos filtros.</p>') : grupos.map((g) => `
       <section class="rep-grupo">
         <h3 class="rep-grupo-t"><span class="cod">${g.nv}</span> · ${esc(g.u || COMUN)}</h3>
         ${f.alcance === 'ambos' ? `<p class="nota num">${resumenGrupo(g)}</p>` : ''}
@@ -83,6 +92,9 @@ function vInforme(main, params) {
   $('#r-resp').onchange = (e) => setF('resp', e.target.value);
   $('#r-nv').onchange = (e) => setF('nivel', e.target.value);
   $('#r-esp').onchange = (e) => setF('espacio', e.target.value);
+  $('#r-amb').onchange = (e) => setF('amb', e.target.value);
+  main.querySelectorAll('[data-tipo]').forEach((b) => (b.onclick = () => { pref('informe-tipo', b.dataset.tipo); setF('tipo', b.dataset.tipo); }));
+  if ($('#r-pest')) $('#r-pest').onclick = () => setF('pestanas', !f.pestanas);
   main.querySelectorAll('[data-alc]').forEach((b) => (b.onclick = () => setF('alcance', b.dataset.alc)));
   main.querySelectorAll('[data-inc]').forEach((b) => (b.onclick = () => { inc[b.dataset.inc] = !inc[b.dataset.inc]; render(); }));
   $('#r-tit').oninput = (e) => { f.titulo = e.target.value; $('#r-tit-vista').textContent = f.titulo; };
@@ -95,7 +107,7 @@ function vInforme(main, params) {
   };
   // antes de armar el archivo se pregunta qué marcadores lleva: pendientes, resueltos o los dos
   const preguntar = (btnId, armar, ext, compartir) => () => {
-    const cuenta = (id) => base.filter((p) => (!f.nivel || f.espacio || p.nivel === f.nivel) && (!f.resp || p.responsable === f.resp) && ALCANCES[id].estados.includes(p.estado)).length;
+    const cuenta = (id) => base.filter((p) => pasaFiltro(p) && ALCANCES[id].estados.includes(p.estado)).length;
     abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">¿Qué incluye el informe?</h2><p>${esc(f.espacio ? etiquetaEspacio(eNv, eU) : rb ? rb.nombre : 'Todos los rubros')}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
       <div class="lista">${Object.entries(ALCANCES).map(([id, a]) => `<button class="fila" data-elegir="${id}" ${cuenta(id) ? '' : 'disabled'}><span class="fila-t">${a.nombre}</span>
         <span class="fila-der">${f.alcance === id ? '<span class="chip piloto">actual</span>' : ''}</span><span class="fila-s"><span>${a.ayuda}</span><span class="num">${cuenta(id)} ${cuenta(id) === 1 ? 'marcador' : 'marcadores'}</span></span></button>`).join('')}</div>`, (h) => {
@@ -113,11 +125,13 @@ function vInforme(main, params) {
   const datosDoc2 = () => (pila[pila.length - 1].params.datosDoc || datosDoc)();
   params.datosDoc = datosDoc;
   if (lista.length || base.length) {
-    $('#r-pdf').disabled = !base.length; $('#r-word').disabled = !base.length;
-    $('#r-pdf').onclick = preguntar('r-pdf', informePDF, 'pdf', false);
-    $('#r-word').onclick = preguntar('r-word', informeWord, 'docx', false);
+    const pdf = planilla ? planillaPDF : informePDF;
+    $('#r-pdf').disabled = !base.length;
+    $('#r-pdf').onclick = preguntar('r-pdf', pdf, 'pdf', false);
+    if (planilla) { $('#r-xlsx').disabled = !base.length; $('#r-xlsx').onclick = preguntar('r-xlsx', planillaExcel, 'xlsx', false); }
+    else { $('#r-word').disabled = !base.length; $('#r-word').onclick = preguntar('r-word', informeWord, 'docx', false); }
     const comp = $('#r-compartir');
-    if (comp) { comp.disabled = !base.length; comp.onclick = preguntar('r-compartir', informePDF, 'pdf', true); }
+    if (comp) { comp.disabled = !base.length; comp.onclick = preguntar('r-compartir', planilla ? planillaExcel : informePDF, planilla ? 'xlsx' : 'pdf', true); }
   }
   $('#r-copiar').onclick = () => {
     const lineas = [`*${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}*`, `${f.resp ? 'Responsable: ' + f.resp + ' · ' : ''}${lista.length} ${f.estados.map(estadoNombre).join('/').toLowerCase()} (${fechaCorta(hoyISO())})`];

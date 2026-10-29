@@ -276,7 +276,7 @@ async function entregar(blob, nombre, compartir) {
     } catch (e) { if (!/cancel/i.test(String(e && e.message))) aviso('No se pudo abrir el menú para compartir el archivo'); }
     return;
   }
-  const tipo = nombre.endsWith('.pdf') ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const tipo = nombre.endsWith('.pdf') ? 'application/pdf' : nombre.endsWith('.xlsx') ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   const archivo = new File([blob], nombre, { type: tipo });
   if (compartir && navigator.canShare && navigator.canShare({ files: [archivo] })) {
     try { await navigator.share({ files: [archivo], title: nombre }); return; } catch (e) { if (e.name === 'AbortError') return; }

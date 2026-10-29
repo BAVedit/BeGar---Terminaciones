@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-10-29",
+    "fecha": "2026-10-29",
+    "titulo": "Informe checklist y pruebas con confirmación",
+    "items": [
+      "Informe: nuevo tipo \"Checklist (planilla)\" sin fotos ni planos, para mandar a cada contratista. Se guarda en Excel o en PDF de tabla, con logo, datos de la obra y una columna libre para observaciones y firma.",
+      "La planilla se puede armar con una pestaña por contratista y filtrar por rubro, responsable, nivel, dpto o ambiente.",
+      "Pruebas: ✓ y N/A piden confirmación. Lo que marcás queda a la vista con \"Listo\" aunque estés mirando Pendientes, y se puede desmarcar."
+    ]
+  },
+  {
     "id": "2026-10-27",
     "fecha": "2026-10-27",
     "titulo": "Plano y pruebas",
