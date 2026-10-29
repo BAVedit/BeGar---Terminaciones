@@ -4,7 +4,7 @@
  "proyecto": {
   "id": "begar",
   "nombre": "Belive Garay",
-  "codigo_archivo": "BeGar",
+  "codigo_archivo": "BeGar", "direccion": "Eugenio A. Garay c/ Lillo, Asunción",
   "planos_base": [
    "Arquitectónico",
    "Nomenclados"
