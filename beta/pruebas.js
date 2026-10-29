@@ -25,6 +25,8 @@ let PR = null;            // pruebas.json
 let entradasPr = [];      // todas las entradas, del teléfono y de la nube
 let pruebasCargadas = false;
 let indicePr = new Map(); // "unidad|item" → entradas en orden
+// ítems resueltos mientras se mira la lista: siguen a la vista (atenuados) aunque el filtro sea Pendientes o No aprueban
+const recienPr = { clave: '', ids: new Set() };
 
 /* ---------- checklist ---------- */
 const nivelesPr = () => [
@@ -244,7 +246,9 @@ async function vPruebas(main, params) {
   cabecera(`Pruebas · ${nv.id === NIVEL_COMUNES ? 'Áreas comunes' : nv.id + ' · ' + nv.nombre}`, nombreUnidadPr(u));
   const r = resumenUnidadPr(u);
   const aprobadas = nv.unidades.filter((x) => resumenUnidadPr(x).estado === 'aprobado').length;
-  const pasa = (it) => { const e = estadoItemPr(u, it.id); return filtro === 'todos' || (filtro === 'pend' ? e === 'pendiente' : e === 'no_aprueba'); };
+  const clave = `${u}|${filtro}`;
+  if (recienPr.clave !== clave) Object.assign(recienPr, { clave, ids: new Set() });
+  const pasa = (it) => { const e = estadoItemPr(u, it.id); return filtro === 'todos' || recienPr.ids.has(it.id) || (filtro === 'pend' ? e === 'pendiente' : e === 'no_aprueba'); };
   const grupos = sistemasDe(u).map((s) => ({ s, its: s.items.map((it) => ({ ...it, rubro: it.rubro || s.rubro })) }))
     .map((g) => ({ ...g, ap: g.its.filter((it) => ['aprueba', 'no_aplica'].includes(estadoItemPr(u, it.id))).length, ver: g.its.filter(pasa) })).filter((g) => g.ver.length);
   main.innerHTML = `
@@ -284,6 +288,7 @@ async function vPruebas(main, params) {
   main.querySelectorAll('[data-no]').forEach((b) => (b.onclick = () => tocarNoAprueba(nv.id, u, b.dataset.no)));
   main.querySelectorAll('[data-hist]').forEach((b) => (b.onclick = () => verHistorialPr(nv.id, u, b.dataset.hist)));
   main.querySelectorAll('[data-obs]').forEach((b) => (b.onclick = () => hojaResueltoPr(nv.id, u, b.dataset.obs)));
+  main.querySelectorAll('[data-desm]').forEach((b) => (b.onclick = () => desmarcarPr(nv.id, u, b.dataset.desm)));
 }
 
 function filaItemPr(nv, u, it) {
@@ -294,8 +299,9 @@ function filaItemPr(nv, u, it) {
   const enHilo = hilo ? entradasHilo(hilo) : [];
   const primera = enHilo[0];
   const lugar = primera ? [...(primera.locales || []), primera.lugar].filter(Boolean).join(', ') : '';
-  return `<div class="fila pr-item pr-${e}">
-    <span class="fila-t"><span class="pr-n num">${it.n}</span>${esc(it.nombre)}</span>
+  const listo = e === 'aprueba' || e === 'no_aplica';
+  return `<div class="fila pr-item pr-${e}${listo && recienPr.ids.has(it.id) ? ' pr-recien' : ''}">
+    <span class="fila-t"><span class="pr-n num">${it.n}</span>${esc(it.nombre)}${listo ? `<span class="pr-listo">${e === 'aprueba' ? '✓ Listo' : 'N/A'}</span>` : ''}</span>
     <span class="fila-s"><span>${esc(it.como || '')}</span></span>
     <span class="pr-botones">
       <button type="button" class="pr-si" data-si="${it.id}" aria-pressed="${e === 'aprueba'}" aria-label="Aprueba" title="Aprueba">✓</button>
@@ -307,6 +313,7 @@ function filaItemPr(nv, u, it) {
         <span>${esc((ult.texto || primera.texto || 'Sin descripción').slice(0, 110))}</span>
         <small>${enHilo.length} ${enHilo.length === 1 ? 'entrada' : 'entradas'} · última ${fechaHora(ult.fecha)} · ${esc(ult.autor)}${(primera.responsable || ult.responsable) ? ' · ' + esc(ult.responsable || primera.responsable) : ''}${enHilo.some((x) => x._pendiente) ? ' · sin subir' : ''}</small>
       </button>` : ult && e !== 'pendiente' ? `<span class="fila-s pr-meta"><span>${e === 'aprueba' ? (ult.hilo ? 'Cerró' : 'Aprobó') : e === 'no_aplica' ? 'Marcó N/A' : 'Marcó'} ${esc(desdePr(u, it.id).autor)} el ${fechaHora(desdePr(u, it.id).fecha)}${ult.hilo ? ` · ${e === 'aprueba' ? 'aprobó' : 'cerró'} en la ${revisionesHilo(ult.hilo).length}ª revisión (rechazado ${vecesTxt(rechazosHilo(ult.hilo))})` : ''}${ult._pendiente ? ' · sin subir' : ''}</span>
+        <button type="button" class="btn-txt" data-desm="${it.id}">Desmarcar</button>
         <button type="button" class="btn-txt" data-obs="${it.id}">${ult.texto ? 'Editar observación' : '＋ Observación'}</button>
         ${nHilos ? `<button type="button" class="btn-txt" data-hist="${it.id}">Historial (${nHilos} ${nHilos === 1 ? 'hilo' : 'hilos'})</button>` : ''}</span>
         ${ult.texto ? `<span class="fila-s pr-obs"><span>${esc(ult.texto)}${ult.texto && ult !== desdePr(u, it.id) ? ` <small>· ${esc(ult.autor)}, ${fechaHora(ult.fecha)}</small>` : ''}</span></span>` : ''}` : ''}
@@ -322,8 +329,31 @@ function tocarResuelto(nv, u, itemId, estado) {
   if (!puedeCargarPr()) return avisoSoloVerPr();
   const ult = ultimaPr(u, itemId);
   if (ult && ult.estado === estado) return hojaResueltoPr(nv, u, itemId);
-  almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado }));
-  render();
+  // confirmación para no aprobar por un toque sin querer
+  const que = estado === 'aprueba' ? 'aprueba' : 'no aplica';
+  abrirHoja(`<div class="pr-hoja pr-confirma"><div class="ficha-cab"><div><h2 class="h-hoja">¿Confirmás que ${que}?</h2>
+      <p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ${it.n}. ${esc(nombrePr(it))}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="acciones pr-confirma-bt"><button class="btn" data-cerrar>Cancelar</button><button class="btn primario" id="pr-confirmar">${estado === 'aprueba' ? '✓ Confirmar' : 'Confirmar N/A'}</button></div></div>`, (h) => {
+    h.querySelectorAll('[data-cerrar]').forEach((b) => (b.onclick = cerrarHoja));
+    $('#pr-confirmar', h).onclick = () => {
+      almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado }));
+      recienPr.ids.add(itemId);
+      cerrarHoja(); render();
+    };
+  });
+}
+
+/** Volver a pendiente un ítem aprobado o N/A (queda en el historial). */
+function desmarcarPr(nv, u, itemId) {
+  if (!puedeCargarPr()) return avisoSoloVerPr();
+  const it = itemPr(u, itemId);
+  abrirHoja(`<div class="pr-hoja pr-confirma"><div class="ficha-cab"><div><h2 class="h-hoja">¿Volver a pendiente?</h2>
+      <p><span class="cod">${esc(nombreUnidadPr(u))}</span> · ${it.n}. ${esc(nombrePr(it))}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    <p class="nota">Queda anotado en el historial.</p>
+    <div class="acciones pr-confirma-bt"><button class="btn" data-cerrar>Cancelar</button><button class="btn primario" id="pr-confirmar">Volver a pendiente</button></div></div>`, (h) => {
+    h.querySelectorAll('[data-cerrar]').forEach((b) => (b.onclick = cerrarHoja));
+    $('#pr-confirmar', h).onclick = () => { almacenPr.agregar(nuevaEntradaPr(nv, u, itemId, { estado: 'pendiente' })); cerrarHoja(); render(); };
+  });
 }
 
 /** Ítem aprobado o N/A: observación (queda como entrada nueva, con su fecha) o volver a pendiente. */
