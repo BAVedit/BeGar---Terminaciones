@@ -31,11 +31,10 @@ function gruposPlanilla(d) {
   return [...por.entries()].sort((a, b) => (a[0] === SIN_CONTRATISTA) - (b[0] === SIN_CONTRATISTA) || a[0].localeCompare(b[0]))
     .map(([nombre, ps]) => ({ nombre, ps: ps.sort(orden) }));
 }
-/** Datos del encabezado: proyecto, dirección y cliente (si están cargados en proyecto.json), emisión y usuario. */
+/** Datos del encabezado: proyecto, dirección (si está cargada en proyecto.json), emisión y usuario. */
 const metaPlanilla = (d) => [
   ['Proyecto / obra', M.proyecto.nombre],
   ...(M.proyecto.direccion ? [['Dirección', M.proyecto.direccion]] : []),
-  ...(M.proyecto.cliente ? [['Cliente', M.proyecto.cliente]] : []),
   ['Fecha de emisión', fechaCorta(hoyISO())],
   ['Emitido por', autor()],
   ['Filtro', resumenFiltro(d)],
