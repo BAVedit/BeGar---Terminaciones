@@ -1,5 +1,13 @@
 [
   {
+    "id": "2026-11-02",
+    "fecha": "2026-11-02",
+    "titulo": "Pruebas para editores",
+    "items": [
+      "Las pruebas de dptos ahora las marcan los administradores y los editores. Los lectores siguen viendo sin marcar."
+    ]
+  },
+  {
     "id": "2026-10-29",
     "fecha": "2026-10-29",
     "titulo": "Informe checklist y pruebas con confirmación",
