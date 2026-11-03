@@ -444,6 +444,7 @@ body:has(.acceso) .barra-logo { display: none; }
 .remision-cab span { color: var(--tenue); font-size: 14px; }
 .remision-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
 .remision-items li { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--linea); padding-top: 4px; }
+.fotos-renglon { grid-column: 1 / -1; grid-template-columns: repeat(auto-fill, minmax(64px, 72px)); margin: 2px 0; }
 .lbl-mini { font: 600 12px/1.2 var(--f-titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
 .foto-ver { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
 .foto-falta { aspect-ratio: 1; border-radius: 10px; border: 1px dashed var(--linea); display: grid; place-items: center; font-size: 11px; color: var(--tenue); text-align: center; }

@@ -141,14 +141,15 @@ const almacenPedidos = {
   },
 };
 
-/** Aplica fn a cada foto del pedido (adjuntos y fotos de remisiones) y devuelve las listas nuevas. */
+/** Aplica fn a cada foto del pedido (adjuntos, fotos de cada material y de remisiones) y devuelve las listas nuevas. */
 function mapaFotos(p, fn) {
   return {
     adjuntos: (p.adjuntos || []).map(fn),
+    items: (p.items || []).map((it) => (it.fotos ? { ...it, fotos: it.fotos.map(fn) } : it)),
     remisiones: (p.remisiones || []).map((r) => ({ ...r, fotos: (r.fotos || []).map(fn), fotosMaterial: (r.fotosMaterial || []).map(fn) })),
   };
 }
-const todasLasFotos = (p) => [...(p.adjuntos || []), ...(p.remisiones || []).flatMap((r) => [...(r.fotos || []), ...(r.fotosMaterial || [])])];
+const todasLasFotos = (p) => [...(p.adjuntos || []), ...(p.items || []).flatMap((it) => it.fotos || []), ...(p.remisiones || []).flatMap((r) => [...(r.fotos || []), ...(r.fotosMaterial || [])])];
 
 async function subirFotosPedido(p) {
   for (const f of todasLasFotos(p)) {
@@ -336,6 +337,7 @@ function filaRenglon(p, it, editable) {
     <span class="fila-der">${pill(ESTADOS_RENGLON[e])}</span>
     <span class="fila-s"><span>${esc((rubro(it.rubro) || {}).nombre || it.rubro)}</span>${it.prioridad && it.prioridad !== p.prioridad ? `<span class="chip ${['Urgente', 'Alta'].includes(pr) ? 'aviso-c' : ''}">${esc(pr)}</span>` : ''}${it.viene ? `<span>viene del ${esc(it.viene.codigo)}</span>` : ''}</span>
     <span class="cantidades num"><span>Pedido <b>${cant(c)}</b> ${esc(it.unidad)}</span><span>Recibido <b>${cant(rec)}</b></span><span class="${falta && !it.cierre ? 'falta' : ''}">Falta <b>${cant(falta)}</b></span></span>
+    ${(it.fotos || []).length ? `<div class="fotos fotos-renglon">${it.fotos.map((f) => fotoMini(f, it.material)).join('')}</div>` : ''}
     ${provs.length ? `<span class="fila-s"><span>Proveedor: ${esc(provs.join(', '))}</span></span>` : ''}
     ${it.oc || it.comentario ? `<span class="fila-s">${it.oc ? `<span>Compras: ${esc(it.oc)}</span>` : ''}${it.comentario ? `<span>${esc(it.comentario)}</span>` : ''}</span>` : ''}
     ${it.cierre ? `<span class="fila-s"><span>${it.cierre.tipo === 'pasa' ? (it.cierre.a ? `Pasó al ${esc(it.cierre.codigo || 'pedido siguiente')}` : 'Se agrega al próximo pedido') : 'Cancelado'}${it.cierre.motivo ? ': ' + esc(it.cierre.motivo) : ''}</span>
@@ -443,7 +445,7 @@ function formPedido(original) {
   if (esNuevo) {
     for (const { p: o, it, falta } of pasan) {
       p.items.push({ id: uid(), material: it.material, rubro: it.rubro, unidad: it.unidad, cantidad: String(falta), prioridad: it.prioridad || '', oc: '', comentario: '',
-        viene: { id: o.id, item: it.id, codigo: codigoPedido(o) } });
+        fotos: (it.fotos || []).map((f) => ({ ...f })), viene: { id: o.id, item: it.id, codigo: codigoPedido(o) } });
     }
     if (!p.items.length) p.items.push(nuevoRenglon());
   }
@@ -465,7 +467,7 @@ function formPedido(original) {
     <datalist id="pf-uni">${UNIDADES.map((u) => `<option value="${u}">`).join('')}</datalist>
     <div class="campo todo"><label for="pf-just">Justificación de compra</label><textarea id="pf-just" placeholder="Ej.: terminaciones de pisos, colocación de artefactos de luz">${esc(p.justificacion)}</textarea></div>
     <div class="campo todo"><label for="pf-obs">Observaciones</label><textarea id="pf-obs" placeholder="Links de compra de distintos proveedores, aclaraciones…">${esc(p.observaciones)}</textarea></div>
-    <div class="campo todo"><span class="lbl">Fotos de referencia</span><div class="fotos" id="pf-fotos"></div></div>
+    <div class="campo todo"><span class="lbl">Otras fotos del pedido</span><div class="fotos" id="pf-fotos"></div></div>
     <div class="acciones"><button class="btn primario ancho" id="pf-ok">${esNuevo ? 'Guardar pedido' : 'Guardar cambios'}</button></div>
   `, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
@@ -495,7 +497,13 @@ function formPedido(original) {
           <div class="campo"><label>Prioridad</label><select data-k="prioridad"><option value="">La del pedido</option>${PRIORIDADES_PEDIDO.map((x) => `<option ${it.prioridad === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
           <div class="campo"><label>Comentario de compras (OC)</label><input data-k="oc" value="${esc(it.oc)}" placeholder="Ej.: oc-7711 bapesa"></div>
           <div class="campo"><label>Mi comentario</label><input data-k="comentario" value="${esc(it.comentario)}"></div>
+          <div class="campo todo"><span class="lbl">Fotos de referencia del material</span><div class="fotos" data-fotos-it="${it.id}"></div></div>
         </div></div>`).join('');
+      for (const it of p.items) {
+        const caja = $(`[data-fotos-it="${it.id}"]`, h);
+        const inp = $(`[data-it="${it.id}"] [data-k="material"]`, h);
+        fotosEditables(caja, (it.fotos = it.fotos || []), () => `${codigoPedido(p)} · ${inp.value.trim() || 'material'}`);
+      }
       h.querySelectorAll('[data-k="material"]').forEach((inp) => (inp.onchange = () => {
         // material ya pedido antes: completa rubro y unidad si están vacíos
         const c = cat.find((x) => normNombre(x.material) === normNombre(inp.value));
@@ -539,7 +547,7 @@ function formPedido(original) {
     };
   });
 }
-const nuevoRenglon = () => ({ id: uid(), material: '', rubro: '', unidad: '', cantidad: '', prioridad: '', oc: '', comentario: '' });
+const nuevoRenglon = () => ({ id: uid(), material: '', rubro: '', unidad: '', cantidad: '', prioridad: '', oc: '', comentario: '', fotos: [] });
 
 /** Fotos con cámara o galería, con fecha y leyenda impresas (igual que en los marcadores). */
 function fotosEditables(caja, lista, leyenda) {
@@ -661,6 +669,39 @@ function elegirResumen() {
 }
 
 /** PDF con el formato de la planilla FL CO COM 10: un pedido, o el resumen de varios. */
+/** Hojas finales del PDF de un pedido: las fotos de referencia de cada material (y las del pedido), en grilla de 4. */
+async function anexoFotos(doc, p, { W, H, m, txt, encabezado, GRIS, soloRubro }) {
+  const grupos = [
+    ...p.items.filter((it) => (it.fotos || []).length && (!soloRubro || it.rubro === soloRubro))
+      .map((it) => ({ t: `${it.material} · ${cant(num(it.cantidad))} ${it.unidad}`, fotos: it.fotos })),
+    ...((p.adjuntos || []).length ? [{ t: 'Otras fotos del pedido', fotos: p.adjuntos }] : []),
+  ];
+  if (!grupos.length) return;
+  if (nube) { try { await firmarFotosPedido(p); } catch (e) { /* sin señal: van las que haya en el teléfono */ } }
+  doc.addPage();
+  let y = encabezado();
+  txt('FOTOS DE REFERENCIA', m, y, 11, 'bold'); y += 6;
+  const ancho = W - 2 * m, gap = 4, wf = (ancho - 3 * gap) / 4;
+  for (const g of grupos) {
+    const imgs = (await Promise.all(g.fotos.map((f) => (f.src ? aJPEG(f.src, 900).catch(() => null) : null)))).filter(Boolean);
+    if (y + 8 + (imgs.length ? 30 : 6) > H - m) { doc.addPage(); y = encabezado(); }
+    txt(g.t, m, y + 1, 10, 'bold'); y += 4;
+    if (!imgs.length) { txt('Foto sin cargar (sin conexión al armar el PDF).', m, y + 3, 8.5, 'normal', GRIS); y += 8; continue; }
+    for (let i = 0; i < imgs.length; i += 4) {
+      const fila = imgs.slice(i, i + 4);
+      const hf = Math.min(wf * 1.2, Math.max(...fila.map((x) => wf * x.h / x.w)));
+      if (y + hf > H - m) { doc.addPage(); y = encabezado(); }
+      fila.forEach((x, j) => {
+        // que entre en la celda sin deformarse
+        const k = Math.min(wf / x.w, hf / x.h), ww = x.w * k, hh = x.h * k;
+        doc.addImage(x.url, 'JPEG', m + j * (wf + gap) + (wf - ww) / 2, y, ww, hh);
+      });
+      y += hf + gap;
+    }
+    y += 3;
+  }
+}
+
 async function pdfPedidos(lista, { titulo, unico = false, rubro: soloRubro = '', soloFalta = false, compartir = false }) {
   aviso('Armando el PDF…');
   try {
@@ -723,7 +764,8 @@ async function pdfPedidos(lista, { titulo, unico = false, rubro: soloRubro = '',
     const renglonCeldas = (p, it) => {
       const rec = recibidoDe(p, it), falta = Math.max(0, num(it.cantidad) - rec);
       const cierre = it.cierre ? (it.cierre.tipo === 'pasa' ? (it.cierre.codigo ? `pasa al ${it.cierre.codigo}` : 'pasa al próximo pedido') : 'cancelado') : '';
-      const coms = [it.oc, it.comentario, it.viene ? `viene del ${it.viene.codigo}` : '', cierre, it.prioridad && it.prioridad !== p.prioridad ? `prioridad ${it.prioridad}` : ''].filter(Boolean).join(' · ');
+      const coms = [it.oc, it.comentario, it.viene ? `viene del ${it.viene.codigo}` : '', cierre, it.prioridad && it.prioridad !== p.prioridad ? `prioridad ${it.prioridad}` : '',
+        (it.fotos || []).length ? (unico ? 'ver foto de referencia' : `${it.fotos.length} ${it.fotos.length === 1 ? 'foto' : 'fotos'} de referencia en la app`) : ''].filter(Boolean).join(' · ');
       return [...(unico ? [] : [`${codigoPedido(p).replace('BEGAR-', '')}\n${fechaCorta(p.fecha + 'T12:00')}`]), it.material, (rubro(it.rubro) || {}).nombre || it.rubro, it.unidad,
         cant(num(it.cantidad)), cant(rec), it.cierre ? '-' : cant(falta), proveedoresDe(p, it).join(', '), coms];
     };
@@ -753,6 +795,7 @@ async function pdfPedidos(lista, { titulo, unico = false, rubro: soloRubro = '',
       doc.line(m + 20, y, m + 100, y); doc.line(W - m - 100, y, W - m - 20, y);
       txt('Firma del solicitante', m + 60, y + 4.5, 9, 'normal', GRIS, { align: 'center' });
       txt('Firma autorizada', W - m - 60, y + 4.5, 9, 'normal', GRIS, { align: 'center' });
+      await anexoFotos(doc, p0, { W, H, m, txt, encabezado: () => { y = m; encabezado(p0); return y; }, GRIS, soloRubro });
     }
     const nombre = `${(unico ? codigoPedido(p0) : titulo).replace(/[\\/:*?"<>|·]+/g, ' ').replace(/\s+/g, ' ').trim()} ${fechaLocal()}.pdf`;
     await entregar(doc.output('blob'), nombre, compartir);
