@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-11-03a",
+    "fecha": "2026-11-03",
+    "titulo": "Fotos de cada material en el pedido",
+    "items": [
+      "Al cargar un pedido, cada material tiene su lugar para fotos de referencia: sacá una foto o elegila de la galería (por ejemplo, el artefacto exacto que hay que comprar).",
+      "Las fotos se ven debajo de cada material en el pedido y salen en una hoja final del PDF del pedido, con el nombre y la cantidad del material.",
+      "Si un material pasa al próximo pedido, sus fotos pasan con él."
+    ]
+  },
+  {
     "id": "2026-10-21a",
     "fecha": "2026-10-21",
     "titulo": "Pedido de materiales",
