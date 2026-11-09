@@ -50,6 +50,8 @@ function vEdificio(main) {
     <div class="seccion-t">Pruebas de dptos</div>
     <div class="lista"><button class="fila" id="ir-pruebas"><span class="fila-t">Checklist de pruebas por nivel</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
       <span class="fila-s"><span>Tablero, luces, AA, cocina, termocalefón, baños y desagües: aprueba o no aprueba, con hilo de seguimiento</span></span></button></div>
+    <hr class="sep">
+    ${bloqueChecklistEdificio()}
   </div>`;
   enlazarChipRubro(main);
   main.querySelectorAll('.unidad').forEach((b) => (b.onclick = () => ir('espacio', { nivel: b.dataset.nv, unidad: b.dataset.u })));
@@ -59,6 +61,7 @@ function vEdificio(main) {
   $('#ver-pend').onclick = abrirPendientes;
   $('#ir-pedidos').onclick = () => ir('pedidos');
   $('#ir-pruebas').onclick = () => ir('pruebas');
+  enlazarChecklist(main);
 }
 
 /** Elegir el dpto para su informe (pendientes y resueltos, para el cierre). */
@@ -105,6 +108,8 @@ function vEspacio(main, params) {
       <button class="btn primario ancho" id="abrir-plano" ${tienePlano ? '' : 'disabled'}>${tienePlano ? (puedeEditar() ? 'Abrir plano y marcar' : 'Ver plano') : 'Este nivel todavía no tiene plano'}</button>
       <button class="btn ancho" id="inf-espacio" ${todos.length ? '' : 'disabled'}>Informe de ${esc(titulo)}</button>
     </div>
+    ${bloqueChecklistDpto(nv.id, u)}
+    ${u === COMUN ? '' : '<div class="seccion-t">Marcadores sobre el plano</div>'}
     ${chipRubro()}
     <nav class="pestanas" role="tablist">
       <button role="tab" data-f="0" aria-selected="${!soloPend}">Todos (${todos.length})</button>
@@ -117,6 +122,7 @@ function vEspacio(main, params) {
       </div>`).join('') : `<p class="vacio-txt">${todos.length ? 'No quedan pendientes en ' + esc(titulo) + '.' : 'Todavía no hay marcadores en ' + esc(titulo) + '. Abrí el plano y mantené apretado donde va el primero.'}</p>`}
   </div>`;
   enlazarChipRubro(main);
+  enlazarChecklist(main, nv.id, u);
   main.querySelectorAll('[data-u]').forEach((b) => (b.onclick = () => ir('espacio', { nivel: nv.id, unidad: b.dataset.u, soloPend }, true)));
   main.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => ir('espacio', { ...params, soloPend: b.dataset.f === '1' }, true)));
   const act = main.querySelector('.nivel-btn[aria-current="true"]');

@@ -27,5 +27,6 @@
   } else await sembrarEjemplos();
   ir('edificio');
   asignarCodigos().catch((e) => console.warn('códigos', e));
+  iniciarChecklistJose().catch((e) => console.warn('checklist de Jose', e));
   setTimeout(() => { if ($('#hoja').hidden) mostrarNovedades(); }, 2600); // cuando termina la animación del logo
 })();

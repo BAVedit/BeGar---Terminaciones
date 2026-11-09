@@ -532,3 +532,45 @@ body:has(.acceso) .barra-logo { display: none; }
 .tabla-caja.planilla td { vertical-align: top; }
 .tabla-caja.planilla td:nth-child(4) { min-width: 220px; }
 .tabla-caja.planilla td:last-child { min-width: 160px; }
+
+/* ---------- Checklist de Jose ---------- */
+.ico-cj { vertical-align: -4px; margin-right: 4px; }
+.unidad.en-curso { border-color: var(--proceso); }
+.unidad.en-curso .u-cant { color: var(--proceso); }
+.ley-cj { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--tenue); }
+.ley-cj span { display: inline-flex; align-items: center; gap: 6px; }
+.ley-cj i { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--linea); background: var(--bg); }
+.ley-cj i.con-pend { border-color: var(--abierto); background: color-mix(in srgb, var(--abierto) 12%, var(--bg)); }
+.ley-cj i.en-curso { border-color: var(--proceso); }
+.ley-cj i.al-dia { border-color: var(--aprobado); }
+.cj-dato { min-height: 46px; display: flex; align-items: center; gap: 6px; font: 600 17px/1.2 var(--f-titulo); }
+.cj-ver { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.cj-ver button { flex: none; min-height: 38px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--linea); background: var(--bg); font: 600 14px/1 var(--f-titulo); }
+.cj-ver button[aria-pressed="true"] { background: var(--tinta); color: var(--pagina); border-color: var(--tinta); }
+.cj-lista { display: grid; gap: 8px; }
+.cj-item { background: var(--sup); border: 1px solid var(--linea); border-left: 5px solid var(--linea); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; box-shadow: var(--sombra); }
+.cj-item.cj-si { border-left-color: var(--aprobado); }
+.cj-item.cj-no { border-left-color: var(--abierto); background: color-mix(in srgb, var(--abierto) 5%, var(--sup)); }
+.cj-item.cj-na { border-left-color: var(--tenue); }
+.cj-cab { display: flex; gap: 10px; align-items: baseline; }
+.cj-n { flex: none; min-width: 22px; font: 700 15px/1 var(--f-titulo); color: var(--tenue); }
+.cj-t { font: 600 17px/1.25 var(--f-titulo); }
+.cj-marcas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.cj-marcas button { min-height: 48px; border-radius: 10px; border: 1px solid var(--linea); background: var(--bg); display: grid; place-items: center; gap: 0; padding: 4px; line-height: 1.05; }
+.cj-marcas button b { font: 700 19px/1 var(--f-titulo); color: var(--c); }
+.cj-marcas button span { font: 600 12px/1.1 var(--f-titulo); color: var(--tenue); }
+.cj-marcas button[aria-pressed="true"] { background: var(--c); border-color: var(--c); }
+.cj-marcas button[aria-pressed="true"] b, .cj-marcas button[aria-pressed="true"] span { color: #fff; }
+.cj-marcas button:disabled { cursor: default; }
+.cj-marcas button:disabled:not([aria-pressed="true"]) { opacity: .45; }
+.cj-detalle { display: grid; gap: 8px; border-top: 1px dashed var(--linea); padding-top: 8px; }
+.cj-lbl { font: 600 12px/1.2 var(--f-titulo); letter-spacing: .06em; text-transform: uppercase; color: var(--tenue); }
+.cj-amb { display: flex; flex-wrap: wrap; gap: 6px; }
+.cj-amb button { min-height: 36px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--linea); background: var(--bg); font: 600 14px/1 var(--f-titulo); }
+.cj-amb button[aria-pressed="true"] { background: var(--abierto); border-color: var(--abierto); color: #fff; }
+.cj-detalle textarea { width: 100%; min-height: 60px; resize: vertical; border: 1px solid var(--linea); border-radius: 10px; background: var(--pagina); padding: 10px 12px; font-size: 16px; }
+.cj-foto-add { aspect-ratio: 1; border: 2px dashed var(--linea); border-radius: 10px; display: grid; place-items: center; color: var(--tenue); font: 600 14px/1.2 var(--f-titulo); text-align: center; cursor: pointer; padding: 6px; position: relative; }
+.cj-foto-add.camara { border-color: var(--acento); color: var(--tinta); background: color-mix(in srgb, var(--acento) 14%, transparent); }
+.cj-foto-add input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.cj-foto-quitar { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; font-size: 13px; }
+.cj-firma { font-size: 12px; color: var(--tenue); }

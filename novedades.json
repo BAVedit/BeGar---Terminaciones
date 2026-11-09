@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-11-09a",
+    "fecha": "2026-11-09",
+    "titulo": "Checklist de Jose",
+    "items": [
+      "Nuevo ícono arriba a la derecha (el portapapeles con el tilde): elegís el rubro y se abre la caja de dptos para relevar cada uno. Por ahora está Carpintería de aluminio, con los 22 ítems de la planilla de inspección.",
+      "Cada ítem se marca ✓ Check, ✗ No check o N/A. En los ✗ se deja la observación, dónde está (dormitorio, baño, cocina…) y fotos para que se solucione. Los ítems quedan en su lugar para el control final, y arriba se puede filtrar por ✓, ✗, N/A o sin marcar.",
+      "La planilla de cada dpto sale en PDF igual a la de papel, con una hoja aparte con los ✗ y sus fotos. La verifican solo las personas habilitadas; el resto del equipo la ve."
+    ]
+  },
+  {
     "id": "2026-11-02",
     "fecha": "2026-11-02",
     "titulo": "Pruebas para editores",

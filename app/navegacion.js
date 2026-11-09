@@ -32,7 +32,7 @@ function render() {
   }
   const main = $('#vista');
   main.scrollTop = 0;
-  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido, pruebas: vPruebas }[vista])(main, params);
+  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido, pruebas: vPruebas, checklists: vChecklists, checklist: vChecklist }[vista])(main, params);
 }
 
 function chipRubro() {
