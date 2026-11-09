@@ -33,6 +33,7 @@ IDs estables: plano = `<disciplina>-<nombre>` del grupo; recorte = `<plano>__<sl
 - `index.html` es un documento completo; lo que sigue al comentario `INICIO` es lo que se publica como demo.
 - Cada publicación con cambios visibles suma una entrada arriba en `visor/novedades.json` (la app se la muestra a cada persona una vez).
 - Pedido de materiales: `pedidos.js` (pedidos PM, remisiones, resumen PDF), tabla `pedidos` de `supabase/4-pedidos.sql`; solo el admin carga, el resto ve y comenta.
+- Checklist de Jose: `checklist-jose.js` (ícono de la barra → rubro → caja de dptos → planilla). Ítems ✓ / ✗ / N/A; el ✗ lleva observación, ambientes y fotos. Planillas en `PLANILLAS_JOSE` (sumar otra = agregar ítems ahí). Tabla `checklists` de `supabase/8-checklist-jose.sql`; verifican el admin y los miembros con la planilla en `miembros.checklists` ("Quién verifica"), el resto mira.
 - Beta: para probar antes de publicar, copiar `visor/` a la carpeta `beta/` de gh-pages (https://bavedit.github.io/BeGar---Terminaciones/beta/). Al publicar en gh-pages, conservar `beta/`.
 - APK nuevo (cambios en `android-app/`): Actions lo compila; copiarlo a `visor/descargas/BAV-BeGar.apk` y poner el número de corrida en `visor/descargas/version.json` → la app avisa a los teléfonos con un APK anterior.
 

@@ -338,7 +338,7 @@ function render() {
   }
   const main = $('#vista');
   main.scrollTop = 0;
-  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido }[vista])(main, params);
+  ({ edificio: vEdificio, espacio: vEspacio, visor: vVisor, informe: vInforme, pedidos: vPedidos, pedido: vPedido, checklists: vChecklists, checklist: vChecklist }[vista])(main, params);
 }
 
 function chipRubro() {
@@ -480,6 +480,8 @@ function vEdificio(main) {
     <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="inf-dpto">Informe por dpto</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
     ${nube ? '' : '<p class="nota">Los marcadores de ejemplo son de prueba y se pueden quitar desde el ícono de usuario.</p>'}
     <hr class="sep">
+    ${bloqueChecklistEdificio()}
+    <hr class="sep">
     <div class="seccion-t">Pedido de materiales</div>
     <div class="lista"><button class="fila" id="ir-pedidos"><span class="fila-t">Pedidos y remisiones</span><span class="fila-der"><span class="chip piloto">nuevo</span></span>
       <span class="fila-s"><span>Pedidos de los martes y jueves, lo que llegó y lo que falta</span></span></button></div>
@@ -491,6 +493,7 @@ function vEdificio(main) {
   $('#inf-dpto').onclick = elegirDptoInforme;
   $('#ver-pend').onclick = abrirPendientes;
   $('#ir-pedidos').onclick = () => ir('pedidos');
+  enlazarChecklist(main);
 }
 
 /** Elegir el dpto para su informe (pendientes y resueltos, para el cierre). */
@@ -537,6 +540,8 @@ function vEspacio(main, params) {
       <button class="btn primario ancho" id="abrir-plano" ${tienePlano ? '' : 'disabled'}>${tienePlano ? (puedeEditar() ? 'Abrir plano y marcar' : 'Ver plano') : 'Este nivel todavía no tiene plano'}</button>
       <button class="btn ancho" id="inf-espacio" ${todos.length ? '' : 'disabled'}>Informe de ${esc(titulo)}</button>
     </div>
+    ${bloqueChecklistDpto(nv.id, u)}
+    ${u === COMUN ? '' : '<div class="seccion-t">Marcadores sobre el plano</div>'}
     ${chipRubro()}
     <nav class="pestanas" role="tablist">
       <button role="tab" data-f="0" aria-selected="${!soloPend}">Todos (${todos.length})</button>
@@ -549,6 +554,7 @@ function vEspacio(main, params) {
       </div>`).join('') : `<p class="vacio-txt">${todos.length ? 'No quedan pendientes en ' + esc(titulo) + '.' : 'Todavía no hay marcadores en ' + esc(titulo) + '. Abrí el plano y mantené apretado donde va el primero.'}</p>`}
   </div>`;
   enlazarChipRubro(main);
+  enlazarChecklist(main, nv.id, u);
   main.querySelectorAll('[data-u]').forEach((b) => (b.onclick = () => ir('espacio', { nivel: nv.id, unidad: b.dataset.u, soloPend }, true)));
   main.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => ir('espacio', { ...params, soloPend: b.dataset.f === '1' }, true)));
   const act = main.querySelector('.nivel-btn[aria-current="true"]');
@@ -1693,5 +1699,6 @@ function migrar(p) {
   } else await sembrarEjemplos();
   ir('edificio');
   asignarCodigos().catch((e) => console.warn('códigos', e));
+  iniciarChecklistJose().catch((e) => console.warn('checklist de Jose', e));
   setTimeout(() => { if ($('#hoja').hidden) mostrarNovedades(); }, 2600); // cuando termina la animación del logo
 })();
