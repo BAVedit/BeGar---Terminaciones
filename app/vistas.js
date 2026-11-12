@@ -40,7 +40,7 @@ function vEdificio(main) {
         <span class="fila-der">${htmlAvance(r)}</span>
         <span class="fila-s"><span>${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')}</span>${r.pend ? `<span><span class="punto e-abierto"></span> ${r.pend} pendientes</span>` : ''}</span>
       </button>`).join('')}</div>
-    <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="inf-dpto">Informe por dpto</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
+    <div class="acciones"><button class="btn" id="inf-todos">Informe general</button><button class="btn" id="inf-dpto">Informe por dpto</button><button class="btn" id="inf-nivel">Informe por nivel</button><button class="btn" id="ver-pend">Pendientes de la ingesta</button></div>
     ${nube ? '' : '<p class="nota">Los marcadores de ejemplo son de prueba y se pueden quitar desde el ícono de usuario.</p>'}
     <hr class="sep">
     <div class="seccion-t">Pedido de materiales</div>
@@ -58,6 +58,7 @@ function vEdificio(main) {
   main.querySelectorAll('[data-inf]').forEach((b) => (b.onclick = () => ir('informe', { filtro: { rubro: b.dataset.inf } })));
   $('#inf-todos').onclick = () => ir('informe', { filtro: { rubro: '' } });
   $('#inf-dpto').onclick = elegirDptoInforme;
+  $('#inf-nivel').onclick = () => elegirNivelInforme();
   $('#ver-pend').onclick = abrirPendientes;
   $('#ir-pedidos').onclick = () => ir('pedidos');
   $('#ir-pruebas').onclick = () => ir('pruebas');
@@ -73,6 +74,40 @@ function elegirDptoInforme() {
       <span class="fila-der">${htmlAvance(x.r)}</span><span class="fila-s"><span class="cod">${x.nv}</span><span>${x.r.pend} pendientes · ${x.r.total - x.r.pend} resueltos</span></span></button>`).join('') || '<p class="nota">Todavía no hay marcadores.</p>'}</div>`, (h) => {
     $('[data-cerrar]', h).onclick = cerrarHoja;
     h.querySelectorAll('[data-esp]').forEach((b) => (b.onclick = () => { cerrarHoja(); ir('informe', { filtro: { rubro: '', espacio: b.dataset.esp, alcance: 'ambos' } }); }));
+  });
+}
+
+/** Informe de un nivel entero (N3…), de un rubro o de todos: primero el nivel, después el rubro. */
+function elegirNivelInforme(nv) {
+  const cerrar = '<button class="cerrar" data-cerrar aria-label="Cerrar">✕</button>';
+  if (!nv) {
+    const filas = M.niveles.map((n) => ({ n, r: resumen(pines.filter((p) => p.nivel === n.id)) })).filter((x) => x.r.total);
+    abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">Informe por nivel</h2><p>Elegí el nivel. Después elegís el rubro, y el informe junta todos los dptos y espacios comunes de ese nivel.</p></div>${cerrar}</div>
+      <div class="lista">${filas.map(({ n, r }) => `<button class="fila" data-nv="${n.id}"><span class="fila-t"><b class="cod">${n.id}</b> · ${esc(n.nombre)}</span>
+        <span class="fila-der">${htmlAvance(r)}</span><span class="fila-s"><span>${r.pend} pendientes · ${r.total - r.pend} resueltos</span></span></button>`).join('') || '<p class="nota">Todavía no hay marcadores.</p>'}</div>`, (h) => {
+      $('[data-cerrar]', h).onclick = cerrarHoja;
+      h.querySelectorAll('[data-nv]').forEach((b) => (b.onclick = () => elegirNivelInforme(b.dataset.nv)));
+    });
+    return;
+  }
+  const delNivel = pines.filter((p) => p.nivel === nv);
+  const activo = rubroActivo().id;
+  const filas = M.rubros.map((rb) => ({ rb, r: resumen(delNivel.filter((p) => p.rubro === rb.id)) })).filter((x) => x.r.total)
+    .sort((a, b) => (b.rb.id === activo) - (a.rb.id === activo));
+  const todos = resumen(delNivel);
+  abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">Informe de ${esc(nv)}</h2><p>Elegí el rubro. Sale con los pendientes de todo el nivel; en la pantalla siguiente podés sumar los resueltos.</p></div>${cerrar}</div>
+    <div class="lista">${filas.map(({ rb, r }) => `<button class="fila" data-rb="${rb.id}" ${r.pend ? '' : 'data-sin-pend'}><span class="fila-t">${esc(rb.nombre)}</span>
+      <span class="fila-der">${rb.id === activo ? '<span class="chip piloto">relevando</span>' : htmlAvance(r)}</span>
+      <span class="fila-s"><span>${esc(responsablesRubro(rb).join(', ') || 'Sin contratista')}</span><span>${r.pend ? `<span class="punto e-abierto"></span> ${r.pend} pendientes` : 'Sin pendientes'}</span></span></button>`).join('')}
+      <button class="fila" data-rb=""><span class="fila-t">Todos los rubros</span><span class="fila-der">${htmlAvance(todos)}</span><span class="fila-s"><span>${todos.pend} pendientes en ${esc(nv)}</span></span></button></div>
+    <div class="acciones"><button class="btn" id="nv-volver">‹ Otro nivel</button></div>`, (h) => {
+    $('[data-cerrar]', h).onclick = cerrarHoja;
+    $('#nv-volver', h).onclick = () => elegirNivelInforme();
+    h.querySelectorAll('[data-rb]').forEach((b) => (b.onclick = () => {
+      cerrarHoja();
+      // sin pendientes en ese rubro: abre con pendientes y resueltos para que no salga vacío
+      ir('informe', { filtro: { rubro: b.dataset.rb, nivel: nv, alcance: b.hasAttribute('data-sin-pend') ? 'ambos' : 'pend' } });
+    }));
   });
 }
 

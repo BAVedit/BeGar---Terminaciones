@@ -14,7 +14,8 @@ const ALCANCES = {
 };
 const tituloInforme = (rb, f) => {
   const [nv, u] = f.espacio ? f.espacio.split('|') : [];
-  return `${M.proyecto.nombre} · ${f.espacio ? etiquetaEspacio(nv, u) + (rb ? ' · ' + rb.nombre : '') : rb ? rb.nombre : 'Todos los rubros'}${f.resp ? ' · ' + f.resp : ''}`;
+  const soloNivel = !f.espacio && f.nivel ? ' · ' + f.nivel : '';
+  return `${M.proyecto.nombre} · ${f.espacio ? etiquetaEspacio(nv, u) + (rb ? ' · ' + rb.nombre : '') : (rb ? rb.nombre : 'Todos los rubros') + soloNivel}${f.resp ? ' · ' + f.resp : ''}`;
 };
 /** Encabezado de contratista dentro de un dpto: aparece cada vez que cambia el rubro (solo si el informe no es de un único rubro). */
 const cabContratista = (p, ant, f) => {

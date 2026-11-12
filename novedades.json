@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-11-12a",
+    "fecha": "2026-11-12",
+    "titulo": "Informe por nivel",
+    "items": [
+      "En la pantalla de inicio, debajo de los informes por contratista, está el botón Informe por nivel: elegís el nivel (por ejemplo N3) y después el rubro (o todos).",
+      "Sale un solo informe con todos los pendientes de ese nivel, dpto por dpto, con el mismo formato de siempre. Se guarda o se comparte en PDF, Word o checklist, y también se copia para WhatsApp.",
+      "En el informe también podés cambiar el nivel desde el filtro Nivel, y el título y el nombre del archivo lo indican."
+    ]
+  },
+  {
     "id": "2026-11-09a",
     "fecha": "2026-11-09",
     "titulo": "Checklist de Jose",
@@ -7,6 +17,16 @@
       "Nuevo ícono arriba a la derecha (el portapapeles con el tilde): elegís el rubro y se abre la caja de dptos para relevar cada uno. Por ahora está Carpintería de aluminio, con los 22 ítems de la planilla de inspección.",
       "Cada ítem se marca ✓ Check, ✗ No check o N/A. En los ✗ se deja la observación, dónde está (dormitorio, baño, cocina…) y fotos para que se solucione. Los ítems quedan en su lugar para el control final, y arriba se puede filtrar por ✓, ✗, N/A o sin marcar.",
       "La planilla de cada dpto sale en PDF igual a la de papel, con una hoja aparte con los ✗ y sus fotos. La verifican solo las personas habilitadas; el resto del equipo la ve."
+    ]
+  },
+  {
+    "id": "2026-11-03a",
+    "fecha": "2026-11-03",
+    "titulo": "Fotos de cada material en el pedido",
+    "items": [
+      "Al cargar un pedido, cada material tiene su lugar para fotos de referencia: sacá una foto o elegila de la galería (por ejemplo, el artefacto exacto que hay que comprar).",
+      "Las fotos se ven debajo de cada material en el pedido y salen en una hoja final del PDF del pedido, con el nombre y la cantidad del material.",
+      "Si un material pasa al próximo pedido, sus fotos pasan con él."
     ]
   },
   {
