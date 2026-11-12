@@ -1,5 +1,15 @@
 [
   {
+    "id": "2026-11-12a",
+    "fecha": "2026-11-12",
+    "titulo": "Informe por nivel",
+    "items": [
+      "En la pantalla de inicio, debajo de los informes por contratista, está el botón Informe por nivel: elegís el nivel (por ejemplo N3) y después el rubro (o todos).",
+      "Sale un solo informe con todos los pendientes de ese nivel, dpto por dpto, con el mismo formato de siempre. Se guarda o se comparte en PDF, Word o checklist, y también se copia para WhatsApp.",
+      "En el informe también podés cambiar el nivel desde el filtro Nivel, y el título y el nombre del archivo lo indican."
+    ]
+  },
+  {
     "id": "2026-11-09a",
     "fecha": "2026-11-09",
     "titulo": "Checklist de Jose",

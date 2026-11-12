@@ -9,7 +9,8 @@ function vInforme(main, params) {
   const inc = f.incluir = { fotos: true, plano: true, datos: true, historial: false, ...f.incluir };
   const rb = f.rubro ? rubro(f.rubro) : null;
   const [eNv, eU] = f.espacio ? f.espacio.split('|') : [];
-  cabecera(M.proyecto.nombre, f.espacio ? `Informe · ${etiquetaEspacio(eNv, eU)}` : rb ? `Informe · ${rb.nombre}` : 'Informe general');
+  const enNivel = !f.espacio && f.nivel ? ` · ${f.nivel}` : '';
+  cabecera(M.proyecto.nombre, f.espacio ? `Informe · ${etiquetaEspacio(eNv, eU)}` : rb ? `Informe · ${rb.nombre}${enNivel}` : f.nivel ? `Informe · ${f.nivel}` : 'Informe general');
   const base = pines.filter((p) => (!f.rubro || p.rubro === f.rubro) && (!f.espacio || (p.nivel === eNv && espacioDe(p) === eU)));
   const ordenRubro = (p) => M.rubros.findIndex((r) => r.id === p.rubro);
   const resuelto = (p) => p.estado !== 'abierto';
@@ -108,7 +109,7 @@ function vInforme(main, params) {
   // antes de armar el archivo se pregunta qué marcadores lleva: pendientes, resueltos o los dos
   const preguntar = (btnId, armar, ext, compartir) => () => {
     const cuenta = (id) => base.filter((p) => pasaFiltro(p) && ALCANCES[id].estados.includes(p.estado)).length;
-    abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">¿Qué incluye el informe?</h2><p>${esc(f.espacio ? etiquetaEspacio(eNv, eU) : rb ? rb.nombre : 'Todos los rubros')}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
+    abrirHoja(`<div class="ficha-cab"><div><h2 class="h-hoja">¿Qué incluye el informe?</h2><p>${esc(f.espacio ? etiquetaEspacio(eNv, eU) : (rb ? rb.nombre : 'Todos los rubros') + enNivel)}</p></div><button class="cerrar" data-cerrar aria-label="Cerrar">✕</button></div>
       <div class="lista">${Object.entries(ALCANCES).map(([id, a]) => `<button class="fila" data-elegir="${id}" ${cuenta(id) ? '' : 'disabled'}><span class="fila-t">${a.nombre}</span>
         <span class="fila-der">${f.alcance === id ? '<span class="chip piloto">actual</span>' : ''}</span><span class="fila-s"><span>${a.ayuda}</span><span class="num">${cuenta(id)} ${cuenta(id) === 1 ? 'marcador' : 'marcadores'}</span></span></button>`).join('')}</div>`, (h) => {
       $('[data-cerrar]', h).onclick = cerrarHoja;
@@ -134,7 +135,7 @@ function vInforme(main, params) {
     if (comp) { comp.disabled = !base.length; comp.onclick = preguntar('r-compartir', planilla ? planillaExcel : informePDF, planilla ? 'xlsx' : 'pdf', true); }
   }
   $('#r-copiar').onclick = () => {
-    const lineas = [`*${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}*`, `${f.resp ? 'Responsable: ' + f.resp + ' · ' : ''}${lista.length} ${f.estados.map(estadoNombre).join('/').toLowerCase()} (${fechaCorta(hoyISO())})`];
+    const lineas = [`*${M.proyecto.nombre} · ${rb ? rb.nombre : 'Todos los rubros'}${f.espacio ? ' · ' + etiquetaEspacio(eNv, eU) : enNivel}*`, `${f.resp ? 'Responsable: ' + f.resp + ' · ' : ''}${lista.length} ${f.estados.map(estadoNombre).join('/').toLowerCase()} (${fechaCorta(hoyISO())})`];
     for (const g of grupos) {
       lineas.push('', `*${etiquetaEspacio(g.nv, g.u)}*`);
       for (const p of g.ps) lineas.push(`${codigoPin(p)} ${p.texto || 'Sin descripción'}${p.ambiente ? ' (' + p.ambiente + ')' : ''}`);
